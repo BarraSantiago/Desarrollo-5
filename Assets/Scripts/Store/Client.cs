@@ -44,23 +44,21 @@ namespace Store
         {
             if (!StoreManager.AvailableItem()) return;
 
-            foreach (DisplayItem displayedItem in StoreManager.DisplayedItems)
-            {
-                if (displayedItem.BeingViewed) continue;
-                _desiredItem = displayedItem;
-            }
+            //foreach (DisplayItem displayedItem in StoreManager.DisplayedItems)
+            //{
+            //    if (displayedItem.BeingViewed) continue;
+            //    _desiredItem = displayedItem;
+            //}
 
             // TODO make desired item selection random
-            //while (_desiredItem == null)
-            //{
-            //    int randomItem = Random.Range(0, StoreManager.DisplayedItems.Length);
+            DisplayItem[] abaliavleItems = System.Array.FindAll(StoreManager.DisplayedItems, item => !item.BeingViewed);
 
-            //    if (!StoreManager.DisplayedItems[randomItem].BeingViewed) continue;
 
-            //    _desiredItem = StoreManager.DisplayedItems[randomItem];
+            int randomItem = Random.Range(0, abaliavleItems.Length);
 
-            //    StoreManager.DisplayedItems[randomItem].BeingViewed = true;
-            //}
+            _desiredItem = StoreManager.DisplayedItems[randomItem];
+
+            StoreManager.DisplayedItems[randomItem].BeingViewed = true;
         }
 
         private IEnumerator WalkToItem()
