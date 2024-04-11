@@ -120,7 +120,7 @@ namespace Store
             Debug.Log("Item bought");
 
             _storeManager.listPrices.prices[_desiredItem.ItemId].amountSoldLastDay++;
-            StoreManager.DisplayedItems[_desiredItem.ItemId] = null;
+            StoreManager.DisplayedItems[_desiredItem.ItemId].gameObject.SetActive(false);
         }
 
         /// <summary>
