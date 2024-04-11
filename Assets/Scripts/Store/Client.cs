@@ -1,14 +1,17 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 namespace Store
 {
     public class Client : MonoBehaviour
     {
-        [SerializeField] private Player _player; // TODO remove this
-        [SerializeField] private StoreManager _storeManager; // TODO remove this
+        [SerializeField] private Player player; // TODO remove this
+        [SerializeField] private StoreManager storeManager; // TODO remove this
+        [SerializeField] private NavMeshAgent agent;
+        [SerializeField] private Transform exit;
         private DisplayItem _desiredItem = null;
 
         /// <summary>
@@ -32,6 +35,12 @@ namespace Store
         /// Por si hacemos mejoras para modificar la probabilidad que dejen propina
         /// </summary>
         private int _tipChanceModifier = 0;
+
+        private void Start()
+        {
+            agent.updateRotation = false;
+            agent.updateUpAxis = false;
+        }
 
         public void EnterStore()
         {
@@ -64,13 +73,16 @@ namespace Store
         private IEnumerator WalkToItem()
         {
             //Move
-
-            StartCoroutine(Move(transform.position, _desiredItem.transform.position, 3));
+            agent.SetDestination(_desiredItem.transform.position);
+            //StartCoroutine(Move(transform.position, _desiredItem.transform.position, 3));
 
             yield return new WaitForSeconds(3);
 
             //When client reaches item
             CheckBuyItem();
+
+            //Leave store after buying item
+            agent.SetDestination(exit.position);
         }
 
 
@@ -85,7 +97,7 @@ namespace Store
 
         private void CheckBuyItem()
         {
-            ListPrice itemList = _storeManager.listPrices.prices[_desiredItem.ItemId];
+            ListPrice itemList = storeManager.listPrices.prices[_desiredItem.ItemId];
             float difference = _desiredItem.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
@@ -116,10 +128,9 @@ namespace Store
         private void BuyItem()
         {
             Player.Money += _desiredItem.price;
-            _player.UpdateMoneyText(); // TODO remove this
-            Debug.Log("Item bought");
+            player.UpdateMoneyText(); // TODO remove this
 
-            _storeManager.listPrices.prices[_desiredItem.ItemId].amountSoldLastDay++;
+            storeManager.listPrices.prices[_desiredItem.ItemId].amountSoldLastDay++;
             StoreManager.DisplayedItems[_desiredItem.ItemId].gameObject.SetActive(false);
         }
 
@@ -134,7 +145,7 @@ namespace Store
             if (chance < randomNum + _tipChanceModifier)
             {
                 Player.Money += _tipValue;
-                _player.UpdateMoneyText(); // TODO remove this
+                player.UpdateMoneyText(); // TODO remove this
             }
         }
 

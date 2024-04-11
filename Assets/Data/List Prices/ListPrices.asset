@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prices:
   - {fileID: 11400000, guid: c488c2647f3a3d44296cd87f94dfe6ae, type: 2}
+  - {fileID: 11400000, guid: 036796ec0acfbd54aab0319594168b88, type: 2}
+  - {fileID: 11400000, guid: fc745c6673e44724d8d81eabcf1066a7, type: 2}
+  - {fileID: 11400000, guid: ec112bbc5aabf254ab21b157a128130a, type: 2}
