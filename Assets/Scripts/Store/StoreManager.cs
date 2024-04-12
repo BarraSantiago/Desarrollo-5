@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UI;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -13,6 +15,8 @@ namespace Store
         [SerializeField] private Client[] clients;
         [SerializeField] public ListPrices listPrices;
         [SerializeField] public DisplayItem[] displayedItems;
+        [SerializeField] private UIManager _uiManager;
+        [SerializeField] private Player _player;
 
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
@@ -29,12 +33,26 @@ namespace Store
         private void Start()
         {
             Client.ItemBought += ItemBought;
-
+            Client.MoneyAdded += SpawnText;
+            UpdateMoneyText();
+            
             // Updates list price of items depending on offer/sold last cycle
             foreach (var listPrice in listPrices.prices)
             {
                 listPrice.UpdatePrice();
             }
+        }
+
+        private void SpawnText(int money)
+        {
+            _player.Money += money;
+            _uiManager.SpawnFlyingText(money);
+            _uiManager.UpdateMoneyText(_player.Money);
+        }
+
+        private void UpdateMoneyText()
+        {
+            _uiManager.UpdateMoneyText(_player.Money);
         }
 
         private void ItemBought(int id)
@@ -51,14 +69,9 @@ namespace Store
             StartCoroutine( SendClient());
         }
 
-        public bool AvailableItem()
+        private bool AvailableItem()
         {
-            foreach (DisplayItem displayedItem in displayedItems)
-            {
-                if (!displayedItem.BeingViewed && !displayedItem.Bought) return true;
-            }
-
-            return false;
+            return displayedItems.Any(displayedItem => !displayedItem.BeingViewed && !displayedItem.Bought);
         }
 
         private IEnumerator SendClient()
@@ -75,6 +88,7 @@ namespace Store
                 yield return new WaitForSeconds(_clientTimer);
             }
         }
+
 
         private void ChooseItem(Client client)
         {

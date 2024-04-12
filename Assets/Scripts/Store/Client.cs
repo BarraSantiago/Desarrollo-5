@@ -10,6 +10,7 @@ namespace Store
     {
         public DisplayItem desiredItem = null;
         public static Action<int> ItemBought;
+        public static Action<int> MoneyAdded; //TODO change name
         
         [SerializeField] private Player player; // TODO remove this
         [SerializeField] private StoreManager storeManager; // TODO remove this
@@ -110,8 +111,7 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            Player.Money += desiredItem.price;
-            player.UpdateMoneyText(); // TODO remove this
+            MoneyAdded?.Invoke(desiredItem.price);
 
             storeManager.listPrices.prices[desiredItem.ItemId].amountSoldLastDay++;
             ItemBought?.Invoke(desiredItem.ItemId);
@@ -127,8 +127,7 @@ namespace Store
 
             if (chance < randomNum + _tipChanceModifier)
             {
-                Player.Money += _tipValue;
-                player.UpdateMoneyText(); // TODO remove this
+                MoneyAdded.Invoke(_tipValue);
             }
         }
 
