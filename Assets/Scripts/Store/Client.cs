@@ -8,11 +8,13 @@ namespace Store
 {
     public class Client : MonoBehaviour
     {
+        public DisplayItem desiredItem = null;
+        public static Action<int> ItemBought;
+        
         [SerializeField] private Player player; // TODO remove this
         [SerializeField] private StoreManager storeManager; // TODO remove this
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private Transform exit;
-        private DisplayItem _desiredItem = null;
 
         /// <summary>
         /// rango de 0 a 100 de lo que esta dispuesto a pagar por sobre el precio de lista (ListPrice)
@@ -28,13 +30,12 @@ namespace Store
         /// booleano para decir si el cliente ya esta en la tienda
         /// </summary>
         public bool inShop;
-
-        private int _tipValue;
-
+        
         /// <summary>
         /// Por si hacemos mejoras para modificar la probabilidad que dejen propina
         /// </summary>
         private int _tipChanceModifier = 0;
+        private int _tipValue;
 
         private void Start()
         {
@@ -44,64 +45,46 @@ namespace Store
 
         public void EnterStore()
         {
-            ChooseItem();
-
             StartCoroutine(WalkToItem());
         }
 
-        private void ChooseItem()
-        {
-            if (!StoreManager.AvailableItem()) return;
-
-            //foreach (DisplayItem displayedItem in StoreManager.DisplayedItems)
-            //{
-            //    if (displayedItem.BeingViewed) continue;
-            //    _desiredItem = displayedItem;
-            //}
-
-            // TODO make desired item selection random
-            DisplayItem[] abaliavleItems = System.Array.FindAll(StoreManager.DisplayedItems, item => !item.BeingViewed);
-
-
-            int randomItem = Random.Range(0, abaliavleItems.Length);
-
-            _desiredItem = StoreManager.DisplayedItems[randomItem];
-
-            StoreManager.DisplayedItems[randomItem].BeingViewed = true;
-        }
+        
 
         private IEnumerator WalkToItem()
         {
             //Move
-            agent.SetDestination(_desiredItem.transform.position);
-            //StartCoroutine(Move(transform.position, _desiredItem.transform.position, 3));
+            agent.SetDestination(desiredItem.transform.position);
 
-            yield return new WaitForSeconds(3);
+            //TODO update this
+            yield return new WaitUntil(CheckDistance);
 
             //When client reaches item
             CheckBuyItem();
 
             //Leave store after buying item
-            agent.SetDestination(exit.position);
+            LeaveStore();
         }
 
-
-        IEnumerator Move(Vector3 beginPos, Vector3 endPos, float time)
+        private bool CheckDistance()
         {
-            for (float t = 0; t < 1; t += Time.deltaTime / time)
+            float minimumDistance = 0.9f;
+            float distance = Vector3.Distance(transform.position, desiredItem.transform.position);
+
+            if (distance < minimumDistance)
             {
-                transform.position = Vector3.Lerp(beginPos, endPos, t);
-                yield return null;
+                return true;
             }
+
+            return false;
         }
 
         private void CheckBuyItem()
         {
-            ListPrice itemList = storeManager.listPrices.prices[_desiredItem.ItemId];
-            float difference = _desiredItem.price - itemList.CurrentPrice;
+            ListPrice itemList = storeManager.listPrices.prices[desiredItem.ItemId];
+            float difference = desiredItem.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
-            if (_desiredItem.price >= itemList.CurrentPrice)
+            if (desiredItem.price >= itemList.CurrentPrice)
             {
                 // Cliente no compra el item y se va
                 if (percentageDifference > _willingnessToPay)
@@ -127,11 +110,11 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            Player.Money += _desiredItem.price;
+            Player.Money += desiredItem.price;
             player.UpdateMoneyText(); // TODO remove this
 
-            storeManager.listPrices.prices[_desiredItem.ItemId].amountSoldLastDay++;
-            StoreManager.DisplayedItems[_desiredItem.ItemId].gameObject.SetActive(false);
+            storeManager.listPrices.prices[desiredItem.ItemId].amountSoldLastDay++;
+            ItemBought?.Invoke(desiredItem.ItemId);
         }
 
         /// <summary>
@@ -155,9 +138,7 @@ namespace Store
         private void LeaveStore()
         {
             //move to outside of store
-            transform.position = Vector3.zero;
-
-            gameObject.SetActive(false);
+            agent.SetDestination(exit.transform.position);
         }
     }
 }
