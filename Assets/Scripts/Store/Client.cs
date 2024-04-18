@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Tilemaps;
@@ -7,23 +8,45 @@ using Random = UnityEngine.Random;
 
 namespace Store
 {
-   
     public class Client : MonoBehaviour
     {
+        private enum State
+        {
+            ChoosingItem,
+            WaitingInline,
+            Buying,
+            Leaving,
+            Happy,
+            Angry
+        }
+        #region public variables
+
         public DisplayItem desiredItem = null;
-        public static Action<Client> StartQueue;
+        public static Action<Client> StartLine;
+        public static Action LeaveLine;
         public static Action<int> ItemBought;
         public static Action<int> MoneyAdded; //TODO change name
+
         /// <summary>
         /// booleano para decir si el cliente ya esta en la tienda
         /// </summary>
         public bool inShop;
-        
+
+        public bool firstInLine;
+
+        #endregion
+
+        #region Serialized variables
+
         [SerializeField] private Player player; // TODO remove this
         [SerializeField] private StoreManager storeManager; // TODO remove this
         [SerializeField] public NavMeshAgent agent;
         [SerializeField] private Tilemap waitingLine;
         [SerializeField] private Transform exit;
+
+        #endregion
+
+        #region priavete variables
 
         /// <summary>
         /// rango de 0 a 100 de lo que esta dispuesto a pagar por sobre el precio de lista (ListPrice)
@@ -39,12 +62,39 @@ namespace Store
         /// Por si hacemos mejoras para modificar la probabilidad que dejen propina
         /// </summary>
         private int _tipChanceModifier = 0;
+
         private int _tipValue;
+        private float minimumDistance = 0.9f;
+        private bool waitingForPlayer;
+        private State _currentState;
+
+        #endregion
 
         private void Start()
         {
             agent.updateRotation = false;
             agent.updateUpAxis = false;
+        }
+
+        private void Update()
+        {
+            switch (_currentState)
+            {
+                case State.ChoosingItem:
+                    break;
+                case State.WaitingInline:
+                    break;
+                case State.Buying:
+                    break;
+                case State.Leaving:
+                    break;
+                case State.Happy:
+                    break;
+                case State.Angry:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public void EnterStore()
@@ -58,31 +108,51 @@ namespace Store
             agent.SetDestination(desiredItem.transform.position);
 
             //TODO update this
-            yield return new WaitUntil(CheckDistance);
+            yield return new WaitUntil(DistanceToItem);
 
             //When client reaches item
             if (CheckBuyItem())
             {
-                StartQueue?.Invoke(this);
+                StartLine?.Invoke(this);
+                
+                waitingForPlayer = true;
+                yield return new WaitUntil(PlayerInteraction);
+                waitingForPlayer = false;
+                
+                GoToCashier();
             }
 
-            GoToCashier();
-            
             //Leave store after buying item
             LeaveStore();
         }
 
-        private void GoToCashier()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private bool PlayerInteraction()
         {
-            //waitingLine.
+            if (!firstInLine) return false;
+
+            return CheckDistance(player.transform.position, minimumDistance);
         }
 
-        private bool CheckDistance()
+        private void GoToCashier()
         {
-            float minimumDistance = 0.9f;
-            float distance = Vector3.Distance(transform.position, desiredItem.transform.position);
+            BuyItem();
+            LeaveLine?.Invoke();
+        }
 
-            if (distance < minimumDistance)
+        private bool DistanceToItem()
+        {
+            return CheckDistance(desiredItem.transform.position, minimumDistance);
+        }
+
+        private bool CheckDistance(Vector3 pos, float distanceDif)
+        {
+            float distance = Vector3.Distance(transform.position, pos);
+
+            if (distance < distanceDif)
             {
                 return true;
             }
@@ -107,12 +177,9 @@ namespace Store
                 }
 
                 //Esta aca para que no deje propina si el precio es mas caro que el precio de lista
-                BuyItem();
                 return true;
             }
-
-            BuyItem();
-
+            
             if (_happiness > 0)
                 LeaveTip(Math.Abs(percentageDifference) + _happiness);
             return true;
@@ -150,6 +217,15 @@ namespace Store
         {
             //move to outside of store
             agent.SetDestination(exit.transform.position);
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (waitingForPlayer)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawWireSphere(transform.position, minimumDistance);
+            }
         }
     }
 }

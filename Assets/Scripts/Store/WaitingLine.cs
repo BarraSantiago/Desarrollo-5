@@ -12,18 +12,34 @@ namespace Store
 
     public class WaitingLine
     {
+        public WaitingLine(Transform startingPosition, int positionsAmount, float positionsDistance)
+        {
+            this.startingPosition = startingPosition;
+            this.positionsAmount = positionsAmount;
+            this.positionsDistance = positionsDistance;
+        }
+
         public WaitingPosition[] queuePositions;
         public Transform startingPosition;
         public int positionsAmount = 3;
 
         private float positionsDistance = 1f;
 
-        private void Awake()
+        public void Initialize()
         {
             queuePositions = new WaitingPosition[positionsAmount];
             for (int i = 0; i < positionsAmount; i++)
             {
                 queuePositions[i].position = startingPosition.position + Vector3.up * i;
+            }
+        }
+
+        public void Deinitialize()
+        {
+            for (int i = 0; i < queuePositions.Length; i++)
+            {
+                queuePositions[i].occupied = false;
+                queuePositions[i].client = null;
             }
         }
 
@@ -45,24 +61,29 @@ namespace Store
                 break;
             }
 
+            queuePositions[0].client.firstInLine = true;
             return true;
         }
 
         public void AdvanceQueue()
         {
+            queuePositions[0].client.firstInLine = false;
+
             for (int i = 0; i < queuePositions.Length; i++)
             {
                 if (!queuePositions[i + 1].occupied)
                 {
                     queuePositions[i].occupied = false;
                     queuePositions[i].client = null;
-                    
+
                     break;
-                } 
+                }
 
                 queuePositions[i].client = queuePositions[i + 1].client;
                 queuePositions[i].client.agent.SetDestination(queuePositions[i].position);
             }
+
+            queuePositions[0].client.firstInLine = true;
         }
     }
 }

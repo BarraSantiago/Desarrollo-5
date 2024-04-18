@@ -4,20 +4,35 @@ using System.Linq;
 using UI;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 namespace Store
 {
     public class StoreManager : MonoBehaviour
     {
+        #region Serialized Fields
+        
+        [Header("Client Setup")]
         [SerializeField] private GameObject clientPrefab;
         [SerializeField] private Client[] clients;
+        
+        [Header("Items Setup")]
         [SerializeField] public ListPrices listPrices;
         [SerializeField] public DisplayItem[] displayedItems;
+        
+        [Header("Waiting Line Setup")]
+        [SerializeField] private Transform waitingLineStart;
+        [SerializeField] private int posAmount;
+        [SerializeField] private float distanceBetweenPos;
+        
+        [Header("Misc Setup")]
         [SerializeField] private UIManager _uiManager;
         [SerializeField] private Player _player;
 
+        #endregion
+
+        #region private variables
+        
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
@@ -31,15 +46,23 @@ namespace Store
         private float _cicleMaxTime;
         private float _cilceTimer;
 
+        #endregion
+        
         private void Start()
         {
             Client.ItemBought += ItemBought;
             Client.MoneyAdded += SpawnText;
-            Client.StartQueue += AddToQueue;
+            Client.StartLine += AddToQueue;
+            Client.LeaveLine += RemoveFromQueue;
 
             UpdateMoneyText();
 
-            _waitingLine = new WaitingLine();
+            _waitingLine = new WaitingLine(waitingLineStart,posAmount, distanceBetweenPos);
+        }
+
+        private void RemoveFromQueue()
+        {
+            _waitingLine.AdvanceQueue();
         }
 
         private void AddToQueue(Client agent)
@@ -70,6 +93,8 @@ namespace Store
 
         public void StartCicle()
         {
+            _waitingLine.Initialize();
+            
             float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
 
@@ -82,6 +107,14 @@ namespace Store
             StartCoroutine(SendClient());
         }
 
+        /// <summary>
+        /// Should be called when cicle ends
+        /// </summary>
+        private void EndCicle()
+        {
+            _waitingLine.Deinitialize();
+        }
+        
         private bool AvailableItem()
         {
             return displayedItems.Any(displayedItem => !displayedItem.BeingViewed && !displayedItem.Bought);
