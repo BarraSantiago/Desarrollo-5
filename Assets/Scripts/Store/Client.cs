@@ -2,19 +2,27 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
 namespace Store
 {
+   
     public class Client : MonoBehaviour
     {
         public DisplayItem desiredItem = null;
+        public static Action<Client> StartQueue;
         public static Action<int> ItemBought;
         public static Action<int> MoneyAdded; //TODO change name
+        /// <summary>
+        /// booleano para decir si el cliente ya esta en la tienda
+        /// </summary>
+        public bool inShop;
         
         [SerializeField] private Player player; // TODO remove this
         [SerializeField] private StoreManager storeManager; // TODO remove this
-        [SerializeField] private NavMeshAgent agent;
+        [SerializeField] public NavMeshAgent agent;
+        [SerializeField] private Tilemap waitingLine;
         [SerializeField] private Transform exit;
 
         /// <summary>
@@ -27,11 +35,6 @@ namespace Store
         /// </summary>
         private int _happiness;
 
-        /// <summary>
-        /// booleano para decir si el cliente ya esta en la tienda
-        /// </summary>
-        public bool inShop;
-        
         /// <summary>
         /// Por si hacemos mejoras para modificar la probabilidad que dejen propina
         /// </summary>
@@ -49,8 +52,6 @@ namespace Store
             StartCoroutine(WalkToItem());
         }
 
-        
-
         private IEnumerator WalkToItem()
         {
             //Move
@@ -60,10 +61,20 @@ namespace Store
             yield return new WaitUntil(CheckDistance);
 
             //When client reaches item
-            CheckBuyItem();
+            if (CheckBuyItem())
+            {
+                StartQueue?.Invoke(this);
+            }
 
+            GoToCashier();
+            
             //Leave store after buying item
             LeaveStore();
+        }
+
+        private void GoToCashier()
+        {
+            //waitingLine.
         }
 
         private bool CheckDistance()
@@ -79,7 +90,7 @@ namespace Store
             return false;
         }
 
-        private void CheckBuyItem()
+        private bool CheckBuyItem()
         {
             ListPrice itemList = storeManager.listPrices.prices[desiredItem.ItemId];
             float difference = desiredItem.price - itemList.CurrentPrice;
@@ -92,18 +103,19 @@ namespace Store
                 {
                     _happiness--; //TODO cambiar la cantidad de felicidad que pierde
                     LeaveStore();
-                    return;
+                    return false;
                 }
 
                 //Esta aca para que no deje propina si el precio es mas caro que el precio de lista
                 BuyItem();
-                return;
+                return true;
             }
 
             BuyItem();
 
             if (_happiness > 0)
                 LeaveTip(Math.Abs(percentageDifference) + _happiness);
+            return true;
         }
 
         /// <summary>

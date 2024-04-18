@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using TMPro;
+using UnityEngine;
 
 namespace Store
 {
@@ -8,5 +10,11 @@ namespace Store
         public bool Bought { get; set; }
         [SerializeField] public int price;
         [SerializeField] public int ItemId;
+        [SerializeField] public TMP_Text showPrice;
+
+        private void Awake()
+        {
+            showPrice.text = "$" + price.ToString();
+        }
     }
 }

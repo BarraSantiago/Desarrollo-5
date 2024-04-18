@@ -4,13 +4,13 @@ using System.Linq;
 using UI;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 namespace Store
 {
     public class StoreManager : MonoBehaviour
     {
-        [SerializeField] private Items items;
         [SerializeField] private GameObject clientPrefab;
         [SerializeField] private Client[] clients;
         [SerializeField] public ListPrices listPrices;
@@ -18,6 +18,7 @@ namespace Store
         [SerializeField] private UIManager _uiManager;
         [SerializeField] private Player _player;
 
+        private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
         private int _clientsSent = 0;
@@ -34,13 +35,19 @@ namespace Store
         {
             Client.ItemBought += ItemBought;
             Client.MoneyAdded += SpawnText;
+            Client.StartQueue += AddToQueue;
+
             UpdateMoneyText();
-            
-            // Updates list price of items depending on offer/sold last cycle
-            foreach (var listPrice in listPrices.prices)
+
+            _waitingLine = new WaitingLine();
+        }
+
+        private void AddToQueue(Client agent)
+        {
+            if (!_waitingLine.AddToQueue(agent))
             {
-                listPrice.UpdatePrice();
-            }
+                //No empty spaces in queue
+            };
         }
 
         private void SpawnText(int money)
@@ -66,7 +73,13 @@ namespace Store
             float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
 
-            StartCoroutine( SendClient());
+            // Updates list price of items depending on offer/sold last cycle
+            foreach (var listPrice in listPrices.prices)
+            {
+                listPrice.UpdatePrice();
+            }
+
+            StartCoroutine(SendClient());
         }
 
         private bool AvailableItem()
@@ -88,13 +101,13 @@ namespace Store
                 yield return new WaitForSeconds(_clientTimer);
             }
         }
-
-
+        
         private void ChooseItem(Client client)
         {
             if (!AvailableItem()) return;
 
-            DisplayItem[] abaliavleItems = System.Array.FindAll(displayedItems, item => !item.BeingViewed && !item.Bought);
+            DisplayItem[] abaliavleItems =
+                System.Array.FindAll(displayedItems, item => !item.BeingViewed && !item.Bought);
 
             int randomItem = Random.Range(0, abaliavleItems.Length);
 
