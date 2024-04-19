@@ -28,9 +28,10 @@ namespace Store
         public void Initialize()
         {
             queuePositions = new WaitingPosition[positionsAmount];
+            
             for (int i = 0; i < positionsAmount; i++)
             {
-                queuePositions[i].position = startingPosition.position + Vector3.up * i;
+                queuePositions[i].position = startingPosition.position + (Vector3.up * positionsDistance) * i;
             }
         }
 
@@ -68,6 +69,7 @@ namespace Store
         public void AdvanceQueue()
         {
             queuePositions[0].client.firstInLine = false;
+            queuePositions[0].client = null;
 
             for (int i = 0; i < queuePositions.Length; i++)
             {
@@ -83,7 +85,7 @@ namespace Store
                 queuePositions[i].client.agent.SetDestination(queuePositions[i].position);
             }
 
-            queuePositions[0].client.firstInLine = true;
+            if(queuePositions[0].client) queuePositions[0].client.firstInLine = true;
         }
     }
 }

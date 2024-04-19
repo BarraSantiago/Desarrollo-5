@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Store
@@ -19,6 +18,7 @@ namespace Store
             Happy,
             Angry
         }
+
         #region public variables
 
         public DisplayItem desiredItem = null;
@@ -41,8 +41,8 @@ namespace Store
         [SerializeField] private Player player; // TODO remove this
         [SerializeField] private StoreManager storeManager; // TODO remove this
         [SerializeField] public NavMeshAgent agent;
-        [SerializeField] private Tilemap waitingLine;
         [SerializeField] private Transform exit;
+        [SerializeField] private Button cobrar; // TODO update this
 
         #endregion
 
@@ -63,6 +63,7 @@ namespace Store
         /// </summary>
         private int _tipChanceModifier = 0;
 
+        private bool cobrado = false;
         private int _tipValue;
         private float minimumDistance = 0.9f;
         private bool waitingForPlayer;
@@ -74,6 +75,7 @@ namespace Store
         {
             agent.updateRotation = false;
             agent.updateUpAxis = false;
+            cobrar.onClick.AddListener(Cobrado);
         }
 
         private void Update()
@@ -113,12 +115,14 @@ namespace Store
             //When client reaches item
             if (CheckBuyItem())
             {
+                desiredItem.gameObject.transform.SetParent(this.transform);
+
                 StartLine?.Invoke(this);
-                
+
                 waitingForPlayer = true;
                 yield return new WaitUntil(PlayerInteraction);
                 waitingForPlayer = false;
-                
+
                 GoToCashier();
             }
 
@@ -133,13 +137,21 @@ namespace Store
         private bool PlayerInteraction()
         {
             if (!firstInLine) return false;
-
-            return CheckDistance(player.transform.position, minimumDistance);
+            cobrar.transform.position = Camera.main.WorldToScreenPoint(transform.position);
+            cobrar.gameObject.SetActive(true); // TODO REMOVE THIS
+            
+            return CheckDistance(player.transform.position, minimumDistance) || cobrado;
         }
 
+        private void Cobrado()
+        {
+
+            cobrado = true;
+        }
         private void GoToCashier()
         {
             BuyItem();
+            cobrar.gameObject.SetActive(false);
             LeaveLine?.Invoke();
         }
 
@@ -179,7 +191,7 @@ namespace Store
                 //Esta aca para que no deje propina si el precio es mas caro que el precio de lista
                 return true;
             }
-            
+
             if (_happiness > 0)
                 LeaveTip(Math.Abs(percentageDifference) + _happiness);
             return true;
@@ -197,9 +209,9 @@ namespace Store
         }
 
         /// <summary>
-        /// Al comprar el item deja propina
+        /// Chance to leave a tip when buying an item
         /// </summary>
-        /// <param name="chance"></param>
+        /// <param name="chance"> Chance to leave a tip </param>
         private void LeaveTip(float chance)
         {
             int randomNum = Random.Range(0, 100);
@@ -211,10 +223,12 @@ namespace Store
         }
 
         /// <summary>
-        /// 
+        /// Exits the store
         /// </summary>
         private void LeaveStore()
         {
+            cobrado = false;
+            // TODO update this
             //move to outside of store
             agent.SetDestination(exit.transform.position);
         }

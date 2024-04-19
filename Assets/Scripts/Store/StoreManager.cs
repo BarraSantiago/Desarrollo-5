@@ -135,6 +135,10 @@ namespace Store
             }
         }
         
+        /// <summary>
+        /// Chooses a random item for the client
+        /// </summary>
+        /// <param name="client"> Subject to recieve a random item </param>
         private void ChooseItem(Client client)
         {
             if (!AvailableItem()) return;
@@ -144,9 +148,9 @@ namespace Store
 
             int randomItem = Random.Range(0, abaliavleItems.Length);
 
-            client.desiredItem = displayedItems[randomItem];
+            client.desiredItem = abaliavleItems[randomItem];
 
-            displayedItems[randomItem].BeingViewed = true;
+            abaliavleItems[randomItem].BeingViewed = true;
         }
     }
 }
