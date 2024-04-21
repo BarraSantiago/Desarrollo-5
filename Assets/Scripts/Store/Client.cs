@@ -11,7 +11,9 @@ namespace Store
     {
         private enum State
         {
+            None,
             ChoosingItem,
+            GrabbingItem,
             WaitingInline,
             Buying,
             Leaving,
@@ -19,7 +21,7 @@ namespace Store
             Angry
         }
 
-        #region public variables
+        #region Public Variables
 
         public DisplayItem desiredItem = null;
         public static Action<Client> StartLine;
@@ -36,7 +38,7 @@ namespace Store
 
         #endregion
 
-        #region Serialized variables
+        #region Serialized Variables
 
         [SerializeField] private Player player; // TODO remove this
         [SerializeField] private StoreManager storeManager; // TODO remove this
@@ -46,7 +48,7 @@ namespace Store
 
         #endregion
 
-        #region priavete variables
+        #region Priavete Variables
 
         /// <summary>
         /// rango de 0 a 100 de lo que esta dispuesto a pagar por sobre el precio de lista (ListPrice)
@@ -68,6 +70,7 @@ namespace Store
         private float minimumDistance = 0.9f;
         private bool waitingForPlayer;
         private State _currentState;
+        private State _previousState;
 
         #endregion
 
@@ -80,20 +83,54 @@ namespace Store
 
         private void Update()
         {
+            if(_currentState == State.None) return;
+            ClientBehaviour();
+        }
+
+        private void ClientBehaviour()
+        {
             switch (_currentState)
             {
                 case State.ChoosingItem:
+                    // in this state, the client should wonder around if there are no available items
+                    _currentState = State.GrabbingItem;
                     break;
+
+                case State.GrabbingItem:
+                    GrabItem();
+                    
+                    break;
+
                 case State.WaitingInline:
+                    StartLine?.Invoke(this);
+                    _currentState = State.Buying;
                     break;
+
                 case State.Buying:
+                    waitingForPlayer = true;
+                    if (PlayerInteraction())
+                    {
+                        waitingForPlayer = false;
+                        _currentState = State.Leaving;
+                    }
+
                     break;
+
                 case State.Leaving:
+                    GoToCashier();
+                    LeaveStore();
                     break;
+
                 case State.Happy:
+                    _happiness++;
+                    LeaveStore();
                     break;
+
                 case State.Angry:
+                    _happiness--;
+                    LeaveStore();
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -101,7 +138,17 @@ namespace Store
 
         public void EnterStore()
         {
-            StartCoroutine(WalkToItem());
+            //StartCoroutine(WalkToItem());
+            _currentState = State.ChoosingItem;
+        }
+
+        private void GrabItem()
+        {
+            if (!CheckBuyItem()) return;
+            agent.SetDestination(desiredItem.transform.position);
+            if (!DistanceToItem()) return;
+            desiredItem.gameObject.transform.SetParent(this.transform);
+            _currentState = State.WaitingInline;
         }
 
         private IEnumerator WalkToItem()
@@ -122,8 +169,6 @@ namespace Store
                 waitingForPlayer = true;
                 yield return new WaitUntil(PlayerInteraction);
                 waitingForPlayer = false;
-
-                GoToCashier();
             }
 
             //Leave store after buying item
@@ -139,15 +184,15 @@ namespace Store
             if (!firstInLine) return false;
             cobrar.transform.position = Camera.main.WorldToScreenPoint(transform.position);
             cobrar.gameObject.SetActive(true); // TODO REMOVE THIS
-            
+
             return CheckDistance(player.transform.position, minimumDistance) || cobrado;
         }
 
         private void Cobrado()
         {
-
             cobrado = true;
         }
+
         private void GoToCashier()
         {
             BuyItem();
@@ -183,8 +228,7 @@ namespace Store
                 // Cliente no compra el item y se va
                 if (percentageDifference > _willingnessToPay)
                 {
-                    _happiness--; //TODO cambiar la cantidad de felicidad que pierde
-                    LeaveStore();
+                    _currentState = State.Angry;
                     return false;
                 }
 
@@ -192,8 +236,6 @@ namespace Store
                 return true;
             }
 
-            if (_happiness > 0)
-                LeaveTip(Math.Abs(percentageDifference) + _happiness);
             return true;
         }
 
@@ -231,6 +273,7 @@ namespace Store
             // TODO update this
             //move to outside of store
             agent.SetDestination(exit.transform.position);
+            _currentState = State.None;
         }
 
         private void OnDrawGizmos()
