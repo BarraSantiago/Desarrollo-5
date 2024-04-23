@@ -8,7 +8,8 @@ namespace Game
     public class GameManager : MonoBehaviour
     {
         [SerializeField] private Player _player;
-        [SerializeField] private GameObject InventoryUIHodler;
+        [SerializeField] private GameObject _inventoryUIHodler;
+        [SerializeField] private GameObject _itemSlotPrefab;
         [SerializeField] private ItemList _itemList;
         [SerializeField] private int inventorySize;
 
@@ -33,9 +34,9 @@ namespace Game
 
             LoadInventory();
             
-            _inventoryUI = InventoryUIHodler.AddComponent<InventoryUI>();
+            _inventoryUI = _inventoryUIHodler.AddComponent<InventoryUI>();
 
-            _inventoryUI.Initialize(_items);
+            _inventoryUI.Initialize(_items, _itemSlotPrefab);
 
             
         }

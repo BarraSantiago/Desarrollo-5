@@ -26,13 +26,21 @@ namespace InventorySystem
 
         private Slot[] slots;
         private Dictionary<int, Item> _items;
-
-
+        
+        /// <summary>
+        /// Checks if there is an available slot in the inventory.
+        /// </summary>
+        /// <returns> Returns true if there is any slot free. </returns>
         public bool IsSlotAvailable()
         {
             return slots.Any(element => element.occupied == false);
         }
 
+        /// <summary>
+        /// Adds item to the inventory.
+        /// </summary>
+        /// <param name="itemId"> Item to be added. </param>
+        /// <returns> True = item successfully added to inventory. False = no space left to add item. </returns>
         public bool AddItem(int itemId)
         {
             if (slots.Any(id => id.itemID == itemId))
@@ -42,7 +50,7 @@ namespace InventorySystem
                     if (slots[i].itemID == itemId)
                     {
                         slots[i].amount++;
-                        ItemAdded?.Invoke(itemId, slots[i].amount);
+                        ItemAdded?.Invoke(itemId, 1);
                         return true;
                     }
                 }

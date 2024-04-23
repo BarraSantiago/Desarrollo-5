@@ -11,16 +11,16 @@ namespace InventorySystem
 
         private void Awake()
         {
+            //TODO Find a better way to get the inventory
             _inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<Inventory>();
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        protected virtual void OnTriggerEnter2D(Collider2D other)
         {
-            if (!CompareTag("Player")) return;
+            if (!other.CompareTag("Player")) return;
             
             if (_inventory.AddItem(itemID))
             {
-                Debug.Log("Item: " + itemID + " picked.");
                 gameObject.SetActive(false);
             }
         }
