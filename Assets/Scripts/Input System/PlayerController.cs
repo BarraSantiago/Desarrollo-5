@@ -54,9 +54,12 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         _Rigidbody.AddForce(_Movement * _Speed);
-
         Vector2 facingDirection = _MousePos - _Rigidbody.position;
         float angle = Mathf.Atan2(facingDirection.y, facingDirection.x) * Mathf.Rad2Deg - 90;
-        _Rigidbody.MoveRotation(angle);
+
+        if (Input.GetMouseButton(0))
+        {
+            _Rigidbody.MoveRotation(angle);
+        } 
     }
 }
