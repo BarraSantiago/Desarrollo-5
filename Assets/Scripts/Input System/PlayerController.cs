@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,12 +7,20 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float _Speed = 3;
-    [SerializeField] Camera _Camera;
     PlayerInput _Input;
     Vector2 _Movement;
-    Vector2 _MousePos;
-
+    Vector2 _LastMovement; // Para almacenar la última dirección del movimiento
     Rigidbody2D _Rigidbody;
+
+    
+
+    //DASH
+    private bool canDash = true;
+    private bool isDashing = false;
+    private float dashingPower = 24f;
+    private float dashingTime = 0.2f;
+    private float dashingCooldown = 1f;
+    //DASH
 
     private void Awake()
     {
@@ -28,15 +35,12 @@ public class PlayerController : MonoBehaviour
         _Input.Gameplay.Movement.performed += OnMovement;
         _Input.Gameplay.Movement.canceled += OnMovement;
 
-        _Input.Gameplay.MousePos.performed += OnMousePos;
-
     }
 
     private void OnDisable()
     {
         _Input.Gameplay.Movement.performed -= OnMovement;
         _Input.Gameplay.Movement.canceled -= OnMovement;
-        _Input.Gameplay.MousePos.performed -= OnMousePos;
 
         _Input.Disable();
     }
@@ -44,22 +48,48 @@ public class PlayerController : MonoBehaviour
     private void OnMovement(InputAction.CallbackContext context)
     {
         _Movement = context.ReadValue<Vector2>();
+
+        // Almacenar la última dirección del movimiento
+        if (_Movement.magnitude > 0)
+        {
+            _LastMovement = _Movement.normalized;
+        }
     }
 
-    private void OnMousePos(InputAction.CallbackContext context)
+    private void Update()
     {
-        _MousePos = _Camera.ScreenToWorldPoint(context.ReadValue<Vector2>());
+        if (isDashing)
+        {
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        {
+            StartCoroutine(Dash(_LastMovement)); // Usar _LastMovement como dirección para el dash
+        }
     }
 
     private void FixedUpdate()
     {
-        _Rigidbody.AddForce(_Movement * _Speed);
-        Vector2 facingDirection = _MousePos - _Rigidbody.position;
-        float angle = Mathf.Atan2(facingDirection.y, facingDirection.x) * Mathf.Rad2Deg - 90;
-
-        if (Input.GetMouseButton(0))
+        if (isDashing)
         {
-            _Rigidbody.MoveRotation(angle);
-        } 
+            return;
+        }
+
+        _Rigidbody.AddForce(_Movement * _Speed);
+    }
+
+    private IEnumerator Dash(Vector2 dashDirection)
+    {
+        canDash = false;
+        isDashing = true;
+        float originalGravity = _Rigidbody.gravityScale;
+        _Rigidbody.gravityScale = 0;
+        _Rigidbody.velocity = dashDirection * dashingPower; // Usar dashDirection para la dirección del dash
+        yield return new WaitForSeconds(dashingTime);
+        _Rigidbody.gravityScale = originalGravity;
+        isDashing = false;
+        yield return new WaitForSeconds(dashingCooldown);
+        canDash = true;
     }
 }
