@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using InventorySystem;
-using UI;
 using UnityEngine;
 
 namespace Game
@@ -14,9 +12,7 @@ namespace Game
         [SerializeField] private int inventorySize;
 
         private Dictionary<int, Item> _items;
-        private InventoryUI _inventoryUI;
         private Inventory _inventory;
-        private Inventory.Slot[] slots;
 
         private void Awake()
         {
@@ -34,9 +30,7 @@ namespace Game
 
             LoadInventory();
             
-            _inventoryUI = _inventoryUIHodler.AddComponent<InventoryUI>();
-
-            _inventoryUI.Initialize(_items, _itemSlotPrefab);
+           
 
             
         }
@@ -44,11 +38,6 @@ namespace Game
         private void LoadInventory()
         {
             //TODO load inventory here
-            slots = new Inventory.Slot[inventorySize];
-            
-            _inventory = _player.Inventory;
-            
-            _inventory.Initialize(inventorySize, _items, slots);
         }
     }
 }

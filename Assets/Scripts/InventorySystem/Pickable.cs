@@ -19,7 +19,7 @@ namespace InventorySystem
         {
             if (!other.CompareTag("Player")) return;
             
-            if (_inventory.AddItem(itemID))
+            //if (_inventory.AddItem(itemID))
             {
                 gameObject.SetActive(false);
             }
