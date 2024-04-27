@@ -29,12 +29,12 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             inventory.Save();
-            equipment.Save();
+            equipment?.Save();
         }
         else if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             inventory.Load();
-            equipment.Load();
+            equipment?.Load();
         }
     }
 
@@ -42,6 +42,6 @@ public class Player : MonoBehaviour
     public void OnApplicationQuit()
     {
         inventory.Clear();
-        equipment.Clear();
+        equipment?.Clear();
     }
 }
