@@ -148,10 +148,10 @@ namespace Store
         private void GrabItem()
         {
             if (!CheckBuyItem()) return;
-            agent.SetDestination(desiredItem.characterDisplay.transform.position);
+            agent.SetDestination(desiredItem.currentInstance.transform.position);
             
             if (!DistanceToItem()) return;
-            desiredItem.characterDisplay.gameObject.transform.SetParent(this.transform);
+            desiredItem.currentInstance.gameObject.transform.SetParent(this.transform);
             _currentState = State.WaitingInline;
         }
         
@@ -182,7 +182,7 @@ namespace Store
 
         private bool DistanceToItem()
         {
-            return CheckDistance(desiredItem.characterDisplay.transform.position, minimumDistance);
+            return CheckDistance(desiredItem.currentInstance.transform.position, minimumDistance);
         }
 
         private bool CheckDistance(Vector3 pos, float distanceDif)
@@ -199,7 +199,8 @@ namespace Store
 
         private bool CheckBuyItem()
         {
-            ListPrice itemList = storeManager.itemDatabase.ItemObjects[desiredItem.data.Id].data.listPrice;
+            if(!desiredItem) return false;
+            ListPrice itemList = storeManager.itemDatabase.ItemObjects[desiredItem.data.id].data.listPrice;
             float difference = desiredItem.data.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
@@ -223,7 +224,7 @@ namespace Store
         private void BuyItem()
         {
             MoneyAdded?.Invoke(desiredItem.data.price);
-            ItemBought?.Invoke(desiredItem.data.Id);
+            ItemBought?.Invoke(desiredItem.data.id);
         }
 
         /// <summary>

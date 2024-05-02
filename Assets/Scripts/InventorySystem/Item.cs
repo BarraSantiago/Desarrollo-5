@@ -3,20 +3,21 @@
 [System.Serializable]
 public class Item
 {
-    public string Name;
-    public int Id = -1;
+    public string name;
+    public int id = -1;
     public ItemBuff[] buffs;
     public ListPrice listPrice;
     public int price;
     public Item()
     {
-        Name = "";
-        Id = -1;
+        name = "";
+        id = -1;
+        listPrice = new ListPrice(price);
     }
     public Item(ItemObject item)
     {
-        Name = item.name;
-        Id = item.data.Id;
+        name = item.name;
+        id = item.data.id;
         buffs = new ItemBuff[item.data.buffs.Length];
         for (int i = 0; i < buffs.Length; i++)
         {
@@ -26,4 +27,5 @@ public class Item
             };
         }
     }
+    
 }

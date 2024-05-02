@@ -19,8 +19,29 @@ MonoBehaviour:
     Slots:
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: 0
         buffs: []
         price: 0
-      amount: 0
+      amount: 1
+    - AllowedItems: 
+      item:
+        name: 
+        id: 0
+        buffs: []
+        price: 0
+      amount: 1
+    - AllowedItems: 
+      item:
+        name: 
+        id: 0
+        buffs: []
+        price: 0
+      amount: 1
+    - AllowedItems: 
+      item:
+        name: 
+        id: 0
+        buffs: []
+        price: 0
+      amount: 1

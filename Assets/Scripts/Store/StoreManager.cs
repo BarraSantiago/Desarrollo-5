@@ -19,8 +19,8 @@ namespace Store
         [SerializeField] private Client[] clients;
         
         [Header("Items Setup")]
+        [SerializeField] private InventoryObject inventory;
         [SerializeField] public ItemDatabaseObject itemDatabase;
-        [SerializeField] public DisplayItem[] displayedItems;
         
         [Header("Waiting Line Setup")]
         [SerializeField] private Transform waitingLineStart;
@@ -89,8 +89,9 @@ namespace Store
 
         private void ItemBought(int id)
         {
-            displayedItems[id].gameObject.SetActive(false);
-            displayedItems[id].Bought = true;
+            //inventory.GetSlots[id].GetItemObject().gameObject.SetActive(false);
+            inventory.GetSlots[id].GetItemObject().displayItem.Bought = true;
+            inventory.GetSlots[id].RemoveItem();
             itemDatabase.ItemObjects[id].data.listPrice.wasSold = true;
             itemDatabase.ItemObjects[id].data.listPrice.amountSoldLastDay++;
         }
@@ -103,9 +104,9 @@ namespace Store
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
 
             // Updates list price of items depending on offer/sold last cycle
-            foreach (var listPrice in itemDatabase.ItemObjects)
+            foreach (var item in itemDatabase.ItemObjects)
             {
-                listPrice.data.listPrice.UpdatePrice();
+                item.data.listPrice.UpdatePrice();
             }
 
             StartCoroutine(SendClient());
@@ -121,7 +122,7 @@ namespace Store
         
         private bool AvailableItem()
         {
-            return displayedItems.Any(displayedItem => !displayedItem.BeingViewed && !displayedItem.Bought);
+            return inventory.GetSlots.Any(slot => !slot.GetItemObject().displayItem.BeingViewed && !slot.GetItemObject().displayItem.Bought);
         }
 
         private IEnumerator SendClient()
@@ -147,14 +148,14 @@ namespace Store
         {
             if (!AvailableItem()) return;
 
-            DisplayItem[] abaliavleItems =
-                System.Array.FindAll(displayedItems, item => !item.BeingViewed && !item.Bought);
+            InventorySlot[] avaliableItems =
+                Array.FindAll(inventory.GetSlots, slot => !slot.GetItemObject().displayItem.BeingViewed && !slot.GetItemObject().displayItem.Bought);
 
-            int randomItem = Random.Range(0, abaliavleItems.Length);
+            int randomItem = Random.Range(0, avaliableItems.Length);
 
-            //client.desiredItem = abaliavleItems[randomItem];
+            client.desiredItem = avaliableItems[randomItem].GetItemObject();
 
-            abaliavleItems[randomItem].BeingViewed = true;
+            avaliableItems[randomItem].GetItemObject().displayItem.BeingViewed = true;
         }
     }
 }

@@ -22,7 +22,7 @@ public class InventorySlot
 
     public ItemObject GetItemObject()
     {
-        return item.Id >= 0 ? parent.inventory.database.ItemObjects[item.Id] : null;
+        return item.id >= 0 ? parent.inventory.database.ItemObjects[item.id] : null;
     }
 
     public InventorySlot() => UpdateSlot(new Item(), 0);
@@ -44,7 +44,7 @@ public class InventorySlot
 
     public bool CanPlaceInSlot(ItemObject itemObject)
     {
-        if (AllowedItems.Length <= 0 || itemObject == null || itemObject.data.Id < 0)
+        if (AllowedItems.Length <= 0 || itemObject == null || itemObject.data.id < 0)
             return true;
         for (int i = 0; i < AllowedItems.Length; i++)
         {
