@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using InventorySystem;
 using UI;
 using Unity.Mathematics;
 using UnityEngine;
@@ -11,6 +11,7 @@ namespace Store
 {
     public class StoreManager : MonoBehaviour
     {
+        public static Action EndCycle;
         #region Serialized Fields
         
         [Header("Client Setup")]
@@ -18,7 +19,7 @@ namespace Store
         [SerializeField] private Client[] clients;
         
         [Header("Items Setup")]
-        [SerializeField] public ListPrices listPrices;
+        [SerializeField] public ItemDatabaseObject itemDatabase;
         [SerializeField] public DisplayItem[] displayedItems;
         
         [Header("Waiting Line Setup")]
@@ -90,6 +91,8 @@ namespace Store
         {
             displayedItems[id].gameObject.SetActive(false);
             displayedItems[id].Bought = true;
+            itemDatabase.ItemObjects[id].data.listPrice.wasSold = true;
+            itemDatabase.ItemObjects[id].data.listPrice.amountSoldLastDay++;
         }
 
         public void StartCicle()
@@ -100,9 +103,9 @@ namespace Store
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
 
             // Updates list price of items depending on offer/sold last cycle
-            foreach (var listPrice in listPrices.prices)
+            foreach (var listPrice in itemDatabase.ItemObjects)
             {
-                listPrice.UpdatePrice();
+                listPrice.data.listPrice.UpdatePrice();
             }
 
             StartCoroutine(SendClient());
@@ -111,9 +114,9 @@ namespace Store
         /// <summary>
         /// Should be called when cicle ends
         /// </summary>
-        private void EndCicle()
+        private void CompleteDayCycle()
         {
-            _waitingLine.Deinitialize();
+            EndCycle?.Invoke();
         }
         
         private bool AvailableItem()
@@ -149,7 +152,7 @@ namespace Store
 
             int randomItem = Random.Range(0, abaliavleItems.Length);
 
-            client.desiredItem = abaliavleItems[randomItem];
+            //client.desiredItem = abaliavleItems[randomItem];
 
             abaliavleItems[randomItem].BeingViewed = true;
         }

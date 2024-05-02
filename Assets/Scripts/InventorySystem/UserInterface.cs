@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System.Linq;
-using System;
 
 [RequireComponent(typeof(EventTrigger))]
 public abstract class UserInterface : MonoBehaviour

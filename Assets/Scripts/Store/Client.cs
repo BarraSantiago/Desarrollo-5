@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -12,6 +11,7 @@ namespace Store
         private enum State
         {
             None,
+            Idle,
             ChoosingItem,
             GrabbingItem,
             WaitingInline,
@@ -23,7 +23,7 @@ namespace Store
 
         #region Public Variables
 
-        public DisplayItem desiredItem = null;
+        public ItemObject desiredItem = null;
         public static Action<Client> StartLine;
         public static Action LeaveLine;
         public static Action<int> ItemBought;
@@ -91,14 +91,18 @@ namespace Store
         {
             switch (_currentState)
             {
+                case State.None:
+                    break;
+                case State.Idle:
+                    // in this state, the client should wonder around until an item has been choosen or if there are no available items
+                    break;
                 case State.ChoosingItem:
-                    // in this state, the client should wonder around if there are no available items
+                    // in this state, the client should go to the item and decide if they want to buy it
                     _currentState = State.GrabbingItem;
                     break;
 
                 case State.GrabbingItem:
                     GrabItem();
-                    
                     break;
 
                 case State.WaitingInline:
@@ -138,43 +142,19 @@ namespace Store
 
         public void EnterStore()
         {
-            //StartCoroutine(WalkToItem());
             _currentState = State.ChoosingItem;
         }
 
         private void GrabItem()
         {
             if (!CheckBuyItem()) return;
-            agent.SetDestination(desiredItem.transform.position);
+            agent.SetDestination(desiredItem.characterDisplay.transform.position);
+            
             if (!DistanceToItem()) return;
-            desiredItem.gameObject.transform.SetParent(this.transform);
+            desiredItem.characterDisplay.gameObject.transform.SetParent(this.transform);
             _currentState = State.WaitingInline;
         }
-
-        private IEnumerator WalkToItem()
-        {
-            //Move
-            agent.SetDestination(desiredItem.transform.position);
-
-            //TODO update this
-            yield return new WaitUntil(DistanceToItem);
-
-            //When client reaches item
-            if (CheckBuyItem())
-            {
-                desiredItem.gameObject.transform.SetParent(this.transform);
-
-                StartLine?.Invoke(this);
-
-                waitingForPlayer = true;
-                yield return new WaitUntil(PlayerInteraction);
-                waitingForPlayer = false;
-            }
-
-            //Leave store after buying item
-            LeaveStore();
-        }
-
+        
         /// <summary>
         /// 
         /// </summary>
@@ -202,7 +182,7 @@ namespace Store
 
         private bool DistanceToItem()
         {
-            return CheckDistance(desiredItem.transform.position, minimumDistance);
+            return CheckDistance(desiredItem.characterDisplay.transform.position, minimumDistance);
         }
 
         private bool CheckDistance(Vector3 pos, float distanceDif)
@@ -219,23 +199,21 @@ namespace Store
 
         private bool CheckBuyItem()
         {
-            ListPrice itemList = storeManager.listPrices.prices[desiredItem.ItemId];
-            float difference = desiredItem.price - itemList.CurrentPrice;
+            ListPrice itemList = storeManager.itemDatabase.ItemObjects[desiredItem.data.Id].data.listPrice;
+            float difference = desiredItem.data.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
-            if (desiredItem.price >= itemList.CurrentPrice)
+            if (desiredItem.data.price >= itemList.CurrentPrice)
             {
-                // Cliente no compra el item y se va
-                if (percentageDifference > _willingnessToPay)
-                {
-                    _currentState = State.Angry;
-                    return false;
-                }
-
-                //Esta aca para que no deje propina si el precio es mas caro que el precio de lista
-                return true;
+                // Client buys item and leaves the store
+                if (!(percentageDifference > _willingnessToPay)) return true;
+                
+                // If the item is too expensive, the client leaves angry
+                _currentState = State.Angry;
+                return false;
             }
 
+            LeaveTip(_happiness);
             return true;
         }
 
@@ -244,10 +222,8 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            MoneyAdded?.Invoke(desiredItem.price);
-
-            storeManager.listPrices.prices[desiredItem.ItemId].amountSoldLastDay++;
-            ItemBought?.Invoke(desiredItem.ItemId);
+            MoneyAdded?.Invoke(desiredItem.data.price);
+            ItemBought?.Invoke(desiredItem.data.Id);
         }
 
         /// <summary>

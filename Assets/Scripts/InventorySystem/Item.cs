@@ -1,9 +1,13 @@
-﻿[System.Serializable]
+﻿using Store;
+
+[System.Serializable]
 public class Item
 {
     public string Name;
     public int Id = -1;
     public ItemBuff[] buffs;
+    public ListPrice listPrice;
+    public int price;
     public Item()
     {
         Name = "";

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Store;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Item", menuName = "Inventory System/Items/New Item")]
@@ -11,6 +11,7 @@ public class ItemObject : ScriptableObject
     public ItemType type;
     [TextArea(15, 20)] public string description;
     public Item data = new Item();
+    public DisplayItem displayItem;
 
     public List<string> boneNames = new List<string>();
 
