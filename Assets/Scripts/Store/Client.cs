@@ -23,10 +23,10 @@ namespace Store
 
         #region Public Variables
 
-        public ItemObject desiredItem = null;
+        public DisplayItem desiredItem;
         public static Action<Client> StartLine;
         public static Action LeaveLine;
-        public static Action<int> ItemBought;
+        public static Action<DisplayItem> ItemBought;
         public static Action<int> MoneyAdded; //TODO change name
 
         /// <summary>
@@ -148,10 +148,10 @@ namespace Store
         private void GrabItem()
         {
             if (!CheckBuyItem()) return;
-            agent.SetDestination(desiredItem.currentInstance.transform.position);
+            agent.SetDestination(desiredItem.Object.transform.position);
             
             if (!DistanceToItem()) return;
-            desiredItem.currentInstance.gameObject.transform.SetParent(this.transform);
+            desiredItem.Object.transform.SetParent(this.transform);
             _currentState = State.WaitingInline;
         }
         
@@ -182,7 +182,7 @@ namespace Store
 
         private bool DistanceToItem()
         {
-            return CheckDistance(desiredItem.currentInstance.transform.position, minimumDistance);
+            return CheckDistance(desiredItem.Object.transform.position, minimumDistance);
         }
 
         private bool CheckDistance(Vector3 pos, float distanceDif)
@@ -200,11 +200,12 @@ namespace Store
         private bool CheckBuyItem()
         {
             if(!desiredItem) return false;
-            ListPrice itemList = storeManager.itemDatabase.ItemObjects[desiredItem.data.id].data.listPrice;
-            float difference = desiredItem.data.price - itemList.CurrentPrice;
+            
+            ListPrice itemList = storeManager.itemDatabase.ItemObjects[desiredItem.ItemObject.data.id].data.listPrice;
+            float difference = desiredItem.ItemObject.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
-            if (desiredItem.data.price >= itemList.CurrentPrice)
+            if (desiredItem.ItemObject.price >= itemList.CurrentPrice)
             {
                 // Client buys item and leaves the store
                 if (!(percentageDifference > _willingnessToPay)) return true;
@@ -223,8 +224,8 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            MoneyAdded?.Invoke(desiredItem.data.price);
-            ItemBought?.Invoke(desiredItem.data.id);
+            MoneyAdded?.Invoke(desiredItem.ItemObject.price);
+            ItemBought?.Invoke(desiredItem);
         }
 
         /// <summary>

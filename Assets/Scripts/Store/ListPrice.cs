@@ -1,6 +1,7 @@
 ﻿
 namespace Store
 {
+    [System.Serializable]
     public class ListPrice
     {
         public int originalPrice;

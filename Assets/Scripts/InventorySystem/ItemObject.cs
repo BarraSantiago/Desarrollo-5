@@ -11,9 +11,7 @@ public class ItemObject : ScriptableObject
     public ItemType type;
     [TextArea(15, 20)] public string description;
     public Item data = new Item();
-    public DisplayItem displayItem;
     public List<string> boneNames = new List<string>();
-    public GameObject currentInstance;
     public int price;
 
     public Item CreateItem()
@@ -37,11 +35,6 @@ public class ItemObject : ScriptableObject
         {
             boneNames.Add(t.name);
         }
-    }
-    
-    public void PlaceItem()
-    {
-        displayItem = currentInstance.AddComponent<DisplayItem>();
     }
 }
 

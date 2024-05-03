@@ -19,14 +19,15 @@ namespace Store
             this.positionsDistance = positionsDistance;
         }
 
-        public WaitingPosition[] queuePositions;
-        public Transform startingPosition;
-        public int positionsAmount = 3;
-
-        private float positionsDistance = 1f;
+        private WaitingPosition[] queuePositions;
+        private readonly Transform startingPosition;
+        private readonly int positionsAmount;
+        private readonly float positionsDistance;
 
         public void Initialize()
         {
+            StoreManager.EndCycle += Deinitialize;
+            
             queuePositions = new WaitingPosition[positionsAmount];
             
             for (int i = 0; i < positionsAmount; i++)
@@ -35,13 +36,15 @@ namespace Store
             }
         }
 
-        public void Deinitialize()
+        private void Deinitialize()
         {
             for (int i = 0; i < queuePositions.Length; i++)
             {
                 queuePositions[i].occupied = false;
                 queuePositions[i].client = null;
             }
+            
+            StoreManager.EndCycle -= Deinitialize;
         }
 
         /// <summary>

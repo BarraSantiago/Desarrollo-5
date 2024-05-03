@@ -1702,6 +1702,7 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: -8333890447269196565, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
     - {fileID: 6550462972327768146, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
+    - {fileID: 1966446001, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
 --- !u!1001 &599556107
 PrefabInstance:
@@ -1769,6 +1770,7 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: -8333890447269196565, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
     - {fileID: 6550462972327768146, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
+    - {fileID: 1966446001, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
 --- !u!1 &604189348
 GameObject:
@@ -5445,11 +5447,12 @@ MonoBehaviour:
   - {fileID: 1532629673}
   inventory: {fileID: 11400000, guid: a97093dcc7679ef418cdc98008560f31, type: 2}
   itemDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
+  itemDisplayer: {fileID: 1966446001}
   waitingLineStart: {fileID: 1340443659}
   posAmount: 3
   distanceBetweenPos: 1.2
-  _uiManager: {fileID: 26083492}
-  _player: {fileID: 1787675932}
+  uiManager: {fileID: 26083492}
+  player: {fileID: 1787675932}
 --- !u!4 &1471474479
 Transform:
   m_ObjectHideFlags: 0
@@ -5989,6 +5992,7 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: -8333890447269196565, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
     - {fileID: 6550462972327768146, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
+    - {fileID: 1966446001, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 19779c3c2d19ebe49acf80557d29f878, type: 3}
 --- !u!4 &1965974293 stripped
 Transform:

@@ -21,6 +21,7 @@ namespace Store
         [Header("Items Setup")]
         [SerializeField] private InventoryObject inventory;
         [SerializeField] public ItemDatabaseObject itemDatabase;
+        [SerializeField] private ItemDisplayer itemDisplayer;
         
         [Header("Waiting Line Setup")]
         [SerializeField] private Transform waitingLineStart;
@@ -28,8 +29,8 @@ namespace Store
         [SerializeField] private float distanceBetweenPos;
         
         [Header("Misc Setup")]
-        [SerializeField] private UIManager _uiManager;
-        [SerializeField] private Player _player;
+        [SerializeField] private UIManager uiManager;
+        [SerializeField] private Player player;
 
         #endregion
 
@@ -58,6 +59,7 @@ namespace Store
             Client.LeaveLine += RemoveFromQueue;
 
             UpdateMoneyText();
+            itemDisplayer.Initialize();
 
             _waitingLine = new WaitingLine(waitingLineStart,posAmount, distanceBetweenPos);
         }
@@ -77,21 +79,23 @@ namespace Store
 
         private void SpawnText(int money)
         {
-            _player.Money += money;
-            _uiManager.SpawnFlyingText(money);
-            _uiManager.UpdateMoneyText(_player.Money);
+            player.Money += money;
+            uiManager.SpawnFlyingText(money);
+            uiManager.UpdateMoneyText(player.Money);
         }
 
         private void UpdateMoneyText()
         {
-            _uiManager.UpdateMoneyText(_player.Money);
+            uiManager.UpdateMoneyText(player.Money);
         }
 
-        private void ItemBought(int id)
+        private void ItemBought(DisplayItem displayItem)
         {
-            //inventory.GetSlots[id].GetItemObject().gameObject.SetActive(false);
-            inventory.GetSlots[id].GetItemObject().displayItem.Bought = true;
-            inventory.GetSlots[id].RemoveItem();
+            int id = displayItem.ItemObject.data.id;
+            
+            displayItem.Bought = true;
+            itemDisplayer.RemoveItem(displayItem.id);
+            
             itemDatabase.ItemObjects[id].data.listPrice.wasSold = true;
             itemDatabase.ItemObjects[id].data.listPrice.amountSoldLastDay++;
         }
@@ -122,7 +126,7 @@ namespace Store
         
         private bool AvailableItem()
         {
-            return inventory.GetSlots.Any(slot => !slot.GetItemObject().displayItem.BeingViewed && !slot.GetItemObject().displayItem.Bought);
+            return itemDisplayer.Items.Any(displayItem => !displayItem.BeingViewed && !displayItem.Bought);
         }
 
         private IEnumerator SendClient()
@@ -139,7 +143,7 @@ namespace Store
                 yield return new WaitForSeconds(_clientTimer);
             }
         }
-        
+
         /// <summary>
         /// Chooses a random item for the client
         /// </summary>
@@ -148,14 +152,14 @@ namespace Store
         {
             if (!AvailableItem()) return;
 
-            InventorySlot[] avaliableItems =
-                Array.FindAll(inventory.GetSlots, slot => !slot.GetItemObject().displayItem.BeingViewed && !slot.GetItemObject().displayItem.Bought);
+            DisplayItem[] avaliableItems =
+                Array.FindAll(itemDisplayer.Items, displayItem => !displayItem.BeingViewed && !displayItem.Bought);
 
             int randomItem = Random.Range(0, avaliableItems.Length);
 
-            client.desiredItem = avaliableItems[randomItem].GetItemObject();
+            client.desiredItem = avaliableItems[randomItem];
 
-            avaliableItems[randomItem].GetItemObject().displayItem.BeingViewed = true;
+            avaliableItems[randomItem].BeingViewed = true;
         }
     }
 }

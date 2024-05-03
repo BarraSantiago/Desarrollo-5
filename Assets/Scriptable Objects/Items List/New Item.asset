@@ -21,8 +21,11 @@ MonoBehaviour:
     name: 
     id: 0
     buffs: []
-    price: 0
+    listPrice:
+      originalPrice: 50
+      amountSoldLastDay: 0
+      wasSold: 0
+    price: 50
   displayItem: {fileID: 0}
   boneNames: []
-  currentInstance: {fileID: 0}
   price: 50
