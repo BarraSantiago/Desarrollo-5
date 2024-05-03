@@ -21,6 +21,7 @@ public abstract class UserInterface : MonoBehaviour
             inventory.GetSlots[i].parent = this;
             inventory.GetSlots[i].onAfterUpdated += OnSlotUpdate;
         }
+
         AddEvent(gameObject, EventTriggerType.PointerEnter, delegate { OnEnterInterface(gameObject); });
         AddEvent(gameObject, EventTriggerType.PointerExit, delegate { OnExitInterface(gameObject); });
     }
@@ -49,23 +50,31 @@ public abstract class UserInterface : MonoBehaviour
         {
             slot.slotDisplay.transform.GetChild(0).GetComponent<Image>().sprite = slot.GetItemObject().uiDisplay;
             slot.slotDisplay.transform.GetChild(0).GetComponent<Image>().color = new Color(1, 1, 1, 1);
-            slot.slotDisplay.GetComponentInChildren<TextMeshProUGUI>().text = slot.amount == 1 ? string.Empty : slot.amount.ToString("n0");
+            slot.slotDisplay.GetComponentInChildren<TextMeshProUGUI>().text =
+                slot.amount == 1 ? string.Empty : slot.amount.ToString("n0");
         }
     }
+
     public void Update()
     {
         if (_previousInventory != inventory)
         {
             UpdateInventoryLinks();
         }
-        _previousInventory = inventory;
 
+        _previousInventory = inventory;
     }
+
     protected void AddEvent(GameObject obj, EventTriggerType type, UnityAction<BaseEventData> action)
     {
         EventTrigger trigger = obj.GetComponent<EventTrigger>();
-        if (!trigger) { Debug.LogWarning("No EventTrigger component found!"); return; }
-        var eventTrigger = new EventTrigger.Entry {eventID = type};
+        if (!trigger)
+        {
+            Debug.LogWarning("No EventTrigger component found!");
+            return;
+        }
+
+        var eventTrigger = new EventTrigger.Entry { eventID = type };
         eventTrigger.callback.AddListener(action);
         trigger.triggers.Add(eventTrigger);
     }
@@ -74,10 +83,12 @@ public abstract class UserInterface : MonoBehaviour
     {
         MouseData.slotHoveredOver = obj;
     }
+
     public void OnEnterInterface(GameObject obj)
     {
         MouseData.interfaceMouseIsOver = obj.GetComponent<UserInterface>();
     }
+
     public void OnExitInterface(GameObject obj)
     {
         MouseData.interfaceMouseIsOver = null;
@@ -92,6 +103,7 @@ public abstract class UserInterface : MonoBehaviour
     {
         MouseData.tempItemBeingDragged = CreateTempItem(obj);
     }
+
     private GameObject CreateTempItem(GameObject obj)
     {
         GameObject tempItem = null;
@@ -105,11 +117,12 @@ public abstract class UserInterface : MonoBehaviour
             img.sprite = slotsOnInterface[obj].GetItemObject().uiDisplay;
             img.raycastTarget = false;
         }
+
         return tempItem;
     }
+
     public void OnDragEnd(GameObject obj)
     {
-
         Destroy(MouseData.tempItemBeingDragged);
 
         if (MouseData.interfaceMouseIsOver == null)
@@ -117,9 +130,11 @@ public abstract class UserInterface : MonoBehaviour
             slotsOnInterface[obj].RemoveItem();
             return;
         }
+
         if (MouseData.slotHoveredOver)
         {
-            InventorySlot mouseHoverSlotData = MouseData.interfaceMouseIsOver.slotsOnInterface[MouseData.slotHoveredOver];
+            InventorySlot mouseHoverSlotData =
+                MouseData.interfaceMouseIsOver.slotsOnInterface[MouseData.slotHoveredOver];
             inventory.SwapItems(slotsOnInterface[obj], mouseHoverSlotData);
         }
     }

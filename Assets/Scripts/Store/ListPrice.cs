@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace Store
 {
     [System.Serializable]
@@ -6,17 +7,17 @@ namespace Store
     {
         public int originalPrice;
         public int CurrentPrice { get; private set; }
-        public static readonly float PriceModifier = 0.12f;
-        public int amountSoldLastDay;
+        [NonSerialized] public static readonly float PriceModifier = 0.12f;
+        [NonSerialized] public int amountSoldLastDay;
+        [NonSerialized] public bool wasSold;
         public int TotalSold { get; private set; }
-        public bool wasSold;
-        
+
         public ListPrice(int originalPrice)
         {
             this.originalPrice = originalPrice;
             CurrentPrice = originalPrice;
         }
-        
+
         /// <summary>
         /// Whenever a store cicle ends, all list prices should be updated to reflect on the offer of the object
         /// </summary>

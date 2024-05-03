@@ -1,22 +1,17 @@
 ﻿using System;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class InventorySlot
 {
     public ItemType[] AllowedItems = new ItemType[0];
-    
-    [System.NonSerialized]
-    public UserInterface parent;
-    [System.NonSerialized]
-    public GameObject slotDisplay;
 
+    [NonSerialized] public UserInterface parent;
+    [NonSerialized] public GameObject slotDisplay;
     
-    [System.NonSerialized]
-    public Action<InventorySlot> onAfterUpdated;
-    [System.NonSerialized]
-    public Action<InventorySlot> onBeforeUpdated;
-    
+    [NonSerialized] public Action<InventorySlot> onAfterUpdated;
+    [NonSerialized] public Action<InventorySlot> onBeforeUpdated;
+
     public Item item;
     public int amount;
 
@@ -51,7 +46,7 @@ public class InventorySlot
             if (itemObject.type == AllowedItems[i])
                 return true;
         }
+
         return false;
     }
-
 }

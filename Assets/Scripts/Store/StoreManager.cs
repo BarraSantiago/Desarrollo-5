@@ -12,30 +12,35 @@ namespace Store
     public class StoreManager : MonoBehaviour
     {
         public static Action EndCycle;
+
         #region Serialized Fields
-        
-        [Header("Client Setup")]
-        [SerializeField] private GameObject clientPrefab;
+
+        [Header("Client Setup")] [SerializeField]
+        private GameObject clientPrefab;
+
         [SerializeField] private Client[] clients;
-        
-        [Header("Items Setup")]
-        [SerializeField] private InventoryObject inventory;
+
+        [Header("Items Setup")] [SerializeField]
+        private InventoryObject inventory;
+
         [SerializeField] public ItemDatabaseObject itemDatabase;
         [SerializeField] private ItemDisplayer itemDisplayer;
-        
-        [Header("Waiting Line Setup")]
-        [SerializeField] private Transform waitingLineStart;
+
+        [Header("Waiting Line Setup")] [SerializeField]
+        private Transform waitingLineStart;
+
         [SerializeField] private int posAmount;
         [SerializeField] private float distanceBetweenPos;
-        
-        [Header("Misc Setup")]
-        [SerializeField] private UIManager uiManager;
+
+        [Header("Misc Setup")] [SerializeField]
+        private UIManager uiManager;
+
         [SerializeField] private Player player;
 
         #endregion
 
         #region private variables
-        
+
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
@@ -50,7 +55,7 @@ namespace Store
         private float _cilceTimer;
 
         #endregion
-        
+
         private void Start()
         {
             Client.ItemBought += ItemBought;
@@ -61,7 +66,7 @@ namespace Store
             UpdateMoneyText();
             itemDisplayer.Initialize();
 
-            _waitingLine = new WaitingLine(waitingLineStart,posAmount, distanceBetweenPos);
+            _waitingLine = new WaitingLine(waitingLineStart, posAmount, distanceBetweenPos);
         }
 
         private void RemoveFromQueue()
@@ -74,7 +79,9 @@ namespace Store
             if (!_waitingLine.AddToQueue(agent))
             {
                 //No empty spaces in queue
-            };
+            }
+
+            ;
         }
 
         private void SpawnText(int money)
@@ -92,10 +99,9 @@ namespace Store
         private void ItemBought(DisplayItem displayItem)
         {
             int id = displayItem.ItemObject.data.id;
-            
+
             displayItem.Bought = true;
-            itemDisplayer.RemoveItem(displayItem.id);
-            
+
             itemDatabase.ItemObjects[id].data.listPrice.wasSold = true;
             itemDatabase.ItemObjects[id].data.listPrice.amountSoldLastDay++;
         }
@@ -103,7 +109,7 @@ namespace Store
         public void StartCicle()
         {
             _waitingLine.Initialize();
-            
+
             float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
 
@@ -123,10 +129,10 @@ namespace Store
         {
             EndCycle?.Invoke();
         }
-        
+
         private bool AvailableItem()
         {
-            return itemDisplayer.Items.Any(displayItem => !displayItem.BeingViewed && !displayItem.Bought);
+            return itemDisplayer.Items.Any(displayItem => displayItem is { BeingViewed: false, Bought: false });
         }
 
         private IEnumerator SendClient()
@@ -153,13 +159,19 @@ namespace Store
             if (!AvailableItem()) return;
 
             DisplayItem[] avaliableItems =
-                Array.FindAll(itemDisplayer.Items, displayItem => !displayItem.BeingViewed && !displayItem.Bought);
+                Array.FindAll(itemDisplayer.Items, displayItem => displayItem is { BeingViewed: false, Bought: false });
+
 
             int randomItem = Random.Range(0, avaliableItems.Length);
 
             client.desiredItem = avaliableItems[randomItem];
 
             avaliableItems[randomItem].BeingViewed = true;
+        }
+
+        public void AddItem()
+        {
+            player.inventory.AddItem(itemDatabase.ItemObjects[0].data, 1);
         }
     }
 }

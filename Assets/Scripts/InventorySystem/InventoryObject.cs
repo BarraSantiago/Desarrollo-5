@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
@@ -8,6 +9,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
 public class InventoryObject : ScriptableObject
 {
+    public Action<int> OnItemAdded;
     public string savePath;
     public ItemDatabaseObject database;
     public InterfaceType type;
@@ -52,6 +54,7 @@ public class InventoryObject : ScriptableObject
         {
             if (GetSlots[i].item.id == item.id)
             {
+                OnItemAdded?.Invoke(i);
                 return GetSlots[i];
             }
         }
@@ -78,6 +81,7 @@ public class InventoryObject : ScriptableObject
         {
             if (GetSlots[i].item.id <= -1)
             {
+                OnItemAdded?.Invoke(i);
                 return GetSlots[i];
             }
         }
@@ -93,6 +97,8 @@ public class InventoryObject : ScriptableObject
             InventorySlot temp = new InventorySlot(item2.item, item2.amount);
             item2.UpdateSlot(item1.item, item1.amount);
             item1.UpdateSlot(temp.item, temp.amount);
+            OnItemAdded?.Invoke(Array.IndexOf(GetSlots, item1));
+            OnItemAdded?.Invoke(Array.IndexOf(GetSlots, item1));
         }
 
     }

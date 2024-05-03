@@ -14,34 +14,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   savePath: 
   database: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
-  type: 0
+  type: 2
   Container:
     Slots:
     - AllowedItems: 
       item:
         name: 
-        id: 0
+        id: -1
         buffs: []
-        price: 0
-      amount: 1
+        listPrice:
+          originalPrice: 50
+        price: 50
+      amount: 0
     - AllowedItems: 
       item:
         name: 
-        id: 0
+        id: -1
         buffs: []
-        price: 0
-      amount: 1
+        listPrice:
+          originalPrice: 50
+        price: 50
+      amount: 0
     - AllowedItems: 
       item:
         name: 
-        id: 0
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
-      amount: 1
+      amount: 0
     - AllowedItems: 
       item:
         name: 
-        id: 0
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
-      amount: 1
+      amount: 0

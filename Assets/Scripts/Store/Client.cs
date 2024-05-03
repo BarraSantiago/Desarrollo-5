@@ -28,6 +28,7 @@ namespace Store
         public static Action LeaveLine;
         public static Action<DisplayItem> ItemBought;
         public static Action<int> MoneyAdded; //TODO change name
+        public static Action<int> ItemGrabbed;
 
         /// <summary>
         /// booleano para decir si el cliente ya esta en la tienda
@@ -152,6 +153,7 @@ namespace Store
             
             if (!DistanceToItem()) return;
             desiredItem.Object.transform.SetParent(this.transform);
+            ItemGrabbed?.Invoke(desiredItem.id);
             _currentState = State.WaitingInline;
         }
         
@@ -199,7 +201,7 @@ namespace Store
 
         private bool CheckBuyItem()
         {
-            if(!desiredItem) return false;
+            if(desiredItem == null) return false;
             
             ListPrice itemList = storeManager.itemDatabase.ItemObjects[desiredItem.ItemObject.data.id].data.listPrice;
             float difference = desiredItem.ItemObject.price - itemList.CurrentPrice;
@@ -234,6 +236,7 @@ namespace Store
         /// <param name="chance"> Chance to leave a tip </param>
         private void LeaveTip(float chance)
         {
+            // TODO make tip be a random consumable item
             int randomNum = Random.Range(0, 100);
 
             if (chance < randomNum + _tipChanceModifier)

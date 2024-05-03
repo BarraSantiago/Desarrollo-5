@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Store
 {
@@ -12,21 +13,35 @@ namespace Store
 
         public void Initialize()
         {
+            StoreManager.EndCycle += Deinitialize;
+            inventory.OnItemAdded += OnAddItem;
+            Client.ItemGrabbed += RemoveItem;
+            
             Items = new DisplayItem[inventory.GetSlots.Length];
         }
-        
+
+        private void Deinitialize()
+        {
+            StoreManager.EndCycle -= Deinitialize;
+            inventory.OnItemAdded -= OnAddItem;
+        }
+
+
         public void Test()
         {
             for (int i = 0; i < inventory.GetSlots.Length; i++)
             {
                 inventory.AddItem(database.ItemObjects[0].data, 1);
-                Items[i] = gameObject.AddComponent<DisplayItem>();
-                Items[i].Object = Instantiate(database.ItemObjects[inventory.GetSlots[i].item.id].characterDisplay,
-                    objPostition[i]);
-                Items[i].ItemObject = inventory.GetSlots[i].GetItemObject();
+                
+                Items[i] = new DisplayItem
+                {
+                    Object = Instantiate(database.ItemObjects[inventory.GetSlots[i].item.id].characterDisplay,
+                        objPostition[i]),
+                    ItemObject = inventory.GetSlots[i].GetItemObject(),
+                    id = i
+                };
+                
                 Items[i].ItemObject.price = 50;
-                Items[i].Initialize(Items[i].ItemObject.price);
-                Items[i].id = i;
             }
         }
 
@@ -34,6 +49,28 @@ namespace Store
         {
             Items[id] = null;
             inventory.GetSlots[id].RemoveItem();
+        }
+
+        private void OnAddItem(int slotId)
+        {
+            if(inventory.GetSlots[slotId].item.id < 0) return;
+            if(Items[slotId] != null) Destroy(Items[slotId].Object);
+
+            if (inventory.GetSlots[slotId].amount == 0)
+            {
+                Items[slotId] = null;
+                return;
+            }
+            
+            Items[slotId] = new DisplayItem
+            {
+                Object = Instantiate(database.ItemObjects[inventory.GetSlots[slotId].item.id].characterDisplay,
+                    objPostition[slotId]),
+                ItemObject = inventory.GetSlots[slotId].GetItemObject(),
+                id = slotId
+            };
+
+            Items[slotId].Initialize(Items[slotId].ItemObject.price);
         }
     }
 }
