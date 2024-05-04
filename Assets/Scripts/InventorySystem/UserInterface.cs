@@ -127,7 +127,9 @@ public abstract class UserInterface : MonoBehaviour
 
         if (MouseData.interfaceMouseIsOver == null)
         {
+            //TODO drop item on ground
             slotsOnInterface[obj].RemoveItem();
+            InventoryObject.OnItemSwapInventory?.Invoke(0);
             return;
         }
 

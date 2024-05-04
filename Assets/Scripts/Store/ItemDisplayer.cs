@@ -31,7 +31,7 @@ namespace Store
         private void Deinitialize()
         {
             StoreManager.EndCycle -= Deinitialize;
-            InventoryObject.OnItemSwapInventory += OnAddItem;
+            InventoryObject.OnItemSwapInventory -= OnAddItem;
             storeInventory.OnItemAdded -= OnAddItem;
         }
 
@@ -47,6 +47,7 @@ namespace Store
             if (!ValidItem(slotId)) return;
 
             CreateDisplayItem(slotId);
+            UpdateInventory();
         }
 
         private bool ValidItem(int slotId)
@@ -82,8 +83,6 @@ namespace Store
             };
 
             Items[slotId].Initialize(Items[slotId].ItemObject.price);
-
-            UpdateInventory();
         }
 
         private void UpdateInventory()
