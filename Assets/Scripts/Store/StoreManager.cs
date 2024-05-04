@@ -15,31 +15,27 @@ namespace Store
 
         #region Serialized Fields
 
-        [Header("Client Setup")] [SerializeField]
-        private GameObject clientPrefab;
-
+        [Header("Client Setup")] 
+        [SerializeField] private GameObject clientPrefab;
         [SerializeField] private Client[] clients;
 
-        [Header("Items Setup")] [SerializeField]
-        private InventoryObject inventory;
-
+        [Header("Items Setup")] 
+        [SerializeField] private InventoryObject storeInventory;
         [SerializeField] public ItemDatabaseObject itemDatabase;
         [SerializeField] private ItemDisplayer itemDisplayer;
 
-        [Header("Waiting Line Setup")] [SerializeField]
-        private Transform waitingLineStart;
-
+        [Header("Waiting Line Setup")] 
+        [SerializeField] private Transform waitingLineStart;
         [SerializeField] private int posAmount;
         [SerializeField] private float distanceBetweenPos;
 
-        [Header("Misc Setup")] [SerializeField]
-        private UIManager uiManager;
-
+        [Header("Misc Setup")]
+        [SerializeField] private UIManager uiManager;
         [SerializeField] private Player player;
 
         #endregion
 
-        #region private variables
+        #region Private Variables
 
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
@@ -64,24 +60,30 @@ namespace Store
             Client.LeaveLine += RemoveFromQueue;
 
             UpdateMoneyText();
-            itemDisplayer.Initialize();
+            itemDisplayer.Initialize(itemDatabase, storeInventory);
 
             _waitingLine = new WaitingLine(waitingLineStart, posAmount, distanceBetweenPos);
         }
-
-        private void RemoveFromQueue()
+        
+        public void AddItem()
         {
-            _waitingLine.AdvanceQueue();
+            player.inventory.AddItem(itemDatabase.ItemObjects[0].data, 1);
         }
-
-        private void AddToQueue(Client agent)
+        
+        public void StartCicle()
         {
-            if (!_waitingLine.AddToQueue(agent))
+            _waitingLine.Initialize();
+
+            float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
+            _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
+
+            // Updates list price of items depending on offer/sold last cycle
+            foreach (var item in itemDatabase.ItemObjects)
             {
-                //No empty spaces in queue
+                item.data.listPrice.UpdatePrice();
             }
 
-            ;
+            StartCoroutine(SendClient());
         }
 
         private void SpawnText(int money)
@@ -105,23 +107,7 @@ namespace Store
             itemDatabase.ItemObjects[id].data.listPrice.wasSold = true;
             itemDatabase.ItemObjects[id].data.listPrice.amountSoldLastDay++;
         }
-
-        public void StartCicle()
-        {
-            _waitingLine.Initialize();
-
-            float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
-            _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
-
-            // Updates list price of items depending on offer/sold last cycle
-            foreach (var item in itemDatabase.ItemObjects)
-            {
-                item.data.listPrice.UpdatePrice();
-            }
-
-            StartCoroutine(SendClient());
-        }
-
+        
         /// <summary>
         /// Should be called when cicle ends
         /// </summary>
@@ -144,8 +130,8 @@ namespace Store
 
                 ChooseItem(client);
                 client.EnterStore();
-
                 _clientsSent++;
+                
                 yield return new WaitForSeconds(_clientTimer);
             }
         }
@@ -160,18 +146,23 @@ namespace Store
 
             DisplayItem[] avaliableItems =
                 Array.FindAll(itemDisplayer.Items, displayItem => displayItem is { BeingViewed: false, Bought: false });
-
-
+            
             int randomItem = Random.Range(0, avaliableItems.Length);
-
             client.desiredItem = avaliableItems[randomItem];
-
             avaliableItems[randomItem].BeingViewed = true;
         }
-
-        public void AddItem()
+        
+        private void RemoveFromQueue()
         {
-            player.inventory.AddItem(itemDatabase.ItemObjects[0].data, 1);
+            _waitingLine.AdvanceQueue();
+        }
+        
+        private void AddToQueue(Client agent)
+        {
+            if (!_waitingLine.AddToQueue(agent))
+            {
+                //No empty spaces in queue
+            }
         }
     }
 }

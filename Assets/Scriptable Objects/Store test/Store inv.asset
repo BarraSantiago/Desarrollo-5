@@ -20,36 +20,36 @@ MonoBehaviour:
     - AllowedItems: 
       item:
         name: 
-        id: -1
+        id: 0
         buffs: []
         listPrice:
           originalPrice: 50
         price: 50
-      amount: 0
+      amount: 1
     - AllowedItems: 
       item:
         name: 
-        id: -1
+        id: 0
         buffs: []
         listPrice:
           originalPrice: 50
         price: 50
-      amount: 0
+      amount: 1
     - AllowedItems: 
       item:
         name: 
-        id: -1
+        id: 0
         buffs: []
         listPrice:
-          originalPrice: 0
-        price: 0
-      amount: 0
+          originalPrice: 50
+        price: 50
+      amount: 1
     - AllowedItems: 
       item:
         name: 
-        id: -1
+        id: 0
         buffs: []
         listPrice:
-          originalPrice: 0
-        price: 0
-      amount: 0
+          originalPrice: 50
+        price: 50
+      amount: 1

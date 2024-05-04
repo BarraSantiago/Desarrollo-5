@@ -118,7 +118,6 @@ namespace Store
                         waitingForPlayer = false;
                         _currentState = State.Leaving;
                     }
-
                     break;
 
                 case State.Leaving:

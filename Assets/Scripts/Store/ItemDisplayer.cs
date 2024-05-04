@@ -1,76 +1,119 @@
-﻿using System;
+﻿using TMPro;
 using UnityEngine;
 
 namespace Store
 {
     public class ItemDisplayer : MonoBehaviour
     {
-        [SerializeField] private InventoryObject inventory;
-        [SerializeField] private ItemDatabaseObject database;
         [SerializeField] private Transform[] objPostition;
+        [SerializeField] private TextMeshPro[] texts;
 
         public DisplayItem[] Items;
 
-        public void Initialize()
+        private ItemDatabaseObject database;
+        private InventoryObject storeInventory;
+
+        public void Initialize(ItemDatabaseObject database, InventoryObject storeInventory)
         {
+            this.storeInventory = storeInventory;
+            this.database = database;
+
+            this.storeInventory.OnItemAdded += OnAddItem;
+            InventoryObject.OnItemSwapInventory += OnAddItem;
             StoreManager.EndCycle += Deinitialize;
-            inventory.OnItemAdded += OnAddItem;
             Client.ItemGrabbed += RemoveItem;
-            
-            Items = new DisplayItem[inventory.GetSlots.Length];
+
+            Items = new DisplayItem[storeInventory.GetSlots.Length];
+
+            UpdateInventory();
         }
 
         private void Deinitialize()
         {
             StoreManager.EndCycle -= Deinitialize;
-            inventory.OnItemAdded -= OnAddItem;
+            InventoryObject.OnItemSwapInventory += OnAddItem;
+            storeInventory.OnItemAdded -= OnAddItem;
         }
 
-
-        public void Test()
-        {
-            for (int i = 0; i < inventory.GetSlots.Length; i++)
-            {
-                inventory.AddItem(database.ItemObjects[0].data, 1);
-                
-                Items[i] = new DisplayItem
-                {
-                    Object = Instantiate(database.ItemObjects[inventory.GetSlots[i].item.id].characterDisplay,
-                        objPostition[i]),
-                    ItemObject = inventory.GetSlots[i].GetItemObject(),
-                    id = i
-                };
-                
-                Items[i].ItemObject.price = 50;
-            }
-        }
-
-        public void RemoveItem(int id)
+        private void RemoveItem(int id)
         {
             Items[id] = null;
-            inventory.GetSlots[id].RemoveItem();
+            storeInventory.GetSlots[id].RemoveItem();
+            texts[id].text = string.Empty;
         }
 
         private void OnAddItem(int slotId)
         {
-            if(inventory.GetSlots[slotId].item.id < 0) return;
-            if(Items[slotId] != null) Destroy(Items[slotId].Object);
+            if (!ValidItem(slotId)) return;
 
-            if (inventory.GetSlots[slotId].amount == 0)
+            CreateDisplayItem(slotId);
+        }
+
+        private bool ValidItem(int slotId)
+        {
+            if (slotId >= storeInventory.GetSlots.Length || slotId < 0) return false;
+
+            if (storeInventory.GetSlots[slotId].item.id < 0)
+            {
+                UpdateInventory();
+                return false;
+            }
+
+            if (Items[slotId] != null) Destroy(Items[slotId].Object);
+
+            if (storeInventory.GetSlots[slotId].amount == 0)
             {
                 Items[slotId] = null;
-                return;
+                return false;
             }
-            
+
+            return true;
+        }
+
+        private void CreateDisplayItem(int slotId)
+        {
             Items[slotId] = new DisplayItem
             {
-                Object = Instantiate(database.ItemObjects[inventory.GetSlots[slotId].item.id].characterDisplay,
+                Object = Instantiate(database.ItemObjects[storeInventory.GetSlots[slotId].item.id].characterDisplay,
                     objPostition[slotId]),
-                ItemObject = inventory.GetSlots[slotId].GetItemObject(),
-                id = slotId
+                ItemObject = storeInventory.GetSlots[slotId].GetItemObject(),
+                id = slotId,
+                showPrice = texts[slotId]
             };
 
             Items[slotId].Initialize(Items[slotId].ItemObject.price);
+
+            UpdateInventory();
+        }
+
+        private void UpdateInventory()
+        {
+            foreach (var slot in storeInventory.GetSlots)
+            {
+                slot.UpdateSlot(slot.item, slot.amount);
+            }
+
+            for (int i = 0; i < Items.Length; i++)
+            {
+                if (storeInventory.GetSlots[i].amount == 0)
+                {
+                    if (Items[i] != null) Destroy(Items[i].Object);
+                    Items[i] = null;
+                    texts[i].text = string.Empty;
+                }
+                else if (storeInventory.GetSlots[i].amount > 0)
+                {
+                    if (Items[i] == null)
+                    {
+                        OnAddItem(i);
+                    }
+                    else if (Items[i].ItemObject != storeInventory.GetSlots[i].GetItemObject())
+                    {
+                        RemoveItem(i);
+                        OnAddItem(i);
+                    }
+                }
+            }
         }
     }
 }

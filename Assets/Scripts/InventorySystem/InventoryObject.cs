@@ -10,6 +10,7 @@ using UnityEngine;
 public class InventoryObject : ScriptableObject
 {
     public Action<int> OnItemAdded;
+    public static Action<int> OnItemSwapInventory;
     public string savePath;
     public ItemDatabaseObject database;
     public InterfaceType type;
@@ -88,21 +89,22 @@ public class InventoryObject : ScriptableObject
         return null;
     }
 
-    public void SwapItems(InventorySlot item1, InventorySlot item2)
+    public void SwapItems(InventorySlot originalSlot, InventorySlot targetSlot)
     {
-        if (item1 == item2)
+        if (originalSlot == targetSlot)
             return;
-        if (item2.CanPlaceInSlot(item1.GetItemObject()) && item1.CanPlaceInSlot(item2.GetItemObject()))
+        if (targetSlot.CanPlaceInSlot(originalSlot.GetItemObject()) && originalSlot.CanPlaceInSlot(targetSlot.GetItemObject()))
         {
-            InventorySlot temp = new InventorySlot(item2.item, item2.amount);
-            item2.UpdateSlot(item1.item, item1.amount);
-            item1.UpdateSlot(temp.item, temp.amount);
-            OnItemAdded?.Invoke(Array.IndexOf(GetSlots, item1));
-            OnItemAdded?.Invoke(Array.IndexOf(GetSlots, item1));
+            InventorySlot temp = new InventorySlot(targetSlot.item, targetSlot.amount);
+            targetSlot.UpdateSlot(originalSlot.item, originalSlot.amount);
+            originalSlot.UpdateSlot(temp.item, temp.amount);
+            
+            OnItemAdded?.Invoke(Array.IndexOf(GetSlots, originalSlot));
+            OnItemAdded?.Invoke(Array.IndexOf(GetSlots, targetSlot));
+            
+            if(targetSlot.parent.inventory != this) OnItemSwapInventory?.Invoke(Array.IndexOf(targetSlot.parent.inventory.GetSlots, targetSlot));
         }
-
     }
-
 
     [ContextMenu("Save")]
     public void Save()
