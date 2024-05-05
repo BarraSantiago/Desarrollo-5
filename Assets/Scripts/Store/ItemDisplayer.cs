@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 
 namespace Store
@@ -31,6 +32,11 @@ namespace Store
         private void Deinitialize()
         {
             StoreManager.EndCycle -= Deinitialize;
+            
+        }
+
+        private void OnDestroy()
+        {
             InventoryObject.OnItemSwapInventory -= OnAddItem;
             storeInventory.OnItemAdded -= OnAddItem;
         }

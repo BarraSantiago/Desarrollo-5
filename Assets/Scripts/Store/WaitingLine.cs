@@ -12,24 +12,14 @@ namespace Store
 
     public class WaitingLine
     {
-        public WaitingLine(Transform startingPosition, int positionsAmount, float positionsDistance)
-        {
-            this.startingPosition = startingPosition;
-            this.positionsAmount = positionsAmount;
-            this.positionsDistance = positionsDistance;
-        }
-
         private WaitingPosition[] queuePositions;
-        private readonly Transform startingPosition;
-        private readonly int positionsAmount;
-        private readonly float positionsDistance;
-
-        public void Initialize()
+        
+        public void Initialize(Transform startingPosition, int positionsAmount, float positionsDistance)
         {
             StoreManager.EndCycle += Deinitialize;
-            
+
             queuePositions = new WaitingPosition[positionsAmount];
-            
+
             for (int i = 0; i < positionsAmount; i++)
             {
                 queuePositions[i].position = startingPosition.position + (Vector3.up * positionsDistance) * i;
@@ -43,7 +33,7 @@ namespace Store
                 queuePositions[i].occupied = false;
                 queuePositions[i].client = null;
             }
-            
+
             StoreManager.EndCycle -= Deinitialize;
         }
 
@@ -71,24 +61,33 @@ namespace Store
 
         public void AdvanceQueue()
         {
-            queuePositions[0].client.firstInLine = false;
+            if (queuePositions[0].client != null)
+            {
+                queuePositions[0].client.firstInLine = false;
+            }
+
             queuePositions[0].client = null;
 
-            for (int i = 0; i < queuePositions.Length; i++)
+            for (int i = 0; i < queuePositions.Length - 1; i++)
             {
                 if (!queuePositions[i + 1].occupied)
                 {
                     queuePositions[i].occupied = false;
                     queuePositions[i].client = null;
-
                     break;
                 }
 
                 queuePositions[i].client = queuePositions[i + 1].client;
-                queuePositions[i].client.agent.SetDestination(queuePositions[i].position);
+                if (queuePositions[i].client != null)
+                {
+                    queuePositions[i].client.agent.SetDestination(queuePositions[i].position);
+                }
             }
 
-            if(queuePositions[0].client) queuePositions[0].client.firstInLine = true;
+            if (queuePositions[0].client != null)
+            {
+                queuePositions[0].client.firstInLine = true;
+            }
         }
     }
 }

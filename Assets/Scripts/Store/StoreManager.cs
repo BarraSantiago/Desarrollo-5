@@ -17,7 +17,7 @@ namespace Store
 
         [Header("Client Setup")] 
         [SerializeField] private GameObject clientPrefab;
-        [SerializeField] private Client[] clients;
+        [SerializeField] private Transform clientExit;
 
         [Header("Items Setup")] 
         [SerializeField] private InventoryObject storeInventory;
@@ -36,14 +36,16 @@ namespace Store
         #endregion
 
         #region Private Variables
-
+        
+        private List<Client> clients = new List<Client>();
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
         private int _clientsSent = 0;
+        private int _clientsLeft = 0;
         private readonly float _popularity = 0.5f;
-        private readonly int _maxClients = 15;
-        private readonly int _minClients = 5;
+        private readonly int _maxClients = 4;
+        private readonly int _minClients = 3;
         private int _buyersInShop; // amount of clients currently in the shop
         private float _timeBetweenClients;
         private float _clientTimer = 3f;
@@ -54,36 +56,67 @@ namespace Store
 
         private void Start()
         {
+            Client.ItemDatabase = itemDatabase;
+            Client.exit = clientExit;
+            
             Client.ItemBought += ItemBought;
             Client.MoneyAdded += SpawnText;
             Client.StartLine += AddToQueue;
             Client.LeaveLine += RemoveFromQueue;
+            Client.LeftStore += CheckEndCicle;
 
             UpdateMoneyText();
             itemDisplayer.Initialize(itemDatabase, storeInventory);
 
-            _waitingLine = new WaitingLine(waitingLineStart, posAmount, distanceBetweenPos);
+            _waitingLine = new WaitingLine();
         }
-        
+
+        private void CheckEndCicle()
+        {
+            _clientsLeft++;
+            if (_clientsLeft >= _dailyClients)
+            {
+                EndDayCycle();
+            }
+        }
+
         public void AddItem()
         {
             player.inventory.AddItem(itemDatabase.ItemObjects[0].data, 1);
         }
         
-        public void StartCicle()
+        public void StartDayCicle()
         {
-            _waitingLine.Initialize();
-
             float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
-
+            
+            _waitingLine.Initialize(waitingLineStart, _dailyClients, distanceBetweenPos);
+            
             // Updates list price of items depending on offer/sold last cycle
             foreach (var item in itemDatabase.ItemObjects)
             {
                 item.data.listPrice.UpdatePrice();
             }
 
-            StartCoroutine(SendClient());
+            StartCoroutine(SendClients());
+        }
+        
+        /// <summary>
+        /// Should be called when cicle ends
+        /// </summary>
+        private void EndDayCycle()
+        {
+            EndCycle?.Invoke();
+
+            for (int i = clients.Count - 1; i >= 0; i--)
+            {
+                clients[i].Deinitialize();
+                Destroy(clients[i].gameObject);
+                clients.RemoveAt(i);
+            }
+            
+            _clientsSent = 0;
+            _clientsLeft = 0;
         }
 
         private void SpawnText(int money)
@@ -107,29 +140,27 @@ namespace Store
             itemDatabase.ItemObjects[id].data.listPrice.wasSold = true;
             itemDatabase.ItemObjects[id].data.listPrice.amountSoldLastDay++;
         }
-        
-        /// <summary>
-        /// Should be called when cicle ends
-        /// </summary>
-        private void CompleteDayCycle()
-        {
-            EndCycle?.Invoke();
-        }
 
         private bool AvailableItem()
         {
             return itemDisplayer.Items.Any(displayItem => displayItem is { BeingViewed: false, Bought: false });
         }
 
-        private IEnumerator SendClient()
+        /// <summary>
+        /// Sends clients to the store
+        /// </summary>
+        /// <returns> Wait time between clients </returns>
+        private IEnumerator SendClients()
         {
-            foreach (Client client in clients)
+            // TODO improve this with object pooling
+            for (int i = 0; i < _dailyClients; i++)
             {
-                if (_clientsSent >= _dailyClients) continue;
-                if (client.inShop) continue;
-
-                ChooseItem(client);
-                client.EnterStore();
+                GameObject newClient = Instantiate(clientPrefab);
+                newClient.transform.position = clientExit.position;
+                
+                clients.Add(newClient.GetComponent<Client>());
+                
+                clients[i].Initialize(i, ChooseItem());
                 _clientsSent++;
                 
                 yield return new WaitForSeconds(_clientTimer);
@@ -139,17 +170,16 @@ namespace Store
         /// <summary>
         /// Chooses a random item for the client
         /// </summary>
-        /// <param name="client"> Subject to recieve a random item </param>
-        private void ChooseItem(Client client)
+        private DisplayItem ChooseItem()
         {
-            if (!AvailableItem()) return;
+            if (!AvailableItem()) return null; // TODO handle this better
 
             DisplayItem[] avaliableItems =
                 Array.FindAll(itemDisplayer.Items, displayItem => displayItem is { BeingViewed: false, Bought: false });
             
             int randomItem = Random.Range(0, avaliableItems.Length);
-            client.desiredItem = avaliableItems[randomItem];
             avaliableItems[randomItem].BeingViewed = true;
+            return avaliableItems[randomItem];
         }
         
         private void RemoveFromQueue()
