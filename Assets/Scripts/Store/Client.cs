@@ -180,7 +180,7 @@ namespace Store
         private bool PlayerInteraction()
         {
             if (!firstInLine) return false;
-            cobrar.transform.position = Camera.main.WorldToScreenPoint(transform.position);
+            cobrar.transform.position = Camera.main.WorldToScreenPoint(transform.position + Vector3.down);
             cobrar.gameObject.SetActive(true); // TODO REMOVE THIS
 
             return cobrado;

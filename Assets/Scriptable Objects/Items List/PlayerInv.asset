@@ -19,169 +19,181 @@ MonoBehaviour:
     Slots:
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
     - AllowedItems: 
       item:
-        Name: 
-        Id: -1
+        name: 
+        id: -1
         buffs: []
-        price: 0
-      amount: 0
-    - AllowedItems: 
-      item:
-        Name: 
-        Id: -1
-        buffs: []
-        price: 0
-      amount: 0
-    - AllowedItems: 
-      item:
-        Name: 
-        Id: -1
-        buffs: []
-        price: 0
-      amount: 0
-    - AllowedItems: 
-      item:
-        Name: 
-        Id: -1
-        buffs: []
-        price: 0
-      amount: 0
-    - AllowedItems: 
-      item:
-        Name: 
-        Id: -1
-        buffs: []
+        listPrice:
+          originalPrice: 0
         price: 0
       amount: 0
