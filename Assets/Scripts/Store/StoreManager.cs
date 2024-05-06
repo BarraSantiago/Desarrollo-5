@@ -82,7 +82,8 @@ namespace Store
 
         public void AddItem()
         {
-            player.inventory.AddItem(itemDatabase.ItemObjects[0].data, 1);
+            int rand = Random.Range(0, itemDatabase.ItemObjects.Length);
+            player.inventory.AddItem(itemDatabase.ItemObjects[rand].data, 1);
         }
         
         public void StartDayCicle()
