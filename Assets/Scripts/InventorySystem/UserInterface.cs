@@ -5,13 +5,16 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System.Linq;
+using InventorySystem;
 
 [RequireComponent(typeof(EventTrigger))]
 public abstract class UserInterface : MonoBehaviour
 {
     public InventoryObject inventory;
-    private InventoryObject _previousInventory;
     public Dictionary<GameObject, InventorySlot> slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
+    
+    [SerializeField] private GameObject itemDisplayPrefab;
+    private InventoryObject _previousInventory;
 
     public void OnEnable()
     {
@@ -83,6 +86,37 @@ public abstract class UserInterface : MonoBehaviour
     {
         MouseData.slotHoveredOver = obj;
     }
+    
+    public void OnRightClick(GameObject obj, BaseEventData data)
+    {
+        if (data is PointerEventData { button: PointerEventData.InputButton.Right })
+        {
+            // TODO add right click functionality
+            if (slotsOnInterface[obj].item.id < 0) return;
+            
+            Canvas canvas = FindObjectOfType<Canvas>();
+
+            // Get the size of the itemDisplay and the canvas
+            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+            Vector2 itemDisplaySize = itemDisplayPrefab.GetComponent<RectTransform>().sizeDelta;
+
+            // Get the mouse position in the canvas coordinate system
+            Vector2 localMousePosition;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, null, out localMousePosition);
+
+            // Check if the mouse position plus half of the itemDisplay size is outside the canvas bounds
+            localMousePosition.x = Mathf.Clamp(localMousePosition.x, -canvasRect.sizeDelta.x / 2 + itemDisplaySize.x / 2, canvasRect.sizeDelta.x / 2 - itemDisplaySize.x / 2);
+            localMousePosition.y = Mathf.Clamp(localMousePosition.y, -canvasRect.sizeDelta.y / 2 + itemDisplaySize.y / 2, canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
+
+            // Convert the local position back to world position
+            Vector3 worldMousePosition = canvasRect.TransformPoint(localMousePosition);
+
+            GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
+            ItemDisplay display = itemDisplay.GetComponent<ItemDisplay>();
+            display.item = slotsOnInterface[obj].GetItemObject();
+            display.Initialize();
+        }
+    }
 
     public void OnEnterInterface(GameObject obj)
     {
@@ -107,16 +141,15 @@ public abstract class UserInterface : MonoBehaviour
     private GameObject CreateTempItem(GameObject obj)
     {
         GameObject tempItem = null;
-        if (slotsOnInterface[obj].item.id >= 0)
-        {
-            tempItem = new GameObject();
-            var rt = tempItem.AddComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(50, 50);
-            tempItem.transform.SetParent(transform.parent.parent);
-            var img = tempItem.AddComponent<Image>();
-            img.sprite = slotsOnInterface[obj].GetItemObject().uiDisplay;
-            img.raycastTarget = false;
-        }
+        if (slotsOnInterface[obj].item.id < 0) return tempItem;
+        
+        tempItem = new GameObject();
+        var rt = tempItem.AddComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(50, 50);
+        tempItem.transform.SetParent(transform.parent.parent);
+        var img = tempItem.AddComponent<Image>();
+        img.sprite = slotsOnInterface[obj].GetItemObject().uiDisplay;
+        img.raycastTarget = false;
 
         return tempItem;
     }

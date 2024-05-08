@@ -1,4 +1,4 @@
-﻿using System;
+﻿using InventorySystem;
 using TMPro;
 using UnityEngine;
 
@@ -23,6 +23,7 @@ namespace Store
             InventoryObject.OnItemSwapInventory += OnAddItem;
             StoreManager.EndCycle += Deinitialize;
             Client.ItemGrabbed += RemoveItem;
+            ItemDisplay.OnItemUpdate += UpdateSlot;
 
             Items = new DisplayItem[storeInventory.GetSlots.Length];
 
@@ -39,6 +40,8 @@ namespace Store
         {
             InventoryObject.OnItemSwapInventory -= OnAddItem;
             storeInventory.OnItemAdded -= OnAddItem;
+            Client.ItemGrabbed -= RemoveItem;
+            ItemDisplay.OnItemUpdate -= UpdateSlot;
         }
 
         private void RemoveItem(int id)
@@ -89,6 +92,14 @@ namespace Store
             };
 
             Items[slotId].Initialize(Items[slotId].ItemObject.price);
+        }
+
+        private void UpdateSlot()
+        {
+            foreach (var item in Items)
+            {
+                item?.Initialize(item.ItemObject.price);
+            }
         }
 
         private void UpdateInventory()

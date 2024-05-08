@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
         if (item)
         {
             //inventory.AddItem(item.item.CreateItem(), 1);
-            if (inventory.AddItem(new Item(item.item), 1))
+            if (inventory.AddItem(new Item(item.item), item.amount))
                 Destroy(other.gameObject);
         }
     }

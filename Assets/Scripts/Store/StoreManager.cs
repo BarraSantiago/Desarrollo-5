@@ -66,9 +66,18 @@ namespace Store
             Client.LeftStore += CheckEndCicle;
 
             UpdateMoneyText();
+            UpdateCurrentPrices();
             itemDisplayer.Initialize(itemDatabase, storeInventory);
 
             _waitingLine = new WaitingLine();
+        }
+
+        private void UpdateCurrentPrices()
+        {
+            foreach (var item in itemDatabase.ItemObjects)
+            {
+                item.data.listPrice.UpdatePrice();
+            }
         }
 
         private void CheckEndCicle()
