@@ -161,39 +161,3 @@ MonoBehaviour:
           originalPrice: 0
         price: 0
       amount: 0
-    - AllowedItems: 
-      item:
-        name: 
-        id: -1
-        buffs: []
-        listPrice:
-          originalPrice: 0
-        price: 0
-      amount: 0
-    - AllowedItems: 
-      item:
-        name: 
-        id: -1
-        buffs: []
-        listPrice:
-          originalPrice: 0
-        price: 0
-      amount: 0
-    - AllowedItems: 
-      item:
-        name: 
-        id: -1
-        buffs: []
-        listPrice:
-          originalPrice: 0
-        price: 0
-      amount: 0
-    - AllowedItems: 
-      item:
-        name: 
-        id: -1
-        buffs: []
-        listPrice:
-          originalPrice: 0
-        price: 0
-      amount: 0
