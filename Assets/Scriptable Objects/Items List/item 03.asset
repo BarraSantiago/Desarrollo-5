@@ -15,10 +15,11 @@ MonoBehaviour:
   uiDisplay: {fileID: 21300000, guid: 36da8acfc4ea765449908de79fe3fd16, type: 3}
   characterDisplay: {fileID: 3138242233395258418, guid: 2efbe5b5a94a1af40bf797deca90513a, type: 3}
   stackable: 0
+  maxStack: 0
   type: 8
   description: Sickle.
   data:
-    name: 
+    name: Sickle
     id: 2
     buffs: []
     listPrice:

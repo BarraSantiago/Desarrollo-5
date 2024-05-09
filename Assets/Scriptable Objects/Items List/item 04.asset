@@ -15,10 +15,11 @@ MonoBehaviour:
   uiDisplay: {fileID: 21300000, guid: e1739d5f739b3c049b3cdcf5ed4dd13d, type: 3}
   characterDisplay: {fileID: 3138242233395258418, guid: 4cfed86620cd58b4abe93e7da5a01aa7, type: 3}
   stackable: 0
+  maxStack: 0
   type: 8
   description: Sword.
   data:
-    name: 
+    name: Sword
     id: 3
     buffs: []
     listPrice:

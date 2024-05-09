@@ -15,14 +15,15 @@ MonoBehaviour:
   uiDisplay: {fileID: 21300000, guid: a0d3b68b3f9b184469a06f453735b48d, type: 3}
   characterDisplay: {fileID: 3138242233395258418, guid: 35ca0a924335e294bbf14a8a00ae76e0, type: 3}
   stackable: 1
+  maxStack: 5
   type: 8
   description: Wood.
   data:
-    name: 
+    name: Wood log
     id: 1
     buffs: []
     listPrice:
       originalPrice: 30
     price: 33
   boneNames: []
-  price: 33
+  price: 20
