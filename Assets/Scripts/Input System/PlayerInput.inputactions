@@ -7,17 +7,8 @@
             "actions": [
                 {
                     "name": "Movement",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "81541e34-c33e-420e-a71f-0ab3acd38064",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "MousePos",
-                    "type": "Value",
-                    "id": "5316f632-356e-42bc-b55a-b35840cf30d6",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
@@ -79,17 +70,6 @@
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "97c3bbe9-c902-4c87-b1b3-3b69e0c08dbf",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MousePos",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 }
             ]
         }
