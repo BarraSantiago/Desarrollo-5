@@ -8,6 +8,7 @@ public class ItemObject : ScriptableObject
     public Sprite uiDisplay;
     public GameObject characterDisplay;
     public bool stackable;
+    public int maxStack;
     public ItemType type;
     [TextArea(15, 20)] public string description;
     public Item data = new Item();

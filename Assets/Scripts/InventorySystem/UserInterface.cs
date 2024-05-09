@@ -96,19 +96,15 @@ public abstract class UserInterface : MonoBehaviour
             
             Canvas canvas = FindObjectOfType<Canvas>();
 
-            // Get the size of the itemDisplay and the canvas
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
             Vector2 itemDisplaySize = itemDisplayPrefab.GetComponent<RectTransform>().sizeDelta;
 
-            // Get the mouse position in the canvas coordinate system
             Vector2 localMousePosition;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, null, out localMousePosition);
 
-            // Check if the mouse position plus half of the itemDisplay size is outside the canvas bounds
             localMousePosition.x = Mathf.Clamp(localMousePosition.x, -canvasRect.sizeDelta.x / 2 + itemDisplaySize.x / 2, canvasRect.sizeDelta.x / 2 - itemDisplaySize.x / 2);
             localMousePosition.y = Mathf.Clamp(localMousePosition.y, -canvasRect.sizeDelta.y / 2 + itemDisplaySize.y / 2, canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
 
-            // Convert the local position back to world position
             Vector3 worldMousePosition = canvasRect.TransformPoint(localMousePosition);
 
             GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);

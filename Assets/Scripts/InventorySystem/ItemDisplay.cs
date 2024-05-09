@@ -48,10 +48,8 @@ namespace InventorySystem
         
         public void ChangeItemPrice()
         {
-            // Intenta convertir el texto del campo de entrada a un entero
             if(int.TryParse(inputField.text, out int result))
             {
-                // Si la conversión es exitosa, cambia el valor de 'myInt'
                 item.price = result;
                 OnItemUpdate?.Invoke();
             }
