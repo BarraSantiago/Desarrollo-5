@@ -6,6 +6,8 @@ using InventorySystem;
 using UI;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Store
@@ -30,36 +32,43 @@ namespace Store
         [SerializeField] private int posAmount;
         [SerializeField] private float distanceBetweenPos;
 
-        [Header("Misc Setup")]
+        [Header("Misc Setup")] 
         [SerializeField] private UIManager uiManager;
         [SerializeField] private Player player;
+
+        [Header("Demo")] 
+        [SerializeField] private Button goToDungeon;
 
         #endregion
 
         #region Private Variables
-        
+
         private List<Client> clients = new List<Client>();
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
+        
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
         private int _clientsSent = 0;
         private int _clientsLeft = 0;
-        private readonly float _popularity = 0.5f;
-        private readonly int _maxClients = 4;
-        private readonly int _minClients = 3;
         private int _buyersInShop; // amount of clients currently in the shop
         private float _timeBetweenClients;
         private float _clientTimer = 3f;
         private float _cicleMaxTime;
         private float _cilceTimer;
+        private readonly float _popularity = 0.5f;
+        private readonly int _maxClients = 4;
+        private readonly int _minClients = 3;
 
+        
         #endregion
 
         private void Start()
         {
+            goToDungeon.onClick.AddListener(ChangeScene);
+            
             Client.ItemDatabase = itemDatabase;
             Client.exit = clientExit;
-            
+
             Client.ItemBought += ItemBought;
             Client.MoneyAdded += SpawnText;
             Client.StartLine += AddToQueue;
@@ -71,6 +80,11 @@ namespace Store
             itemDisplayer.Initialize(itemDatabase, storeInventory);
 
             _waitingLine = new WaitingLine();
+        }
+
+        private void ChangeScene()
+        {
+            SceneManager.LoadScene("Dungeon");
         }
 
         private void UpdateCurrentPrices()
@@ -95,14 +109,14 @@ namespace Store
             int rand = Random.Range(0, itemDatabase.ItemObjects.Length);
             player.inventory.AddItem(itemDatabase.ItemObjects[rand].data, 1);
         }
-        
+
         public void StartDayCicle()
         {
             float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
-            
+
             _waitingLine.Initialize(waitingLineStart, _dailyClients, distanceBetweenPos);
-            
+
             // Updates list price of items depending on offer/sold last cycle
             foreach (var item in itemDatabase.ItemObjects)
             {
@@ -111,7 +125,7 @@ namespace Store
 
             StartCoroutine(SendClients());
         }
-        
+
         /// <summary>
         /// Should be called when cicle ends
         /// </summary>
@@ -125,7 +139,7 @@ namespace Store
                 Destroy(clients[i].gameObject);
                 clients.RemoveAt(i);
             }
-            
+
             _clientsSent = 0;
             _clientsLeft = 0;
         }
@@ -168,12 +182,12 @@ namespace Store
             {
                 GameObject newClient = Instantiate(clientPrefab);
                 newClient.transform.position = clientExit.position;
-                
+
                 clients.Add(newClient.GetComponent<Client>());
-                
+
                 clients[i].Initialize(i, ChooseItem());
                 _clientsSent++;
-                
+
                 yield return new WaitForSeconds(_clientTimer);
             }
         }
@@ -187,17 +201,17 @@ namespace Store
 
             DisplayItem[] avaliableItems =
                 Array.FindAll(itemDisplayer.Items, displayItem => displayItem is { BeingViewed: false, Bought: false });
-            
+
             int randomItem = Random.Range(0, avaliableItems.Length);
             avaliableItems[randomItem].BeingViewed = true;
             return avaliableItems[randomItem];
         }
-        
+
         private void RemoveFromQueue()
         {
             _waitingLine.AdvanceQueue();
         }
-        
+
         private void AddToQueue(Client agent)
         {
             if (!_waitingLine.AddToQueue(agent))

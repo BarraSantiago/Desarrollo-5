@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace InventorySystem
 {
@@ -9,6 +10,20 @@ namespace InventorySystem
         public int Money;
 
 
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            inventory.UpdateInventory();
+        }
         public void OnTriggerEnter(Collider other)
         {
             var item = other.GetComponent<GroundItem>();

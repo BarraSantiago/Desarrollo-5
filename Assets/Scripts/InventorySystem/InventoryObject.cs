@@ -22,6 +22,14 @@ namespace InventorySystem
         [SerializeField] private Inventory Container = new Inventory();
         public InventorySlot[] GetSlots => Container.Slots;
 
+        public void UpdateInventory()
+        {
+            foreach (var slot in GetSlots)
+            {
+                slot.UpdateSlot(slot.item, slot.amount);
+            }
+        }
+
         public bool AddItem(Item item, int amount)
         {
             ItemObject itemObject = database.ItemObjects[item.id];
@@ -87,11 +95,10 @@ namespace InventorySystem
         {
             for (int i = 0; i < GetSlots.Length; i++)
             {
-                if (GetSlots[i].item.id <= -1)
-                {
-                    OnItemAdded?.Invoke(i);
-                    return GetSlots[i];
-                }
+                if (GetSlots[i].item.id > -1) continue;
+                
+                OnItemAdded?.Invoke(i);
+                return GetSlots[i];
             }
 
             return null;
@@ -181,6 +188,7 @@ namespace InventorySystem
             }
         }
 
+        
         [ContextMenu("Clear")]
         public void Clear()
         {

@@ -1,5 +1,7 @@
 ﻿using InventorySystem;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Game
 {
@@ -8,6 +10,7 @@ namespace Game
         [SerializeField] private Player _player;
         [SerializeField] private GameObject groundItemPrefab;
         [SerializeField] private ItemDatabaseObject itemDatabase;
+        [SerializeField] private Button goToStore;
 
         private Inventory _inventory;
 
@@ -15,22 +18,31 @@ namespace Game
         {
             Initialize();
         }
-        
+
+        private void Initialize()
+        {
+            LoadInventory();
+            goToStore.onClick.AddListener(ChangeScene);
+        }
+
+        private void ChangeScene()
+        {
+            SceneManager.LoadScene("Store");
+        }
+
         public void SpawnItem()
         {
-            int randX = Random.Range(-6, 0);
-            int randY = Random.Range(-3, 3);
-            Vector3 position = new Vector3(randX, randY, 0);
-            GameObject gameObject = Instantiate(groundItemPrefab, position, Quaternion.identity);
+            int randZ = Random.Range(-7, 0);
+            int randX = Random.Range(-5, 1);
+            Vector3 position = new Vector3(randX, 0, randZ);
+            GameObject gameObject = Instantiate(groundItemPrefab);
+            gameObject.transform.position = position;
+            gameObject.transform.rotation = Quaternion.Euler(90, 0, 0);
             int rand = Random.Range(0, itemDatabase.ItemObjects.Length);
             gameObject.GetComponent<GroundItem>().item = itemDatabase.ItemObjects[rand];
             gameObject.GetComponentInChildren<SpriteRenderer>().sprite = itemDatabase.ItemObjects[rand].uiDisplay;
         }
 
-        private void Initialize()
-        {
-            LoadInventory();
-        }
 
         private void LoadInventory()
         {

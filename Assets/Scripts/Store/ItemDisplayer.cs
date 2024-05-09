@@ -104,10 +104,7 @@ namespace Store
 
         private void UpdateInventory()
         {
-            foreach (var slot in storeInventory.GetSlots)
-            {
-                slot.UpdateSlot(slot.item, slot.amount);
-            }
+            storeInventory.UpdateInventory();
 
             for (int i = 0; i < Items.Length; i++)
             {
