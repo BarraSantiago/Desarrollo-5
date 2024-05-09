@@ -1,12 +1,15 @@
-﻿public enum ItemType
+﻿namespace InventorySystem
 {
-    Food,
-    Helmet,
-    Chest,
-    Pants,
-    Boots,
-    Sword,
-    shield,
-    Gloves,
-    Default
+    public enum ItemType
+    {
+        Food,
+        Helmet,
+        Chest,
+        Pants,
+        Boots,
+        Sword,
+        shield,
+        Gloves,
+        Default
+    }
 }

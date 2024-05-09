@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 
-public class Billboard : MonoBehaviour
+namespace InventorySystem
 {
-    private void LateUpdate()
+    public class Billboard : MonoBehaviour
     {
-        transform.forward = Camera.main.transform.forward;
+        private void LateUpdate()
+        {
+            transform.forward = Camera.main.transform.forward;
+        }
     }
 }

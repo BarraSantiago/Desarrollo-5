@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Item Database", menuName = "Inventory System/Items/Database")]
-public class ItemDatabaseObject : ScriptableObject
+namespace InventorySystem
 {
-    public ItemObject[] ItemObjects;
-
-    public void OnValidate()
+    [CreateAssetMenu(fileName = "New Item Database", menuName = "Inventory System/Items/Database")]
+    public class ItemDatabaseObject : ScriptableObject
     {
-        for (int i = 0; i < ItemObjects.Length; i++)
-        {
-            ItemObjects[i].data.id = i;
-        }
-    }
+        public ItemObject[] ItemObjects;
 
+        public void OnValidate()
+        {
+            for (int i = 0; i < ItemObjects.Length; i++)
+            {
+                ItemObjects[i].data.id = i;
+            }
+        }
+
+    }
 }

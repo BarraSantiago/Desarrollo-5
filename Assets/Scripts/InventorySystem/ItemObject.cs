@@ -1,40 +1,42 @@
 ﻿using System.Collections.Generic;
-using Store;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Item", menuName = "Inventory System/Items/New Item")]
-public class ItemObject : ScriptableObject
+namespace InventorySystem
 {
-    public Sprite uiDisplay;
-    public GameObject characterDisplay;
-    public bool stackable;
-    public int maxStack;
-    public ItemType type;
-    [TextArea(15, 20)] public string description;
-    public Item data = new Item();
-    public List<string> boneNames = new List<string>();
-    public int price;
-
-    public Item CreateItem()
+    [CreateAssetMenu(fileName = "New Item", menuName = "Inventory System/Items/New Item")]
+    public class ItemObject : ScriptableObject
     {
-        Item newItem = new Item(this);
-        return newItem;
-    }
+        public Sprite uiDisplay;
+        public GameObject characterDisplay;
+        public bool stackable;
+        public int maxStack;
+        public ItemType type;
+        [TextArea(15, 20)] public string description;
+        public Item data = new Item();
+        public List<string> boneNames = new List<string>();
+        public int price;
 
-    private void OnValidate()
-    {
-        boneNames.Clear();
-        if (characterDisplay == null) 
-            return;
-        if(!characterDisplay.GetComponent<SkinnedMeshRenderer>())
-            return;
-
-        var renderer = characterDisplay.GetComponent<SkinnedMeshRenderer>();
-        var bones = renderer.bones;
-
-        foreach (var t in bones)
+        public Item CreateItem()
         {
-            boneNames.Add(t.name);
+            Item newItem = new Item(this);
+            return newItem;
+        }
+
+        private void OnValidate()
+        {
+            boneNames.Clear();
+            if (characterDisplay == null) 
+                return;
+            if(!characterDisplay.GetComponent<SkinnedMeshRenderer>())
+                return;
+
+            var renderer = characterDisplay.GetComponent<SkinnedMeshRenderer>();
+            var bones = renderer.bones;
+
+            foreach (var t in bones)
+            {
+                boneNames.Add(t.name);
+            }
         }
     }
 }

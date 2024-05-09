@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 
-public static class MouseData
+namespace InventorySystem
 {
-    public static UserInterface interfaceMouseIsOver;
-    public static GameObject tempItemBeingDragged;
-    public static GameObject slotHoveredOver;
+    public static class MouseData
+    {
+        public static UserInterface InterfaceMouseIsOver;
+        public static GameObject TempItemBeingDragged;
+        public static GameObject SlotHoveredOver;
+    }
 }

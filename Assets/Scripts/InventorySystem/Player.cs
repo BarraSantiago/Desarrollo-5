@@ -1,42 +1,44 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Player : MonoBehaviour
+namespace InventorySystem
 {
-    public InventoryObject inventory;
-    public InventoryObject equipment;
-    [SerializeField] public int Money;
-
-
-    public void OnTriggerEnter(Collider other)
+    public class Player : MonoBehaviour
     {
-        var item = other.GetComponent<GroundItem>();
-        if (item)
+        public InventoryObject inventory;
+        public InventoryObject equipment;
+        public int Money;
+
+
+        public void OnTriggerEnter(Collider other)
         {
-            if (inventory.AddItem(new Item(item.item), item.amount))
-                Destroy(other.gameObject);
+            var item = other.GetComponent<GroundItem>();
+            if (item)
+            {
+                if (inventory.AddItem(new Item(item.item), item.amount))
+                    Destroy(other.gameObject);
+            }
         }
-    }
 
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
+        private void Update()
         {
-            inventory.Save();
-            equipment?.Save();
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                inventory.Save();
+                equipment?.Save();
+            }
+            else if (Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                inventory.Load();
+                equipment?.Load();
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.KeypadEnter))
+
+
+        public void OnApplicationQuit()
         {
-            inventory.Load();
-            equipment?.Load();
+            inventory.Clear();
+            equipment?.Clear();
         }
-    }
-
-
-    public void OnApplicationQuit()
-    {
-        inventory.Clear();
-        equipment?.Clear();
     }
 }

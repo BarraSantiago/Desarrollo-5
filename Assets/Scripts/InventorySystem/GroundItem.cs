@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 
-public class GroundItem : MonoBehaviour
+namespace InventorySystem
 {
-    public ItemObject item;
-    public int amount = 1;
+    public class GroundItem : MonoBehaviour
+    {
+        public ItemObject item;
+        public int amount = 1;
+    }
 }

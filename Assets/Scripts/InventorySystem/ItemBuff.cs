@@ -1,31 +1,34 @@
 ﻿using System;
 using UnityEngine;
 
-[Serializable]
-public class ItemBuff : IModifiers
+namespace InventorySystem
 {
-    public Attributes stat;
-    public int value;
-    [SerializeField]
-    private int min;   //buff min value roll
-    public int Min => min;
-    [SerializeField]
-    private int max;   //buff max value roll
-    public int Max => max;
-    public ItemBuff(int _min, int _max)
+    [Serializable]
+    public class ItemBuff : IModifiers
     {
-        min = _min;
-        max = _max;
-        GenerateField();
-    }
+        public Attributes stat;
+        public int value;
+        [SerializeField]
+        private int min;   //buff min value roll
+        public int Min => min;
+        [SerializeField]
+        private int max;   //buff max value roll
+        public int Max => max;
+        public ItemBuff(int _min, int _max)
+        {
+            min = _min;
+            max = _max;
+            GenerateField();
+        }
 
-    public void AddValue(ref int v)
-    {
-        v += value;
-    }
+        public void AddValue(ref int v)
+        {
+            v += value;
+        }
 
-    public void GenerateField()
-    {
-        value = UnityEngine.Random.Range(min, max);
+        public void GenerateField()
+        {
+            value = UnityEngine.Random.Range(min, max);
+        }
     }
 }

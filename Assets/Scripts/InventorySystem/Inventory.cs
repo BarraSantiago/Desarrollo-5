@@ -1,28 +1,31 @@
 ﻿using System;
 using System.Linq;
 
-[System.Serializable]
-public class Inventory
+namespace InventorySystem
 {
-    public InventorySlot[] Slots = new InventorySlot[24];
-
-    public void Clear()
+    [System.Serializable]
+    public class Inventory
     {
-        for (int i = 0; i < Slots.Length; i++)
+        public InventorySlot[] Slots = new InventorySlot[24];
+
+        public void Clear()
         {
-            Slots[i].item = new Item();
-            Slots[i].amount = 0;
+            for (int i = 0; i < Slots.Length; i++)
+            {
+                Slots[i].item = new Item();
+                Slots[i].amount = 0;
+            }
         }
-    }
 
-    public bool ContainsItem(ItemObject itemObject)
-    {
-        return Array.Find(Slots, i => i.item.id == itemObject.data.id) != null;
-    }
+        public bool ContainsItem(ItemObject itemObject)
+        {
+            return Array.Find(Slots, i => i.item.id == itemObject.data.id) != null;
+        }
 
 
-    public bool ContainsItem(int id)
-    {
-        return Slots.FirstOrDefault(i => i.item.id == id) != null;
+        public bool ContainsItem(int id)
+        {
+            return Slots.FirstOrDefault(i => i.item.id == id) != null;
+        }
     }
 }

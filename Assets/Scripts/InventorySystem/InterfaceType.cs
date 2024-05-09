@@ -1,6 +1,9 @@
-﻿public enum InterfaceType
+﻿namespace InventorySystem
 {
-    Inventory,
-    Equipment,
-    Chest
+    public enum InterfaceType
+    {
+        Inventory,
+        Equipment,
+        Chest
+    }
 }

@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using InventorySystem;
+using TMPro;
 using UnityEngine;
 
 namespace Store

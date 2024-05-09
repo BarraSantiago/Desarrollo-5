@@ -1,7 +1,10 @@
-﻿public enum Attributes
+﻿namespace InventorySystem
 {
-    Agility,
-    Intellect,
-    Stamina,
-    Strength
+    public enum Attributes
+    {
+        Agility,
+        Intellect,
+        Stamina,
+        Strength
+    }
 }

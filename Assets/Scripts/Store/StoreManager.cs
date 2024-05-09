@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using InventorySystem;
 using UI;
 using Unity.Mathematics;
 using UnityEngine;
