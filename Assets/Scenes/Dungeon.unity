@@ -170,8 +170,7 @@ MonoBehaviour:
   _player: {fileID: 575743206}
   groundItemPrefab: {fileID: 5920758140201309097, guid: f62c6b258c081874cbe00b97c765cc30, type: 3}
   itemDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
-  goToStoreButton: {fileID: 411408566}
-  spawnItemButton: {fileID: 1188863709}
+  goToStore: {fileID: 411408566}
 --- !u!1 &257404169
 GameObject:
   m_ObjectHideFlags: 0
@@ -340,7 +339,7 @@ RectTransform:
   m_Children:
   - {fileID: 257404170}
   m_Father: {fileID: 1544427886}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -390,7 +389,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 411408567}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 67123365}
+        m_TargetAssemblyTypeName: Game.GameManager, Assembly-CSharp
+        m_MethodName: SpawnItem
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &411408567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -531,7 +542,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 922b9cd77f8673b4da07d662650a6d37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 25
+  speed: 40
 --- !u!114 &575743205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -893,7 +904,7 @@ RectTransform:
   m_Children:
   - {fileID: 576281649}
   m_Father: {fileID: 1544427886}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -943,7 +954,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1188863710}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 67123365}
+        m_TargetAssemblyTypeName: Game.GameManager, Assembly-CSharp
+        m_MethodName: SpawnItem
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1188863710
 MonoBehaviour:
   m_ObjectHideFlags: 0
