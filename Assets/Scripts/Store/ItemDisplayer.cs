@@ -21,7 +21,7 @@ namespace Store
 
             this.storeInventory.OnItemAdded += OnAddItem;
             InventoryObject.OnItemSwapInventory += OnAddItem;
-            StoreManager.EndCycle += Deinitialize;
+            StoreManager.OnEndCycle += Deinitialize;
             Client.ItemGrabbed += RemoveItem;
             ItemDisplay.OnItemUpdate += UpdateSlot;
 
@@ -32,8 +32,7 @@ namespace Store
 
         private void Deinitialize()
         {
-            StoreManager.EndCycle -= Deinitialize;
-            
+            StoreManager.OnEndCycle -= Deinitialize;
         }
 
         private void OnDestroy()

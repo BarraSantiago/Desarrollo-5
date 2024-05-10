@@ -22,19 +22,28 @@ namespace Store
             Happy,
             Angry
         }
+        
+        #region Serialized Variables
+        
+        [SerializeField] public NavMeshAgent agent;
+        [SerializeField] private Button cobrar; // TODO update this
+        
+        [Header("Demo")]
+        [SerializeField] private SpriteRenderer spriteRenderer; 
+
+        #endregion
 
         #region Public Variables
 
         public int id;
         public static Transform exit;
-        public DisplayItem desiredItem;
         public static ItemDatabaseObject ItemDatabase;
-        public static Action<Client> StartLine;
-        public static Action LeaveLine;
-        public static Action<DisplayItem> ItemBought;
-        public static Action<int> MoneyAdded; //TODO change name
+        public static Action<Client> OnStartLine;
+        public static Action OnLeaveLine;
+        public static Action<DisplayItem> OnItemBought;
+        public static Action<int> OnMoneyAdded; //TODO change name
         public static Action<int> ItemGrabbed;
-        public static Action LeftStore;
+        public static Action OnLeftStore;
 
         /// <summary>
         /// Bool that indicates if the client is in the shop
@@ -44,35 +53,29 @@ namespace Store
 
         #endregion
 
-        #region Serialized Variables
-        
-        [SerializeField] public NavMeshAgent agent;
-        [SerializeField] private Button cobrar; // TODO update this
-
-        #endregion
-
         #region Priavete Variables
 
         /// <summary>
-        /// rango de 0 a 100 de lo que esta dispuesto a pagar por sobre el precio de lista (ListPrice)
+        /// Percentage that reprecents how much the client is willing to pay over the list price
         /// </summary>
         private int _willingnessToPay = 20; // TODO update WOT value
 
         /// <summary>
-        /// afecta al willingnessToPay y da una porbabilidad de que deje propina
+        /// Chance to leave a tip
         /// </summary>
         private int _happiness;
 
         /// <summary>
-        /// Por si hacemos mejoras para modificar la probabilidad que dejen propina
+        /// If we want to modify the chance to leave a tip
         /// </summary>
         private int _tipChanceModifier = 0;
         private bool cobrado = false;
         private int _tipValue;
-        private float minimumDistance = 0.9f;
-        private bool waitingForPlayer;
+        private readonly float minimumDistance = 0.9f;
+        private bool _waitingForPlayer = false;
         private State _currentState;
         private State _previousState;
+        private DisplayItem desiredItem;
 
         #endregion
 
@@ -89,10 +92,12 @@ namespace Store
             ClientBehaviour();
         }
         
-        public void Initialize(int id, DisplayItem item)
+        public void Initialize(int id, DisplayItem item, Sprite clientSprite)
         {
             this.id = id;
             desiredItem = item;
+            spriteRenderer.sprite = clientSprite;
+            
             EnterStore();
         }
 
@@ -121,15 +126,15 @@ namespace Store
                     break;
 
                 case State.WaitingInline:
-                    StartLine?.Invoke(this);
+                    OnStartLine?.Invoke(this);
                     _currentState = State.Buying;
                     break;
 
                 case State.Buying:
-                    waitingForPlayer = true;
+                    _waitingForPlayer = true;
                     if (PlayerInteraction())
                     {
-                        waitingForPlayer = false;
+                        _waitingForPlayer = false;
                         _currentState = State.Leaving;
                     }
                     break;
@@ -158,7 +163,7 @@ namespace Store
             }
         }
 
-        public void EnterStore()
+        private void EnterStore()
         {
             _currentState = State.ChoosingItem;
         }
@@ -175,7 +180,7 @@ namespace Store
         }
         
         /// <summary>
-        /// 
+        /// Way for the player to charge the client
         /// </summary>
         /// <returns></returns>
         private bool PlayerInteraction()
@@ -196,7 +201,7 @@ namespace Store
         {
             BuyItem();
             cobrar.gameObject.SetActive(false);
-            LeaveLine?.Invoke();
+            OnLeaveLine?.Invoke();
         }
 
         private bool CheckBuyItem()
@@ -217,7 +222,6 @@ namespace Store
                 return false;
             }
 
-            LeaveTip(_happiness);
             return true;
         }
 
@@ -226,8 +230,8 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            MoneyAdded?.Invoke(desiredItem.ItemObject.price);
-            ItemBought?.Invoke(desiredItem);
+            OnMoneyAdded?.Invoke(desiredItem.ItemObject.price);
+            OnItemBought?.Invoke(desiredItem);
         }
 
         /// <summary>
@@ -241,7 +245,7 @@ namespace Store
 
             if (chance < randomNum + _tipChanceModifier)
             {
-                MoneyAdded.Invoke(_tipValue);
+                OnMoneyAdded.Invoke(_tipValue);
             }
         }
 
@@ -261,7 +265,7 @@ namespace Store
         {
             if (NearExit())
             {
-                LeftStore?.Invoke();
+                OnLeftStore?.Invoke();
                 gameObject.SetActive(false);
                 _currentState = State.None;
             }

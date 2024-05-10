@@ -1,9 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Store
 {
-    public struct WaitingPosition
+    public class WaitingPosition
     {
         public Vector3 position;
         public bool occupied;
@@ -12,29 +13,30 @@ namespace Store
 
     public class WaitingLine
     {
+        private Transform startingPosition;
+        private int positionsAmount;
+        private float positionsDistance;
         private WaitingPosition[] queuePositions;
         
         public void Initialize(Transform startingPosition, int positionsAmount, float positionsDistance)
         {
-            StoreManager.EndCycle += Deinitialize;
-
-            queuePositions = new WaitingPosition[positionsAmount];
-
-            for (int i = 0; i < positionsAmount; i++)
-            {
-                queuePositions[i].position = startingPosition.position + (Vector3.up * positionsDistance) * i;
-            }
+            StoreManager.OnEndCycle += Deinitialize;
+            this.startingPosition = startingPosition;
+            this.positionsAmount = positionsAmount;
+            this.positionsDistance = positionsDistance;
+            
+            CleanUpQueue();
         }
 
         private void Deinitialize()
         {
-            for (int i = 0; i < queuePositions.Length; i++)
+            foreach (var position in queuePositions)
             {
-                queuePositions[i].occupied = false;
-                queuePositions[i].client = null;
+                position.occupied = false;
+                position.client = null;
             }
 
-            StoreManager.EndCycle -= Deinitialize;
+            StoreManager.OnEndCycle -= Deinitialize;
         }
 
         /// <summary>
@@ -44,14 +46,16 @@ namespace Store
         /// <returns> Returns true if it was able to queue the client. Returns false if there are no available positions. </returns>
         public bool AddToQueue(Client client)
         {
+            if(queuePositions == null) CleanUpQueue();
+            
             if (queuePositions.All(queuePosition => queuePosition.occupied)) return false;
 
-            for (int i = 0; i < queuePositions.Length; i++)
+            foreach (var position in queuePositions)
             {
-                if (queuePositions[i].occupied) continue;
-                queuePositions[i].client = client;
-                queuePositions[i].client.agent.SetDestination(queuePositions[i].position);
-                queuePositions[i].occupied = true;
+                if (position.occupied) continue;
+                position.client = client;
+                position.client.agent.SetDestination(position.position);
+                position.occupied = true;
                 break;
             }
 
@@ -61,7 +65,7 @@ namespace Store
 
         public void AdvanceQueue()
         {
-            if (queuePositions[0].client != null)
+            if (queuePositions[0]?.client)
             {
                 queuePositions[0].client.firstInLine = false;
             }
@@ -78,15 +82,28 @@ namespace Store
                 }
 
                 queuePositions[i].client = queuePositions[i + 1].client;
-                if (queuePositions[i].client != null)
+                if (queuePositions[i].client)
                 {
                     queuePositions[i].client.agent.SetDestination(queuePositions[i].position);
                 }
             }
 
-            if (queuePositions[0].client != null)
+            if (queuePositions[0].client)
             {
                 queuePositions[0].client.firstInLine = true;
+            }
+        }
+        
+        private void CleanUpQueue()
+        {
+            queuePositions = new WaitingPosition[positionsAmount];
+            
+            for (int i = 0; i < positionsAmount; i++)
+            {
+                queuePositions[i] = new WaitingPosition
+                {
+                    position = startingPosition.position + Vector3.up * (positionsDistance * i)
+                };
             }
         }
     }
