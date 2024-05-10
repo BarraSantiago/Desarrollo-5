@@ -635,6 +635,7 @@ MonoBehaviour:
   firstInLine: 0
   agent: {fileID: 8878269646090004208}
   cobrar: {fileID: 4569001148723587566}
+  body: {fileID: 8878269646090004214}
 --- !u!195 &8878269646090004208
 NavMeshAgent:
   m_ObjectHideFlags: 0

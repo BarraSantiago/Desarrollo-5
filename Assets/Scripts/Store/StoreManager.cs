@@ -20,6 +20,7 @@ namespace Store
 
         [Header("Client Setup")] 
         [SerializeField] private GameObject clientPrefab;
+        [SerializeField] private Button startCicle;
         [SerializeField] private Transform clientExit;
 
         [Header("Items Setup")] 
@@ -38,6 +39,7 @@ namespace Store
 
         [Header("Demo")] 
         [SerializeField] private Button goToDungeon;
+        [SerializeField] private Sprite[] sprites;
 
         #endregion
 
@@ -65,6 +67,7 @@ namespace Store
         private void Start()
         {
             goToDungeon.onClick.AddListener(ChangeScene);
+            startCicle.onClick.AddListener(StartDayCicle);
             
             Client.ItemDatabase = itemDatabase;
             Client.exit = clientExit;
@@ -80,6 +83,12 @@ namespace Store
             itemDisplayer.Initialize(itemDatabase, storeInventory);
 
             _waitingLine = new WaitingLine();
+        }
+
+        private void OnDestroy()
+        {
+            goToDungeon.onClick.RemoveAllListeners();
+            startCicle.onClick.RemoveAllListeners();
         }
 
         private void ChangeScene()
@@ -185,7 +194,8 @@ namespace Store
 
                 clients.Add(newClient.GetComponent<Client>());
 
-                clients[i].Initialize(i, ChooseItem());
+                int randomSprite = Random.Range(0, sprites.Length);
+                clients[i].Initialize(i, ChooseItem(), sprites[randomSprite]);
                 _clientsSent++;
 
                 yield return new WaitForSeconds(_clientTimer);

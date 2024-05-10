@@ -1,6 +1,7 @@
 ﻿using InventorySystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Game
@@ -10,8 +11,11 @@ namespace Game
         [SerializeField] private Player _player;
         [SerializeField] private GameObject groundItemPrefab;
         [SerializeField] private ItemDatabaseObject itemDatabase;
-        [SerializeField] private Button goToStore;
-
+        
+        [Header("Demo")]
+        [SerializeField] private Button goToStoreButton;
+        [SerializeField] private Button spawnItemButton;
+        
         private Inventory _inventory;
 
         private void Awake()
@@ -22,7 +26,8 @@ namespace Game
         private void Initialize()
         {
             LoadInventory();
-            goToStore.onClick.AddListener(ChangeScene);
+            goToStoreButton.onClick.AddListener(ChangeScene);
+            spawnItemButton.onClick.AddListener(SpawnItem);
         }
 
         private void ChangeScene()

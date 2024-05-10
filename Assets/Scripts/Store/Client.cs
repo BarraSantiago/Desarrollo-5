@@ -2,6 +2,7 @@ using System;
 using InventorySystem;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -48,6 +49,7 @@ namespace Store
         
         [SerializeField] public NavMeshAgent agent;
         [SerializeField] private Button cobrar; // TODO update this
+        [SerializeField] private SpriteRenderer body;
 
         #endregion
 
@@ -89,10 +91,11 @@ namespace Store
             ClientBehaviour();
         }
         
-        public void Initialize(int id, DisplayItem item)
+        public void Initialize(int id, DisplayItem item, Sprite sprite)
         {
             this.id = id;
             desiredItem = item;
+            body.sprite = sprite;
             EnterStore();
         }
 
@@ -216,8 +219,7 @@ namespace Store
                 _currentState = State.Angry;
                 return false;
             }
-
-            LeaveTip(_happiness);
+            
             return true;
         }
 

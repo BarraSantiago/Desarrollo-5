@@ -1509,19 +1509,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 209248503}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1471474478}
-        m_TargetAssemblyTypeName: Store.StoreManager, Assembly-CSharp
-        m_MethodName: StartDayCicle
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &209248503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5450,6 +5438,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clientPrefab: {fileID: 8878269646090004212, guid: 909f82e97b92eed449376b7ac2637efc, type: 3}
+  startCicle: {fileID: 209248502}
   clientExit: {fileID: 264479065}
   storeInventory: {fileID: 11400000, guid: a97093dcc7679ef418cdc98008560f31, type: 2}
   itemDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
@@ -5460,6 +5449,11 @@ MonoBehaviour:
   uiManager: {fileID: 26083492}
   player: {fileID: 1787675932}
   goToDungeon: {fileID: 1748887321}
+  sprites:
+  - {fileID: 21300000, guid: f66464aba737e3141b3cc356f46edd8a, type: 3}
+  - {fileID: 21300000, guid: 8ace47bb603d66244bbcf3011d841a5a, type: 3}
+  - {fileID: 21300000, guid: d21b692b43713da468d19e92c0a0c349, type: 3}
+  - {fileID: 21300000, guid: e7e9e1f82a052434d944142eb119c083, type: 3}
 --- !u!4 &1471474479
 Transform:
   m_ObjectHideFlags: 0
@@ -5953,19 +5947,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1748887322}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1471474478}
-        m_TargetAssemblyTypeName: Store.StoreManager, Assembly-CSharp
-        m_MethodName: StartDayCicle
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1748887322
 MonoBehaviour:
   m_ObjectHideFlags: 0
