@@ -13,6 +13,7 @@ namespace Store
         public GameObject Object;
         public ItemObject ItemObject;
         public int id;
+        public int amount;
 
         public void Initialize(int price)
         {

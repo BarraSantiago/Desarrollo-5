@@ -17,13 +17,13 @@ namespace InventorySystem
         [SerializeField] private GameObject itemDisplayPrefab;
         private InventoryObject _previousInventory;
 
-        public void OnEnable()
+        public void Awake()
         {
             CreateSlots();
-            for (int i = 0; i < inventory.GetSlots.Length; i++)
+            foreach (var slot in inventory.GetSlots)
             {
-                inventory.GetSlots[i].parent = this;
-                inventory.GetSlots[i].onAfterUpdated += OnSlotUpdate;
+                slot.parent = this;
+                slot.onAfterUpdated += OnSlotUpdate;
             }
 
             AddEvent(gameObject, EventTriggerType.PointerEnter, delegate { OnEnterInterface(gameObject); });

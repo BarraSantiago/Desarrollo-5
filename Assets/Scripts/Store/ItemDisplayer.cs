@@ -43,11 +43,12 @@ namespace Store
             ItemDisplay.OnItemUpdate -= UpdateSlot;
         }
 
-        private void RemoveItem(int id)
+        private void RemoveItem(int id, int amount)
         {
-            Items[id] = null;
-            storeInventory.GetSlots[id].RemoveItem();
-            texts[id].text = string.Empty;
+            if (Items[id] == null) return;
+
+            Items[id].amount -= amount;
+            if (Items[id].amount <= 0) storeInventory.GetSlots[id].RemoveItem();
         }
 
         private void OnAddItem(int slotId)
@@ -87,7 +88,8 @@ namespace Store
                     objPostition[slotId]),
                 ItemObject = storeInventory.GetSlots[slotId].GetItemObject(),
                 id = slotId,
-                showPrice = texts[slotId]
+                showPrice = texts[slotId],
+                amount = storeInventory.GetSlots[slotId].amount
             };
 
             Items[slotId].Initialize(Items[slotId].ItemObject.price);
@@ -121,7 +123,7 @@ namespace Store
                     }
                     else if (Items[i].ItemObject != storeInventory.GetSlots[i].GetItemObject())
                     {
-                        RemoveItem(i);
+                        RemoveItem(i, Items[i].amount);
                         OnAddItem(i);
                     }
                 }

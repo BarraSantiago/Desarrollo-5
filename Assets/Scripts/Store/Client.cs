@@ -42,7 +42,7 @@ namespace Store
         public static Action OnLeaveLine;
         public static Action<DisplayItem> OnItemBought;
         public static Action<int> OnMoneyAdded; //TODO change name
-        public static Action<int> ItemGrabbed;
+        public static Action<int, int> ItemGrabbed;
         public static Action OnLeftStore;
 
         /// <summary>
@@ -69,8 +69,9 @@ namespace Store
         /// If we want to modify the chance to leave a tip
         /// </summary>
         private int _tipChanceModifier = 0;
-        private bool cobrado = false;
         private int _tipValue;
+        private int _itemAmount;
+        private bool cobrado = false;
         private readonly float minimumDistance = 0.9f;
         private bool _waitingForPlayer = false;
         private State _currentState;
@@ -97,6 +98,7 @@ namespace Store
             this.id = id;
             desiredItem = item;
             spriteRenderer.sprite = clientSprite;
+            _itemAmount = Random.Range(1, desiredItem.amount + 1);
             
             EnterStore();
         }
@@ -115,6 +117,7 @@ namespace Store
                     break;
                 case State.Idle:
                     // in this state, the client should wonder around until an item has been choosen or if there are no available items
+                    _currentState = State.ChoosingItem;
                     break;
                 case State.ChoosingItem:
                     // in this state, the client should go to the item and decide if they want to buy it
@@ -165,7 +168,7 @@ namespace Store
 
         private void EnterStore()
         {
-            _currentState = State.ChoosingItem;
+            _currentState = State.Idle;
         }
 
         private void GrabItem()
@@ -175,7 +178,7 @@ namespace Store
             
             if (!NearItem()) return;
             desiredItem.Object.transform.SetParent(this.transform);
-            ItemGrabbed?.Invoke(desiredItem.id);
+            ItemGrabbed?.Invoke(desiredItem.id, _itemAmount);
             _currentState = State.WaitingInline;
         }
         
@@ -230,7 +233,8 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            OnMoneyAdded?.Invoke(desiredItem.ItemObject.price);
+            int finalPrice = desiredItem.ItemObject.price * desiredItem.amount;
+            OnMoneyAdded?.Invoke(finalPrice);
             OnItemBought?.Invoke(desiredItem);
         }
 

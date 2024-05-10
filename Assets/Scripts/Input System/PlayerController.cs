@@ -1,38 +1,58 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+namespace Input_System
 {
-    private PlayerInput input;
-    [SerializeField] private float speed = 50f;
-    private Vector2 move;
-    private Rigidbody rb;
-
-    private void Awake()
+    public class PlayerController : MonoBehaviour
     {
-        input = new PlayerInput();
-        rb = GetComponent<Rigidbody>();
-    }
+        [SerializeField] private float speed = 50f;
+        [SerializeField] private GameObject inventoryUI;
+        private PlayerInput input;
+        private Vector2 move;
+        private Rigidbody rb;
+    
 
-    private void Update()
-    {
-        MovePlayer();
-    }
+        private void Awake()
+        {
+            input = new PlayerInput();
+            rb = GetComponent<Rigidbody>();
+        }
 
-    private void MovePlayer()
-    {
-        move = input.Gameplay.Movement.ReadValue<Vector2>();
+        private void Update()
+        {
+            MovePlayer();
+        }
 
-        Vector3 movement = new Vector3(move.x, 0, move.y);
-        rb.MovePosition(rb.position + movement * speed * Time.deltaTime);
-    }
+        private void MovePlayer()
+        {
+            Vector3 movement = new Vector3(move.x, 0, move.y);
+            rb?.MovePosition(rb.position + movement * (speed * Time.deltaTime));
+        }
 
-    private void OnEnable()
-    {
-        input.Enable();
-    }
+        public void OnMovement(InputValue context)
+        {
+            move = context.Get<Vector2>();
+        }
 
-    private void OnDisable()
-    {
-        input.Disable();
+        public void OnInventoryOpen(InputValue context)
+        {
+            inventoryUI.SetActive(!inventoryUI.activeSelf);
+        }
+
+        public void OnPause(InputValue context)
+        {
+            Application.Quit();
+        }
+    
+        private void OnEnable()
+        {
+            input.Enable();
+        }
+
+        private void OnDisable()
+        {
+            input.Disable();
+        }
     }
 }
