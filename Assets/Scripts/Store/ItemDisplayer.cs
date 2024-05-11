@@ -49,6 +49,7 @@ namespace Store
 
             Items[id].amount -= amount;
             if (Items[id].amount <= 0) storeInventory.GetSlots[id].RemoveItem();
+            UpdateInventory();
         }
 
         private void OnAddItem(int slotId)

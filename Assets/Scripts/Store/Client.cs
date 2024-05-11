@@ -27,9 +27,6 @@ namespace Store
         
         [SerializeField] public NavMeshAgent agent;
         [SerializeField] private Button cobrar; // TODO update this
-        
-        [Header("Demo")]
-        [SerializeField] private SpriteRenderer spriteRenderer; 
 
         #endregion
 
@@ -93,11 +90,10 @@ namespace Store
             ClientBehaviour();
         }
         
-        public void Initialize(int id, DisplayItem item, Sprite clientSprite)
+        public void Initialize(int id, DisplayItem item)
         {
             this.id = id;
             desiredItem = item;
-            spriteRenderer.sprite = clientSprite;
             _itemAmount = Random.Range(1, desiredItem.amount + 1);
             
             EnterStore();
@@ -106,6 +102,7 @@ namespace Store
         public void Deinitialize()
         {
             desiredItem.BeingViewed = false;
+            _itemAmount = 0;
             desiredItem = null;
         }
 
@@ -179,6 +176,7 @@ namespace Store
             if (!NearItem()) return;
             desiredItem.Object.transform.SetParent(this.transform);
             ItemGrabbed?.Invoke(desiredItem.id, _itemAmount);
+            desiredItem.BeingViewed = false;
             _currentState = State.WaitingInline;
         }
         
@@ -267,12 +265,11 @@ namespace Store
 
         private void CheckLeftStore()
         {
-            if (NearExit())
-            {
-                OnLeftStore?.Invoke();
-                gameObject.SetActive(false);
-                _currentState = State.None;
-            }
+            if (!NearExit()) return;
+            
+            OnLeftStore?.Invoke();
+            gameObject.SetActive(false);
+            _currentState = State.None;
         }
         
         private bool NearItem()
@@ -282,7 +279,7 @@ namespace Store
 
         private bool NearExit()
         {
-            return CheckDistance(exit.position, minimumDistance);
+            return CheckDistance(exit.position, minimumDistance + 1f);
         }
 
         private bool CheckDistance(Vector3 pos, float distanceDif)

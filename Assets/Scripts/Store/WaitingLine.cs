@@ -13,9 +13,9 @@ namespace Store
 
     public class WaitingLine
     {
-        private Transform startingPosition;
         private int positionsAmount;
         private float positionsDistance;
+        private Transform startingPosition;
         private WaitingPosition[] queuePositions;
         
         public void Initialize(Transform startingPosition, int positionsAmount, float positionsDistance)
@@ -102,7 +102,7 @@ namespace Store
             {
                 queuePositions[i] = new WaitingPosition
                 {
-                    position = startingPosition.position + Vector3.up * (positionsDistance * i)
+                    position = startingPosition.position + Vector3.forward * (positionsDistance * i)
                 };
             }
         }

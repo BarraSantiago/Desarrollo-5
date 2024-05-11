@@ -8,6 +8,7 @@ namespace Input_System
     {
         [SerializeField] private float speed = 50f;
         [SerializeField] private GameObject inventoryUI;
+        [SerializeField] private CharacterController characterController;
         private PlayerInput input;
         private Vector2 move;
         private Rigidbody rb;
@@ -27,7 +28,7 @@ namespace Input_System
         private void MovePlayer()
         {
             Vector3 movement = new Vector3(move.x, 0, move.y);
-            rb?.MovePosition(rb.position + movement * (speed * Time.deltaTime));
+            characterController.Move(movement * (speed * Time.deltaTime));
         }
 
         public void OnMovement(InputValue context)

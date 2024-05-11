@@ -38,13 +38,13 @@ namespace Store
 
         [Header("Demo")] 
         [SerializeField] private Button goToDungeon;
-        [SerializeField] private Sprite[] clientSprites;
+        [SerializeField] private Button startCicle;
 
         #endregion
 
         #region Private Variables
 
-        private List<Client> _clients = new List<Client>();
+        [SerializeField]private List<Client> _clients = new List<Client>();
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
@@ -65,6 +65,7 @@ namespace Store
         {
             goToDungeon.onClick.AddListener(ChangeScene);
             goToDungeon.onClick.AddListener(EndDayCycle);
+            startCicle.onClick.AddListener(StartDayCicle);
             
             Client.ItemDatabase = itemDatabase;
             Client.exit = clientExit;
@@ -85,6 +86,8 @@ namespace Store
 
         public void StartDayCicle()
         {
+            startCicle.onClick.RemoveListener(StartDayCicle);
+
             float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
 
@@ -126,6 +129,7 @@ namespace Store
 
             _clientsSent = 0;
             _clientsLeft = 0;
+            startCicle.onClick.AddListener(StartDayCicle);
         }
         
         private void ChangeScene()
@@ -197,8 +201,7 @@ namespace Store
 
                 _clients.Add(newClient.GetComponent<Client>());
 
-                int rand = Random.Range(0, clientSprites.Length);
-                _clients[i].Initialize(i, ChooseItem(), clientSprites[rand]);
+                _clients[i].Initialize(i, ChooseItem());
                 _clientsSent++;
 
                 yield return new WaitForSeconds(_clientTimer);
