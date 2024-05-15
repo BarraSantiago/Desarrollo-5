@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,11 +8,10 @@ namespace Input_System
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private float speed = 50f;
-        [SerializeField] private GameObject inventoryUI;
+        //[SerializeField] private GameObject inventoryUI;
         private PlayerInput input;
         private Vector2 move;
         private Rigidbody rb;
-    
 
         private void Awake()
         {
@@ -27,7 +27,7 @@ namespace Input_System
         private void MovePlayer()
         {
             Vector3 movement = new Vector3(move.x, 0, move.y);
-            rb?.MovePosition(rb.position + movement * (speed * Time.deltaTime));
+            rb.MovePosition(rb.position + movement * (speed * Time.deltaTime));
         }
 
         public void OnMovement(InputValue context)
@@ -37,7 +37,7 @@ namespace Input_System
 
         public void OnInventoryOpen(InputValue context)
         {
-            inventoryUI.SetActive(!inventoryUI.activeSelf);
+            //inventoryUI.SetActive(!inventoryUI.activeSelf);
         }
 
         public void OnPause(InputValue context)
