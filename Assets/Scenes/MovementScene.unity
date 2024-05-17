@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 421544002}
   - component: {fileID: 421544001}
   - component: {fileID: 421544000}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -235,7 +235,8 @@ GameObject:
   - component: {fileID: 457610259}
   - component: {fileID: 457610257}
   - component: {fileID: 457610258}
-  m_Layer: 0
+  - component: {fileID: 457610260}
+  m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -380,6 +381,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &457610260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 457610252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 782027a906ec0c248b718d3271a18639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 50
 --- !u!1 &806907401
 GameObject:
   m_ObjectHideFlags: 0
@@ -717,6 +731,7 @@ GameObject:
   - component: {fileID: 1164608143}
   - component: {fileID: 1164608147}
   - component: {fileID: 1164608148}
+  - component: {fileID: 1164608150}
   - component: {fileID: 1164608149}
   m_Layer: 3
   m_Name: Player
@@ -866,6 +881,23 @@ MonoBehaviour:
   m_DefaultActionMap: Gameplay
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1164608150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164608142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c6a26e5f051ae34f81d09f655d5bf1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 30
+  attackDamage: 10
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &1635073108
 GameObject:
   m_ObjectHideFlags: 0
