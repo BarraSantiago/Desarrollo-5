@@ -13,6 +13,10 @@ namespace Input_System
         private Vector2 move;
         private Rigidbody rb;
 
+        public float dashSpeed;
+        public float dashTime;
+        private Vector3 dashDirection;
+
         private void Awake()
         {
             input = new PlayerInput();
@@ -22,6 +26,13 @@ namespace Input_System
         private void Update()
         {
             MovePlayer();
+
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                // Obtener dirección del movimiento
+                
+                StartCoroutine(Dash());
+            }
         }
 
         private void MovePlayer()
@@ -44,7 +55,7 @@ namespace Input_System
         {
             Application.Quit();
         }
-    
+
         private void OnEnable()
         {
             input.Enable();
@@ -53,6 +64,19 @@ namespace Input_System
         private void OnDisable()
         {
             input.Disable();
+        }
+
+        IEnumerator Dash()
+        {
+            dashDirection = new Vector3(move.x, 0, move.y);
+            float startTime = Time.time;
+
+            while (Time.time < startTime + dashTime)
+            {
+                rb.MovePosition(rb.position + dashDirection.normalized * dashSpeed * Time.deltaTime);
+
+                yield return null;
+            }
         }
     }
 }
