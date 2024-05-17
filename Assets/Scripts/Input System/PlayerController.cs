@@ -26,7 +26,7 @@ namespace Input_System
         private void Update()
         {
             MovePlayer();
-
+            RotatePlayer();
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 // Obtener dirección del movimiento
@@ -39,6 +39,16 @@ namespace Input_System
         {
             Vector3 movement = new Vector3(move.x, 0, move.y);
             rb.MovePosition(rb.position + movement * (speed * Time.deltaTime));
+        }
+
+        private void RotatePlayer()
+        {
+            if (move != Vector2.zero)
+            {
+                Vector3 direction = new Vector3(move.x, 0, move.y);
+                Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+                rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, speed * Time.deltaTime);
+            }
         }
 
         public void OnMovement(InputValue context)
