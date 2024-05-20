@@ -1,3 +1,4 @@
+using Game;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class Health : MonoBehaviour
 {
     public int maxHealth = 50; // Salud máxima del enemigo
     private int currentHealth;
+    public GameManager gameManager;
 
     void Start()
     {
@@ -24,6 +26,9 @@ public class Health : MonoBehaviour
 
     void Die()
     {
-        Destroy(gameObject); // Destruye el objeto enemigo
+        Destroy(gameObject);
+
+        //Intancia el objeto
+        gameManager.SpawnItem();
     }
 }
