@@ -4,28 +4,31 @@ using UnityEngine.AI;
 
 public class EnemyIAPatrol : MonoBehaviour
 {
-    GameObject player;
+    //Layer
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask playerLayer;
 
-    NavMeshAgent agent;
-
-    [SerializeField] private LayerMask groundLayer, playerLayer;
-
-    BoxCollider boxCollider;
+    private GameObject player;
+    private NavMeshAgent agent;
+    private EnemyBehaviour enemyBehavior;
 
     //Patrol
-    Vector3 destPoint;
-    bool walkPointSet;
     [SerializeField] float range;
+    private Vector3 destPoint;
+    private bool walkPointSet;
+
 
     //State Change
-    [SerializeField] private float sightRange, attackRange;
-    bool playerInSight, playerInAttackRange;
+    [SerializeField] private float sightRange;
+    [SerializeField] private float attackRange;
+    private bool playerInSight;
+    private bool playerInAttackRange;
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.Find("Player");
-        boxCollider = player.GetComponentInChildren<BoxCollider>();
+        enemyBehavior = GetComponent<EnemyBehaviour>();
     }
 
     private void Update()
@@ -46,6 +49,18 @@ public class EnemyIAPatrol : MonoBehaviour
     void Attack()
     {
         agent.SetDestination(transform.position);
+
+        if (enemyBehavior != null)
+        {
+            if (enemyBehavior.isRanged)
+            {
+                enemyBehavior.DoRangedAction();
+            }
+            else
+            {
+                enemyBehavior.DoMeleeAction();
+            }
+        }
     }
 
     void Patrol()
@@ -71,23 +86,15 @@ public class EnemyIAPatrol : MonoBehaviour
             walkPointSet = true;
     }
 
-    //void EnableAttack()
-    //{
-    //    boxCollider.enabled = true;
-    //}
-
-    //void DisableAttack()
-    //{
-    //    boxCollider.enabled = false;
-    //}
-
-    private void OnTriggerEnter(Collider other)
+    // Visualización de rangos en la vista de escena
+    private void OnDrawGizmosSelected()
     {
-        var player = other.GetComponent<PlayerController>();
+        // Dibujar el rango de visión
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, sightRange);
 
-        if(player != null)
-        {
-            print("HIT!");
-        }
+        // Dibujar el rango de ataque
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }

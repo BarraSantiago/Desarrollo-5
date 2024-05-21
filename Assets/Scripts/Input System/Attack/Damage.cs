@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Damage : MonoBehaviour
 {
-    public float attackRange = 2f; // Rango de ataque
-    public int attackDamage = 10; // Daño de ataque
-    public LayerMask enemyLayer; // Capa para identificar enemigos
+    public float attackRange = 2f;
+    public int attackDamage = 10;
+    public LayerMask enemyLayer;
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) // Detecta clic izquierdo
+        if (Input.GetMouseButtonDown(0))
         {
             Attack();
         }
