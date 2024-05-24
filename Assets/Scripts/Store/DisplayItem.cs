@@ -1,5 +1,4 @@
-﻿using System;
-using InventorySystem;
+﻿using InventorySystem;
 using TMPro;
 using UnityEngine;
 

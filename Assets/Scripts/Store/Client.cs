@@ -109,7 +109,7 @@ namespace Store
 
         public void Deinitialize()
         {
-            desiredItem.BeingViewed = false;
+            if(desiredItem != null) desiredItem.BeingViewed = false;
             _itemAmount = 0;
             desiredItem = null;
         }

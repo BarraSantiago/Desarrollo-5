@@ -49,7 +49,7 @@ namespace Input_System
 
         public void OnAttack(InputValue context)
         {
-            dmg.Attack();
+            dmg?.Attack();
         }
         
         public void OnDash(InputValue context)
