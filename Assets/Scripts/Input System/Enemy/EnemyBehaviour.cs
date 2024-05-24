@@ -4,10 +4,14 @@ public class EnemyBehaviour : MonoBehaviour
 {
     public enum EnemyType { Melee, Ranged };
 
-    public EnemyType enemyType;
+    [SerializeField] private EnemyType enemyType;
+
     [SerializeField] private float maxHealth = 50;
     private float currentHealth;
-    public float damage;
+
+    [SerializeField] private float damage;
+
+    [SerializeField] private PlayerStats playerStats;
 
     private void Start()
     {
@@ -38,7 +42,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void DoMeleeAction()
     {
-        Debug.Log("Ataque Melee");
+        playerStats.TakeDamage(damage);
     }
 
     public void TakeDamage(float damage)

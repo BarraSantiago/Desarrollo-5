@@ -17,7 +17,7 @@ namespace Input_System
         public float dashTime;
         private Vector3 dashDirection;
 
-        PlayerAttack dmg;
+        [SerializeField] private PlayerAttack dmg;
 
         private void Awake()
         {
