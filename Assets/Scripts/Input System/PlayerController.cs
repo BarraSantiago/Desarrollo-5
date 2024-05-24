@@ -17,6 +17,8 @@ namespace Input_System
         public float dashTime;
         private Vector3 dashDirection;
 
+        PlayerAttack dmg;
+
         private void Awake()
         {
             input = new PlayerInput();
@@ -29,9 +31,11 @@ namespace Input_System
             RotatePlayer();
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
-                // Obtener dirección del movimiento
-                
                 StartCoroutine(Dash());
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                dmg.Attack();
             }
         }
 
