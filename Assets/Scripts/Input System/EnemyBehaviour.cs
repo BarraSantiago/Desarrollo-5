@@ -2,30 +2,59 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    public bool isRanged;
+    public enum EnemyType { Melee, Ranged };
+
+    public EnemyType enemyType;
+    [SerializeField] private float maxHealth = 50;
+    private float currentHealth;
+    public float damage;
 
     private void Start()
     {
-        // Determinar el tipo de enemigo basado en la etiqueta
-        if (CompareTag("Ranged"))
+        currentHealth = maxHealth;
+    }
+
+    public EnemyType PerformAction()
+    {
+        switch (enemyType)
         {
-            isRanged = true;
+            case EnemyType.Melee:
+                DoMeleeAction();
+                break;
+            case EnemyType.Ranged:
+                DoRangedAction();
+                break;
+            default:
+                break;
         }
-        else if (CompareTag("Melee"))
+
+        return enemyType;
+    }
+
+    private void DoRangedAction()
+    {
+        Debug.Log("Ataque Range");
+    }
+
+    private void DoMeleeAction()
+    {
+        Debug.Log("Ataque Melee");
+    }
+
+    public void TakeDamage(float damage)
+    {
+        Debug.Log("Enemy health " + currentHealth);
+        currentHealth -= damage;
+        if (currentHealth <= 0)
         {
-            isRanged = false;
+            currentHealth = 0;
+            Die();
         }
     }
 
-    public void DoRangedAction()
+    private void Die()
     {
-        Debug.Log("Este es un enemigo a distancia. Realizando acción a distancia.");
-        // Aquí puedes agregar la lógica específica para enemigos a distancia
-    }
-
-    public void DoMeleeAction()
-    {
-        Debug.Log("Este es un enemigo cuerpo a cuerpo. Realizando acción cuerpo a cuerpo.");
-        // Aquí puedes agregar la lógica específica para enemigos cuerpo a cuerpo
+        Debug.Log($"{enemyType} enemy died.");
+        Destroy(gameObject);
     }
 }

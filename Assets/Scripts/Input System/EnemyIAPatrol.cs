@@ -52,14 +52,7 @@ public class EnemyIAPatrol : MonoBehaviour
 
         if (enemyBehavior != null)
         {
-            if (enemyBehavior.isRanged)
-            {
-                enemyBehavior.DoRangedAction();
-            }
-            else
-            {
-                enemyBehavior.DoMeleeAction();
-            }
+            enemyBehavior.PerformAction();
         }
     }
 
@@ -86,14 +79,11 @@ public class EnemyIAPatrol : MonoBehaviour
             walkPointSet = true;
     }
 
-    // Visualización de rangos en la vista de escena
     private void OnDrawGizmosSelected()
     {
-        // Dibujar el rango de visión
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, sightRange);
 
-        // Dibujar el rango de ataque
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
