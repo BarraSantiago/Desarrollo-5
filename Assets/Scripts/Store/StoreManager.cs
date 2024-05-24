@@ -196,10 +196,10 @@ namespace Store
             // TODO improve this with object pooling
             for (int i = 0; i < _dailyClients; i++)
             {
-                GameObject newClient = Instantiate(clientPrefab);
-                newClient.transform.position = clientExit.position;
+                //GameObject newClient = Instantiate(clientPrefab);
+                //newClient.transform.position = clientExit.position;
 
-                _clients.Add(newClient.GetComponent<Client>());
+                //_clients.Add(newClient.GetComponent<Client>());
 
                 _clients[i].Initialize(i, ChooseItem());
                 _clientsSent++;

@@ -22,9 +22,9 @@ namespace Store
             Happy,
             Angry
         }
-        
+
         #region Serialized Variables
-        
+
         [SerializeField] public NavMeshAgent agent;
         [SerializeField] private Button cobrar; // TODO update this
 
@@ -46,6 +46,7 @@ namespace Store
         /// Bool that indicates if the client is in the shop
         /// </summary>
         public bool inShop;
+
         public bool firstInLine;
 
         #endregion
@@ -66,14 +67,16 @@ namespace Store
         /// If we want to modify the chance to leave a tip
         /// </summary>
         private int _tipChanceModifier = 0;
+
         private int _tipValue;
         private int _itemAmount;
         private bool cobrado = false;
-        private readonly float minimumDistance = 0.9f;
+        [SerializeField] private float _minimumDistance = 1.6f;
         private bool _waitingForPlayer = false;
         private State _currentState;
         private State _previousState;
         private DisplayItem desiredItem;
+        private GameObject _itemInstance;
 
         #endregion
 
@@ -86,16 +89,21 @@ namespace Store
 
         private void Update()
         {
-            if(_currentState == State.None) return;
+            if (_currentState == State.None) return;
             ClientBehaviour();
+
+            if (!(agent.velocity.magnitude > 0.1f)) return;
+
+            Quaternion toRotation = Quaternion.LookRotation(agent.velocity, Vector3.up);
+            transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, Time.deltaTime * 10f);
         }
-        
+
         public void Initialize(int id, DisplayItem item)
         {
             this.id = id;
             desiredItem = item;
             _itemAmount = Random.Range(1, desiredItem.amount + 1);
-            
+
             EnterStore();
         }
 
@@ -137,13 +145,14 @@ namespace Store
                         _waitingForPlayer = false;
                         _currentState = State.Leaving;
                     }
+
                     break;
 
                 case State.Leaving:
                     PayItem();
                     LeaveStore();
                     break;
-                
+
                 case State.LeftStore:
                     CheckLeftStore();
                     break;
@@ -168,18 +177,21 @@ namespace Store
             _currentState = State.Idle;
         }
 
+        /// <summary>
+        /// The client goes to the item and grabs it
+        /// </summary>
         private void GrabItem()
         {
             if (!CheckBuyItem()) return;
             agent.SetDestination(desiredItem.Object.transform.position);
-            
+
             if (!NearItem()) return;
-            desiredItem.Object.transform.SetParent(this.transform);
+            desiredItem.Object.transform.SetParent(gameObject.transform);
             ItemGrabbed?.Invoke(desiredItem.id, _itemAmount);
             desiredItem.BeingViewed = false;
             _currentState = State.WaitingInline;
         }
-        
+
         /// <summary>
         /// Way for the player to charge the client
         /// </summary>
@@ -207,8 +219,8 @@ namespace Store
 
         private bool CheckBuyItem()
         {
-            if(desiredItem == null) return false;
-            
+            if (desiredItem == null) return false;
+
             ListPrice itemList = ItemDatabase.ItemObjects[desiredItem.ItemObject.data.id].data.listPrice;
             float difference = desiredItem.ItemObject.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
@@ -217,7 +229,7 @@ namespace Store
             {
                 // Client buys item and leaves the store
                 if (!(percentageDifference > _willingnessToPay)) return true;
-                
+
                 // If the item is too expensive, the client leaves angry
                 _currentState = State.Angry;
                 return false;
@@ -231,7 +243,7 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            int finalPrice = desiredItem.ItemObject.price * desiredItem.amount;
+            int finalPrice = desiredItem.ItemObject.price * _itemAmount;
             OnMoneyAdded?.Invoke(finalPrice);
             OnItemBought?.Invoke(desiredItem);
         }
@@ -266,20 +278,20 @@ namespace Store
         private void CheckLeftStore()
         {
             if (!NearExit()) return;
-            
+
             OnLeftStore?.Invoke();
             gameObject.SetActive(false);
             _currentState = State.None;
         }
-        
+
         private bool NearItem()
         {
-            return CheckDistance(desiredItem.Object.transform.position, minimumDistance);
+            return CheckDistance(desiredItem.Object.transform.position, _minimumDistance);
         }
 
         private bool NearExit()
         {
-            return CheckDistance(exit.position, minimumDistance + 1f);
+            return CheckDistance(exit.position, _minimumDistance + 1f);
         }
 
         private bool CheckDistance(Vector3 pos, float distanceDif)
