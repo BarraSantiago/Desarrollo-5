@@ -1,5 +1,5 @@
-using System;
 using System.Collections;
+using InventorySystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,16 +8,17 @@ namespace Input_System
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private float speed = 50f;
-        //[SerializeField] private GameObject inventoryUI;
-        private PlayerInput input;
-        private Vector2 move;
-        private Rigidbody rb;
+        [SerializeField] private GameObject inventoryUI;
+        [SerializeField] private InventoryObject playerInventory;
+        [SerializeField] private PlayerAttack dmg;
 
         public float dashSpeed;
         public float dashTime;
-        private Vector3 dashDirection;
 
-        [SerializeField] private PlayerAttack dmg;
+        private PlayerInput input;
+        private Vector2 move;
+        private Rigidbody rb;
+        private Vector3 dashDirection;
 
         private void Awake()
         {
@@ -29,14 +30,6 @@ namespace Input_System
         {
             MovePlayer();
             RotatePlayer();
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                StartCoroutine(Dash());
-            }
-            if (Input.GetMouseButtonDown(0))
-            {
-                dmg.Attack();
-            }
         }
 
         private void MovePlayer()
@@ -47,12 +40,21 @@ namespace Input_System
 
         private void RotatePlayer()
         {
-            if (move != Vector2.zero)
-            {
-                Vector3 direction = new Vector3(move.x, 0, move.y);
-                Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
-                rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, speed * Time.deltaTime);
-            }
+            if (move == Vector2.zero) return;
+            
+            Vector3 direction = new Vector3(move.x, 0, move.y);
+            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+            rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, speed * Time.deltaTime);
+        }
+
+        public void OnAttack(InputValue context)
+        {
+            dmg.Attack();
+        }
+        
+        public void OnDash(InputValue context)
+        {
+            StartCoroutine(Dash());
         }
 
         public void OnMovement(InputValue context)
@@ -62,7 +64,11 @@ namespace Input_System
 
         public void OnInventoryOpen(InputValue context)
         {
-            //inventoryUI.SetActive(!inventoryUI.activeSelf);
+            inventoryUI.SetActive(!inventoryUI.activeSelf);
+            if (inventoryUI.activeSelf)
+            {
+                playerInventory.UpdateInventory();
+            }
         }
 
         public void OnPause(InputValue context)
@@ -80,14 +86,14 @@ namespace Input_System
             input.Disable();
         }
 
-        IEnumerator Dash()
+        private IEnumerator Dash()
         {
             dashDirection = new Vector3(move.x, 0, move.y);
             float startTime = Time.time;
 
             while (Time.time < startTime + dashTime)
             {
-                rb.MovePosition(rb.position + dashDirection.normalized * dashSpeed * Time.deltaTime);
+                rb.MovePosition(rb.position + dashDirection.normalized * (dashSpeed * Time.deltaTime));
 
                 yield return null;
             }

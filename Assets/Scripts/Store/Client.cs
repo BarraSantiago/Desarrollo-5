@@ -298,12 +298,7 @@ namespace Store
         {
             float distance = Vector3.Distance(transform.position, pos);
 
-            if (distance < distanceDif)
-            {
-                return true;
-            }
-
-            return false;
+            return distance < distanceDif;
         }
     }
 }

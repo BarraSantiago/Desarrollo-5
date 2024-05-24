@@ -22,7 +22,7 @@ namespace Game
         private void Initialize()
         {
             LoadInventory();
-            goToStore.onClick.AddListener(ChangeScene);
+            goToStore?.onClick.AddListener(ChangeScene);
         }
 
         private void ChangeScene()

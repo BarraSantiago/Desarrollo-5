@@ -27,28 +27,15 @@ namespace InventorySystem
         public void OnTriggerEnter(Collider other)
         {
             var item = other.GetComponent<GroundItem>();
-            if (item)
+            
+            if (!item) return;
+
+            if (inventory.AddItem(new Item(item.item), item.amount))
             {
-                if (inventory.AddItem(new Item(item.item), item.amount))
-                    Destroy(other.gameObject);
+                Destroy(other.gameObject);
+                inventory.UpdateInventory();
             }
         }
-
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                inventory.Save();
-                equipment?.Save();
-            }
-            else if (Input.GetKeyDown(KeyCode.KeypadEnter))
-            {
-                inventory.Load();
-                equipment?.Load();
-            }
-        }
-
 
         public void OnApplicationQuit()
         {

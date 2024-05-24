@@ -1,32 +1,34 @@
+using EnemyUnits;
 using UnityEngine;
 
-public class PlayerAttack : MonoBehaviour
+namespace Input_System
 {
-    [SerializeField] private float attackRange = 2f;
-    [SerializeField] private int attackDamage = 10;
-    [SerializeField] private LayerMask enemyLayer;
-
-    public void Attack()
+    public class PlayerAttack : MonoBehaviour
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
+        [SerializeField] private float attackRange = 2f;
+        [SerializeField] private int attackDamage = 10;
+        [SerializeField] private LayerMask enemyLayer;
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, enemyLayer))
+        public void Attack()
         {
-            if (Vector3.Distance(transform.position, hit.transform.position) <= attackRange)
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (!Physics.Raycast(ray, out hit, Mathf.Infinity, enemyLayer)) return;
+            if (!(Vector3.Distance(transform.position, hit.transform.position) <= attackRange)) return;
+        
+            EnemyBehaviour enemy = hit.transform.GetComponent<EnemyBehaviour>();
+        
+            if (enemy != null)
             {
-                EnemyBehaviour enemy = hit.transform.GetComponent<EnemyBehaviour>();
-                if (enemy != null)
-                {
-                    enemy.TakeDamage(attackDamage);
-                }
+                enemy.TakeDamage(attackDamage);
             }
         }
-    }
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, attackRange);
+        }
     }
 }
