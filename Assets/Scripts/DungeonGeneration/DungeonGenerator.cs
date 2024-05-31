@@ -10,7 +10,9 @@ namespace DungeonGeneration
         public static DungeonGenerator s;
 
         #region Attributes
-
+        [Header("Dungeon configuration")]
+        [SerializeField] private int maxRooms = 10;
+        [SerializeField] private int minRooms = 7;
         private int _maxRooms;
         private int _nCurrentRooms;
         private int _nDeadEnds = 3;
@@ -123,19 +125,18 @@ namespace DungeonGeneration
                 int nNeighbours = (_nCurrentRooms + _pendingRooms.Count < _maxRooms) ? UnityEngine.Random.Range(1, 4) : 0;
                 for (int i = 0; i < nNeighbours; ++i)
                 {
-                    if (currentRoom.NeighboursCount < 4)
-                    {
-                        RoomDirections newNeighbourDirection = GetRandomNeighbourDirection(currentRoom);
-                        (DungeonRoom, bool) newNeighbour = GenerateNeighbour(currentRoom, newNeighbourDirection);
-                        DungeonRoom newNeighbourRoom = newNeighbour.Item1;
-                        bool neighbourJustCreated = newNeighbour.Item2;
-                        currentRoom.AddNeighbourInDirection(newNeighbourRoom, newNeighbourDirection);
-                        if (neighbourJustCreated)
-                        {
-                            _pendingRooms.Enqueue(newNeighbourRoom);
-                            _dungeonRooms.Add(newNeighbourRoom);
-                        }
-                    }
+                    if (currentRoom.NeighboursCount >= 4) continue;
+                    
+                    RoomDirections newNeighbourDirection = GetRandomNeighbourDirection(currentRoom);
+                    (DungeonRoom, bool) newNeighbour = GenerateNeighbour(currentRoom, newNeighbourDirection);
+                    DungeonRoom newNeighbourRoom = newNeighbour.Item1;
+                    bool neighbourJustCreated = newNeighbour.Item2;
+                    currentRoom.AddNeighbourInDirection(newNeighbourRoom, newNeighbourDirection);
+                    
+                    if (!neighbourJustCreated) continue;
+                    
+                    _pendingRooms.Enqueue(newNeighbourRoom);
+                    _dungeonRooms.Add(newNeighbourRoom);
                 }
             }
 
@@ -342,7 +343,7 @@ namespace DungeonGeneration
 
         private int GetDungeonMaxRoomCount()
         {
-            return Mathf.RoundToInt(3.33f + 1 + UnityEngine.Random.Range(5, 6));
+            return Mathf.RoundToInt(1 + UnityEngine.Random.Range(minRooms, maxRooms));
         }
 
         private void GenerateSpecialRooms()

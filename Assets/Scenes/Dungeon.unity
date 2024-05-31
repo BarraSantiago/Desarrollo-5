@@ -200,6 +200,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bb92962a683285468d6a4febae23e09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxRooms: 10
+  minRooms: 5
 --- !u!4 &157197235
 Transform:
   m_ObjectHideFlags: 0
@@ -530,7 +532,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Kill monster
+  m_text: Generate Dungeon
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 419112269cc5c67448d8f7570a9a6875, type: 2}
   m_sharedMaterial: {fileID: 8582872187526979888, guid: 419112269cc5c67448d8f7570a9a6875, type: 2}
@@ -557,8 +559,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 31.71
-  m_fontSizeBase: 31.71
+  m_fontSize: 21.54
+  m_fontSizeBase: 21.54
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -824,7 +826,7 @@ GameObject:
   - component: {fileID: 1188863710}
   - component: {fileID: 1188863709}
   m_Layer: 5
-  m_Name: Spawn Item
+  m_Name: Generate dungeon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
