@@ -19,17 +19,29 @@ namespace Input_System
         private Vector2 move;
         private Rigidbody rb;
         private Vector3 dashDirection;
+        private bool isDashing;
 
         private void Awake()
         {
             input = new PlayerInput();
             rb = GetComponent<Rigidbody>();
+            rb.freezeRotation = true;
         }
 
         private void Update()
         {
-            MovePlayer();
-            RotatePlayer();
+            if (!isDashing)
+            {
+                RotatePlayer();
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            if (!isDashing)
+            {
+                MovePlayer();
+            }
         }
 
         private void MovePlayer()
@@ -54,7 +66,10 @@ namespace Input_System
         
         public void OnDash(InputValue context)
         {
-            StartCoroutine(Dash());
+            if (!isDashing)
+            {
+                StartCoroutine(Dash());
+            }
         }
 
         public void OnMovement(InputValue context)
@@ -88,15 +103,17 @@ namespace Input_System
 
         private IEnumerator Dash()
         {
-            dashDirection = new Vector3(move.x, 0, move.y);
+            isDashing = true;
+            dashDirection = new Vector3(move.x, 0, move.y).normalized;
             float startTime = Time.time;
 
             while (Time.time < startTime + dashTime)
             {
-                rb.MovePosition(rb.position + dashDirection.normalized * (dashSpeed * Time.deltaTime));
-
+                rb.MovePosition(rb.position + dashDirection * (dashSpeed * Time.deltaTime));
                 yield return null;
             }
+
+            isDashing = false;
         }
     }
 }
