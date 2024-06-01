@@ -702,7 +702,7 @@ RectTransform:
   - {fileID: 826358546}
   - {fileID: 1459204007}
   m_Father: {fileID: 1421938192}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -1172,11 +1172,9 @@ GameObject:
   - component: {fileID: 457610256}
   - component: {fileID: 457610255}
   - component: {fileID: 457610254}
-  - component: {fileID: 457610259}
   - component: {fileID: 457610257}
   - component: {fileID: 457610261}
   - component: {fileID: 457610262}
-  - component: {fileID: 457610263}
   - component: {fileID: 457610264}
   m_Layer: 7
   m_Name: Enemy Melee
@@ -1273,22 +1271,6 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!54 &457610259
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 457610252}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!114 &457610261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1321,20 +1303,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &457610263
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 457610252}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d100bc3787342274bbb541c139b108fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthSlider: {fileID: 346336018}
-  health: 20
 --- !u!114 &457610264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3161,8 +3129,8 @@ RectTransform:
   m_Children:
   - {fileID: 1060123719}
   - {fileID: 1227774099}
-  - {fileID: 354528128}
   - {fileID: 346336019}
+  - {fileID: 354528128}
   - {fileID: 1276161670}
   m_Father: {fileID: 0}
   m_RootOrder: 3
