@@ -8,12 +8,11 @@ namespace InventorySystem
     {
         public Attributes stat;
         public int value;
-        [SerializeField]
-        private int min;   //buff min value roll
+        [SerializeField] private int min; //buff min value roll
         public int Min => min;
-        [SerializeField]
-        private int max;   //buff max value roll
+        [SerializeField] private int max; //buff max value roll
         public int Max => max;
+
         public ItemBuff(int _min, int _max)
         {
             min = _min;
