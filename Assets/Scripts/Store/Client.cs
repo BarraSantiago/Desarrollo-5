@@ -26,14 +26,14 @@ namespace Store
         #region Serialized Variables
 
         [SerializeField] public NavMeshAgent agent;
-        [SerializeField] private Button cobrar; // TODO update this
 
         #endregion
 
         #region Public Variables
 
         public int id;
-        public static Transform exit;
+        public static Transform Exit;
+        public static Transform WaitingLineStart;
         public static ItemDatabaseObject ItemDatabase;
         public static Action<Client> OnStartLine;
         public static Action OnLeaveLine;
@@ -68,14 +68,12 @@ namespace Store
         /// </summary>
         private int _tipChanceModifier = 0;
 
+        private bool _paid;
         private int _tipValue;
         private int _itemAmount;
-        private bool cobrado = false;
         [SerializeField] private float _minimumDistance = 1.6f;
-        private bool _waitingForPlayer = false;
         private State _currentState;
-        private State _previousState;
-        private DisplayItem desiredItem;
+        private DisplayItem _desiredItem;
         private GameObject _itemInstance;
 
         #endregion
@@ -84,7 +82,6 @@ namespace Store
         {
             agent.updateRotation = false;
             agent.updateUpAxis = false;
-            cobrar.onClick.AddListener(Cobrado);
         }
 
         private void Update()
@@ -101,17 +98,17 @@ namespace Store
         public void Initialize(int id, DisplayItem item)
         {
             this.id = id;
-            desiredItem = item;
-            _itemAmount = Random.Range(1, desiredItem.amount + 1);
+            _desiredItem = item;
+            _itemAmount = Random.Range(1, _desiredItem.amount + 1);
 
             EnterStore();
         }
 
         public void Deinitialize()
         {
-            if(desiredItem != null) desiredItem.BeingViewed = false;
+            if (_desiredItem != null) _desiredItem.BeingViewed = false;
             _itemAmount = 0;
-            desiredItem = null;
+            _desiredItem = null;
         }
 
         private void ClientBehaviour()
@@ -134,22 +131,24 @@ namespace Store
                     break;
 
                 case State.WaitingInline:
-                    OnStartLine?.Invoke(this);
-                    _currentState = State.Buying;
+                    agent.SetDestination(WaitingLineStart.position);
+                    if (NearWaitingLine())
+                    {
+                        OnStartLine?.Invoke(this);
+                        _currentState = State.Buying;
+                    }
                     break;
 
                 case State.Buying:
-                    _waitingForPlayer = true;
-                    if (PlayerInteraction())
+                    if (_paid)
                     {
-                        _waitingForPlayer = false;
+                        firstInLine = false;
                         _currentState = State.Leaving;
                     }
 
                     break;
 
                 case State.Leaving:
-                    PayItem();
                     LeaveStore();
                     break;
 
@@ -183,49 +182,31 @@ namespace Store
         private void GrabItem()
         {
             if (!CheckBuyItem()) return;
-            agent.SetDestination(desiredItem.Object.transform.position);
+            agent.SetDestination(_desiredItem.Object.transform.position);
 
             if (!NearItem()) return;
-            desiredItem.Object.transform.SetParent(gameObject.transform);
-            ItemGrabbed?.Invoke(desiredItem.id, _itemAmount);
-            desiredItem.BeingViewed = false;
+            _desiredItem.Object.transform.SetParent(gameObject.transform);
+            ItemGrabbed?.Invoke(_desiredItem.id, _itemAmount);
+            _desiredItem.BeingViewed = false;
             _currentState = State.WaitingInline;
         }
 
-        /// <summary>
-        /// Way for the player to charge the client
-        /// </summary>
-        /// <returns></returns>
-        private bool PlayerInteraction()
+        public void PayItem()
         {
-            if (!firstInLine) return false;
-            cobrar.transform.position = Camera.main.WorldToScreenPoint(transform.position + Vector3.down);
-            cobrar.gameObject.SetActive(true); // TODO REMOVE THIS
-
-            return cobrado;
-        }
-
-        private void Cobrado()
-        {
-            cobrado = true;
-        }
-
-        private void PayItem()
-        {
+            _paid = true;
             BuyItem();
-            cobrar.gameObject.SetActive(false);
-            OnLeaveLine?.Invoke();
+            //OnLeaveLine?.Invoke();
         }
 
         private bool CheckBuyItem()
         {
-            if (desiredItem == null) return false;
+            if (_desiredItem == null) return false;
 
-            ListPrice itemList = ItemDatabase.ItemObjects[desiredItem.ItemObject.data.id].data.listPrice;
-            float difference = desiredItem.ItemObject.price - itemList.CurrentPrice;
+            ListPrice itemList = ItemDatabase.ItemObjects[_desiredItem.ItemObject.data.id].data.listPrice;
+            float difference = _desiredItem.ItemObject.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
-            if (desiredItem.ItemObject.price >= itemList.CurrentPrice)
+            if (_desiredItem.ItemObject.price >= itemList.CurrentPrice)
             {
                 // Client buys item and leaves the store
                 if (!(percentageDifference > _willingnessToPay)) return true;
@@ -243,9 +224,9 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            int finalPrice = desiredItem.ItemObject.price * _itemAmount;
+            int finalPrice = _desiredItem.ItemObject.price * _itemAmount;
             OnMoneyAdded?.Invoke(finalPrice);
-            OnItemBought?.Invoke(desiredItem);
+            OnItemBought?.Invoke(_desiredItem);
         }
 
         /// <summary>
@@ -268,10 +249,9 @@ namespace Store
         /// </summary>
         private void LeaveStore()
         {
-            cobrado = false;
             // TODO update this
             //move to outside of store
-            agent.SetDestination(exit.transform.position);
+            agent.SetDestination(Exit.transform.position);
             _currentState = State.LeftStore;
         }
 
@@ -284,14 +264,19 @@ namespace Store
             _currentState = State.None;
         }
 
+        private bool NearWaitingLine()
+        {
+            return CheckDistance(WaitingLineStart.position, _minimumDistance + 2f);
+        }
+
         private bool NearItem()
         {
-            return CheckDistance(desiredItem.Object.transform.position, _minimumDistance);
+            return CheckDistance(_desiredItem.Object.transform.position, _minimumDistance);
         }
 
         private bool NearExit()
         {
-            return CheckDistance(exit.position, _minimumDistance + 1f);
+            return CheckDistance(Exit.position, _minimumDistance + 1f);
         }
 
         private bool CheckDistance(Vector3 pos, float distanceDif)

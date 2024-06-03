@@ -19,6 +19,7 @@ namespace Store
         #region Serialized Fields
 
         [Header("Client Setup")] 
+        [SerializeField] private Button chargeButton;
         [SerializeField] private GameObject clientPrefab;
         [SerializeField] private Transform clientExit;
 
@@ -28,6 +29,7 @@ namespace Store
         [SerializeField] private ItemDisplayer itemDisplayer;
 
         [Header("Waiting Line Setup")] 
+        [SerializeField] private Transform checkOut;
         [SerializeField] private Transform waitingLineStart;
         [SerializeField] private int posAmount;
         [SerializeField] private float distanceBetweenPos;
@@ -44,11 +46,10 @@ namespace Store
 
         #region Private Variables
 
-        [SerializeField]private List<Client> _clients = new List<Client>();
+        [SerializeField] private List<Client> _clients = new List<Client>();
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
-        private int _clientsSent = 0;
         private int _clientsLeft = 0;
         private int _buyersInShop; // amount of clients currently in the shop
         private float _timeBetweenClients;
@@ -68,14 +69,21 @@ namespace Store
             startCicle.onClick.AddListener(StartDayCicle);
             
             Client.ItemDatabase = itemDatabase;
-            Client.exit = clientExit;
+            Client.Exit = clientExit;
+            Client.WaitingLineStart = waitingLineStart;
 
             UpdateMoneyText();
             UpdateCurrentPrices();
 
             _waitingLine = new WaitingLine();
+            chargeButton.onClick.AddListener(_waitingLine.ChargeClient);
             
             itemDisplayer.Initialize(itemDatabase, storeInventory);
+        }
+
+        private void Update()
+        {
+            ChargeClient();
         }
 
         private void OnDestroy()
@@ -91,7 +99,7 @@ namespace Store
             float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
 
-            _waitingLine.Initialize(waitingLineStart, _dailyClients, distanceBetweenPos);
+            _waitingLine.Initialize(waitingLineStart, _dailyClients, distanceBetweenPos, checkOut);
             
             Client.OnItemBought += ItemBought;
             Client.OnMoneyAdded += SpawnText;
@@ -127,7 +135,6 @@ namespace Store
                 _clients.RemoveAt(i);
             }
 
-            _clientsSent = 0;
             _clientsLeft = 0;
             startCicle.onClick.AddListener(StartDayCicle);
         }
@@ -202,7 +209,6 @@ namespace Store
                 //_clients.Add(newClient.GetComponent<Client>());
 
                 _clients[i].Initialize(i, ChooseItem());
-                _clientsSent++;
 
                 yield return new WaitForSeconds(_clientTimer);
             }
@@ -234,6 +240,26 @@ namespace Store
             {
                 //No empty spaces in queue
             }
+
+        }
+
+        private void ChargeClient()
+        {
+            if (!_clients.Any(client => client.firstInLine))
+            {
+                chargeButton.gameObject.SetActive(false);
+                return;
+            }
+            
+            float distance = Vector3.Distance(player.transform.position, waitingLineStart.position);
+
+            if (distance > 5)
+            {
+                chargeButton.gameObject.SetActive(false);
+                return;
+            }
+            
+            chargeButton.gameObject.SetActive(true);
         }
     }
 }

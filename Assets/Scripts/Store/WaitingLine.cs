@@ -17,13 +17,15 @@ namespace Store
         private float positionsDistance;
         private Transform startingPosition;
         private WaitingPosition[] queuePositions;
+        private Transform checkOut;
         
-        public void Initialize(Transform startingPosition, int positionsAmount, float positionsDistance)
+        public void Initialize(Transform startingPosition, int positionsAmount, float positionsDistance, Transform checkOut)
         {
             StoreManager.OnEndCycle += Deinitialize;
             this.startingPosition = startingPosition;
             this.positionsAmount = positionsAmount;
             this.positionsDistance = positionsDistance;
+            this.checkOut = checkOut;
             
             CleanUpQueue();
         }
@@ -39,6 +41,12 @@ namespace Store
             StoreManager.OnEndCycle -= Deinitialize;
         }
 
+        public void ChargeClient()
+        {
+            queuePositions[0].client.PayItem();
+            AdvanceQueue();
+        }
+        
         /// <summary>
         /// Adds an client to the "cash register" queue.
         /// </summary>
@@ -53,6 +61,7 @@ namespace Store
             foreach (var position in queuePositions)
             {
                 if (position.occupied) continue;
+                
                 position.client = client;
                 position.client.agent.SetDestination(position.position);
                 position.occupied = true;
@@ -63,6 +72,12 @@ namespace Store
             return true;
         }
 
+        public void RotateToTarget(Client client)
+        {
+            Vector3 direction = checkOut.position - client.gameObject.transform.position;
+            Quaternion toRotation = Quaternion.LookRotation(direction);
+            client.gameObject.transform.rotation = Quaternion.Slerp(client.gameObject.transform.rotation, toRotation, 1f); // 1f means instant rotation
+        }
         public void AdvanceQueue()
         {
             if (queuePositions[0]?.client)

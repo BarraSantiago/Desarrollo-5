@@ -111,6 +111,7 @@ namespace InventorySystem
 
             GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
             ItemDisplay display = itemDisplay.GetComponent<ItemDisplay>();
+            itemDisplay.transform.SetAsLastSibling(); 
             display.item = slotsOnInterface[obj].GetItemObject();
             display.Initialize();
         }
