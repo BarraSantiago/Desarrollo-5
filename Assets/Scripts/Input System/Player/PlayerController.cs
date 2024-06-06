@@ -7,16 +7,18 @@ namespace Input_System
 {
     public class PlayerController : MonoBehaviour
     {
-        [SerializeField] private float speed = 50f;
+        [SerializeField] private float moveSpeed = 50f;
         [SerializeField] private GameObject inventoryUI;
         [SerializeField] private InventoryObject playerInventory;
-        [SerializeField] private PlayerAttack dmg;
+        
+        private PlayerAttack playerAttack;
 
         public float dashSpeed;
         public float dashTime;
+        public Animator animator;
 
         private PlayerInput input;
-        private Vector2 move;
+        private Vector2 moveInput;
         private Rigidbody rb;
         private Vector3 dashDirection;
         private bool isDashing;
@@ -25,7 +27,8 @@ namespace Input_System
         {
             input = new PlayerInput();
             rb = GetComponent<Rigidbody>();
-            rb.freezeRotation = true;
+            playerAttack = GetComponent<PlayerAttack>();
+            input.Gameplay.Attack.performed += ctx => playerAttack.Attack();
         }
 
         private void Update()
@@ -34,6 +37,9 @@ namespace Input_System
             {
                 RotatePlayer();
             }
+            float speed = moveInput.magnitude * moveSpeed;
+            animator.SetFloat("speed", speed);
+
         }
 
         private void FixedUpdate()
@@ -46,22 +52,22 @@ namespace Input_System
 
         private void MovePlayer()
         {
-            Vector3 movement = new Vector3(move.x, 0, move.y);
-            rb.MovePosition(rb.position + movement * (speed * Time.deltaTime));
+            Vector3 movement = new Vector3(moveInput.x, 0, moveInput.y);
+            rb.MovePosition(rb.position + movement * (moveSpeed * Time.deltaTime));
         }
 
         private void RotatePlayer()
         {
-            if (move == Vector2.zero) return;
+            if (moveInput == Vector2.zero) return;
             
-            Vector3 direction = new Vector3(move.x, 0, move.y);
+            Vector3 direction = new Vector3(moveInput.x, 0, moveInput.y);
             Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
-            rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, speed * Time.deltaTime);
+            rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, moveSpeed * Time.deltaTime);
         }
 
         public void OnAttack(InputValue context)
         {
-            dmg?.Attack();
+            playerAttack?.Attack();
         }
         
         public void OnDash(InputValue context)
@@ -74,7 +80,7 @@ namespace Input_System
 
         public void OnMovement(InputValue context)
         {
-            move = context.Get<Vector2>();
+            moveInput = context.Get<Vector2>();
         }
 
         public void OnInventoryOpen(InputValue context)
@@ -104,7 +110,7 @@ namespace Input_System
         private IEnumerator Dash()
         {
             isDashing = true;
-            dashDirection = new Vector3(move.x, 0, move.y).normalized;
+            dashDirection = new Vector3(moveInput.x, 0, moveInput.y).normalized;
             float startTime = Time.time;
 
             while (Time.time < startTime + dashTime)

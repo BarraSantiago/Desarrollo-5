@@ -1,34 +1,78 @@
-using EnemyUnits;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-namespace Input_System
+public class PlayerAttack : MonoBehaviour
 {
-    public class PlayerAttack : MonoBehaviour
+    public List<AttackSO> combo;
+    public float comboCooldownTime = 0.5f;
+    public float attackInterval = 0.2f;
+    public float exitAttackDelay = 1f;
+
+    private float lastClickedTime;
+    private float lastComboEnd;
+    private int comboCounter;
+    private Animator animator;
+    [SerializeField] private Weapon weapon;
+
+    private void Start()
     {
-        [SerializeField] private float attackRange = 2f;
-        [SerializeField] private int attackDamage = 10;
-        [SerializeField] private LayerMask enemyLayer;
+        animator = GetComponent<Animator>();
+    }
 
-        public void Attack()
+    private void Update()
+    {
+        ExitAttack();
+    }
+
+    public void Attack()
+    {
+        if (Time.time - lastComboEnd > comboCooldownTime && comboCounter < combo.Count)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            CancelInvoke(nameof(EndCombo));
 
-            if (!Physics.Raycast(ray, out hit, Mathf.Infinity, enemyLayer)) return;
-            if (!(Vector3.Distance(transform.position, hit.transform.position) <= attackRange)) return;
-        
-            EnemyBehaviour enemy = hit.transform.GetComponent<EnemyBehaviour>();
-        
-            if (enemy != null)
+            if (Time.time - lastClickedTime >= attackInterval)
             {
-                enemy.TakeDamage(attackDamage);
+                PlayAttackAnimation(comboCounter);
+                weapon.damage = combo[comboCounter].damage;
+                comboCounter++;
+                lastClickedTime = Time.time;
+
+                if (comboCounter > combo.Count)
+                {
+                    comboCounter = 0;
+                }
+
+                weapon.EnableTriggerBox();
             }
         }
+    }
 
-        private void OnDrawGizmosSelected()
+    private void PlayAttackAnimation(int index)
+    {
+        animator.runtimeAnimatorController = combo[index].animatorOV;
+        animator.Play("Attack", 0, 0);
+    }
+
+    void ExitAttack()
+    {
+        if (IsExitingAttack())
         {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, attackRange);
+            Invoke(nameof(EndCombo), exitAttackDelay);
         }
+    }
+
+    bool IsExitingAttack()
+    {
+        var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.normalizedTime > 0.9f && stateInfo.IsTag("Attack");
+    }
+
+    void EndCombo()
+    {
+        comboCounter = 0;
+        lastComboEnd = Time.time;
+
+        weapon.DisableTriggerBox();
     }
 }
