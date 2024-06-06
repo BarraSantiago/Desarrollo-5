@@ -36,7 +36,7 @@ namespace Store
 
         [Header("Misc Setup")] 
         [SerializeField] private UIManager uiManager;
-        [SerializeField] private Player player;
+        [SerializeField] private InventorySystem.Player player;
 
         [Header("Demo")] 
         [SerializeField] private Button goToDungeon;
