@@ -7,8 +7,6 @@ namespace DungeonGeneration
 {
     public class DungeonGenerator : MonoBehaviour
     {
-        public static DungeonGenerator s;
-
         #region Attributes
         [Header("Dungeon configuration")]
         [SerializeField] private int maxRooms = 10;
@@ -69,8 +67,6 @@ namespace DungeonGeneration
 
         private void Awake()
         {
-            s = this;
-
             LoadRoomPrefabs();
         }
 
