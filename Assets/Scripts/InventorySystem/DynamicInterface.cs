@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 namespace InventorySystem
 {
     public class DynamicInterface : UserInterface
     {
         public GameObject inventoryPrefab;
-        public int X_START;
-        public int Y_START;
-        public int X_SPACE_BETWEEN_ITEM;
-        public int NUMBER_OF_COLUMN;
-        public int Y_SPACE_BETWEEN_ITEMS;
+        [FormerlySerializedAs("X_START")] public int xStart;
+        [FormerlySerializedAs("Y_START")] public int yStart;
+        [FormerlySerializedAs("X_SPACE_BETWEEN_ITEM")] public int xSpaceBetweenItem;
+        [FormerlySerializedAs("NUMBER_OF_COLUMN")] public int numberOfColumn;
+        [FormerlySerializedAs("Y_SPACE_BETWEEN_ITEMS")] public int ySpaceBetweenItems;
 
-        public override void CreateSlots()
+        protected override void CreateSlots()
         {
-            // base.CreateSlots();
             slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
             for (int i = 0; i < inventory.GetSlots.Length; i++)
             {
@@ -32,9 +32,10 @@ namespace InventorySystem
                 slotsOnInterface.Add(obj, inventory.GetSlots[i]);
             }
         }
-        public Vector3 GetPosition(int i)
+
+        private Vector3 GetPosition(int i)
         {
-            return new Vector3(X_START + (X_SPACE_BETWEEN_ITEM * (i % NUMBER_OF_COLUMN)), Y_START + (-Y_SPACE_BETWEEN_ITEMS * (i / NUMBER_OF_COLUMN)), 0f);
+            return new Vector3(xStart + (xSpaceBetweenItem * (i % numberOfColumn)), yStart + (-ySpaceBetweenItems * (i / numberOfColumn)), 0f);
         }
     }
 }

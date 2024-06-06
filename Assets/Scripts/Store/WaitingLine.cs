@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 namespace Store
@@ -13,26 +12,26 @@ namespace Store
 
     public class WaitingLine
     {
-        private int positionsAmount;
-        private float positionsDistance;
-        private Transform startingPosition;
-        private WaitingPosition[] queuePositions;
-        private Transform checkOut;
+        private int _positionsAmount;
+        private float _positionsDistance;
+        private Transform _startingPosition;
+        private WaitingPosition[] _queuePositions;
+        private Transform _checkOut;
         
         public void Initialize(Transform startingPosition, int positionsAmount, float positionsDistance, Transform checkOut)
         {
             StoreManager.OnEndCycle += Deinitialize;
-            this.startingPosition = startingPosition;
-            this.positionsAmount = positionsAmount;
-            this.positionsDistance = positionsDistance;
-            this.checkOut = checkOut;
+            _startingPosition = startingPosition;
+            _positionsAmount = positionsAmount;
+            _positionsDistance = positionsDistance;
+            _checkOut = checkOut;
             
             CleanUpQueue();
         }
 
         private void Deinitialize()
         {
-            foreach (var position in queuePositions)
+            foreach (var position in _queuePositions)
             {
                 position.occupied = false;
                 position.client = null;
@@ -43,22 +42,22 @@ namespace Store
 
         public void ChargeClient()
         {
-            queuePositions[0].client.PayItem();
+            _queuePositions[0].client.PayItem();
             AdvanceQueue();
         }
-        
+
         /// <summary>
         /// Adds an client to the "cash register" queue.
         /// </summary>
-        /// <param name="clientAgent"> Client's agent to occupy position. </param>
+        /// <param name="client"> New client to add to the queue </param>
         /// <returns> Returns true if it was able to queue the client. Returns false if there are no available positions. </returns>
         public bool AddToQueue(Client client)
         {
-            if(queuePositions == null) CleanUpQueue();
+            if(_queuePositions == null) CleanUpQueue();
             
-            if (queuePositions.All(queuePosition => queuePosition.occupied)) return false;
+            if (_queuePositions.All(queuePosition => queuePosition.occupied)) return false;
 
-            foreach (var position in queuePositions)
+            foreach (var position in _queuePositions)
             {
                 if (position.occupied) continue;
                 
@@ -68,56 +67,56 @@ namespace Store
                 break;
             }
 
-            queuePositions[0].client.firstInLine = true;
+            _queuePositions[0].client.firstInLine = true;
             return true;
         }
 
         public void RotateToTarget(Client client)
         {
-            Vector3 direction = checkOut.position - client.gameObject.transform.position;
+            Vector3 direction = _checkOut.position - client.gameObject.transform.position;
             Quaternion toRotation = Quaternion.LookRotation(direction);
             client.gameObject.transform.rotation = Quaternion.Slerp(client.gameObject.transform.rotation, toRotation, 1f); // 1f means instant rotation
         }
         public void AdvanceQueue()
         {
-            if (queuePositions[0]?.client)
+            if (_queuePositions[0]?.client)
             {
-                queuePositions[0].client.firstInLine = false;
+                _queuePositions[0].client.firstInLine = false;
             }
 
-            queuePositions[0].client = null;
+            _queuePositions[0].client = null;
 
-            for (int i = 0; i < queuePositions.Length - 1; i++)
+            for (int i = 0; i < _queuePositions.Length - 1; i++)
             {
-                if (!queuePositions[i + 1].occupied)
+                if (!_queuePositions[i + 1].occupied)
                 {
-                    queuePositions[i].occupied = false;
-                    queuePositions[i].client = null;
+                    _queuePositions[i].occupied = false;
+                    _queuePositions[i].client = null;
                     break;
                 }
 
-                queuePositions[i].client = queuePositions[i + 1].client;
-                if (queuePositions[i].client)
+                _queuePositions[i].client = _queuePositions[i + 1].client;
+                if (_queuePositions[i].client)
                 {
-                    queuePositions[i].client.agent.SetDestination(queuePositions[i].position);
+                    _queuePositions[i].client.agent.SetDestination(_queuePositions[i].position);
                 }
             }
 
-            if (queuePositions[0].client)
+            if (_queuePositions[0].client)
             {
-                queuePositions[0].client.firstInLine = true;
+                _queuePositions[0].client.firstInLine = true;
             }
         }
         
         private void CleanUpQueue()
         {
-            queuePositions = new WaitingPosition[positionsAmount];
+            _queuePositions = new WaitingPosition[_positionsAmount];
             
-            for (int i = 0; i < positionsAmount; i++)
+            for (int i = 0; i < _positionsAmount; i++)
             {
-                queuePositions[i] = new WaitingPosition
+                _queuePositions[i] = new WaitingPosition
                 {
-                    position = startingPosition.position + Vector3.forward * (positionsDistance * i)
+                    position = _startingPosition.position + Vector3.forward * (_positionsDistance * i)
                 };
             }
         }

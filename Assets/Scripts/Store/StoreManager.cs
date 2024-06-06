@@ -92,7 +92,7 @@ namespace Store
             goToDungeon.onClick.RemoveListener(EndDayCycle);
         }
 
-        public void StartDayCicle()
+        private void StartDayCicle()
         {
             startCicle.onClick.RemoveListener(StartDayCicle);
 
@@ -240,7 +240,6 @@ namespace Store
             {
                 //No empty spaces in queue
             }
-
         }
 
         private void ChargeClient()

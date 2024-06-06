@@ -33,9 +33,9 @@ namespace InventorySystem
             AddEvent(gameObject, EventTriggerType.PointerExit, delegate { OnExitInterface(gameObject); });
         }
 
-        public abstract void CreateSlots();
+        protected abstract void CreateSlots();
 
-        public void UpdateInventoryLinks()
+        private void UpdateInventoryLinks()
         {
             int i = 0;
             foreach (var key in slotsOnInterface.Keys.ToList())
@@ -116,22 +116,22 @@ namespace InventorySystem
             display.Initialize();
         }
 
-        public void OnEnterInterface(GameObject obj)
+        private void OnEnterInterface(GameObject obj)
         {
             MouseData.InterfaceMouseIsOver = obj.GetComponent<UserInterface>();
         }
 
-        public void OnExitInterface(GameObject obj)
+        private void OnExitInterface(GameObject obj)
         {
             MouseData.InterfaceMouseIsOver = null;
         }
 
-        public void OnExit(GameObject obj)
+        protected void OnExit(GameObject obj)
         {
             MouseData.SlotHoveredOver = null;
         }
 
-        public void OnDragStart(GameObject obj)
+        protected void OnDragStart(GameObject obj)
         {
             MouseData.TempItemBeingDragged = CreateTempItem(obj);
         }
@@ -152,7 +152,7 @@ namespace InventorySystem
             return tempItem;
         }
 
-        public void OnDragEnd(GameObject obj)
+        protected void OnDragEnd(GameObject obj)
         {
             Destroy(MouseData.TempItemBeingDragged);
 
@@ -171,7 +171,7 @@ namespace InventorySystem
             inventory.SwapItems(slotsOnInterface[obj], mouseHoverSlotData);
         }
 
-        public void OnDrag(GameObject obj)
+        protected void OnDrag(GameObject obj)
         {
             if (MouseData.TempItemBeingDragged != null)
                 MouseData.TempItemBeingDragged.GetComponent<RectTransform>().position = Input.mousePosition;
