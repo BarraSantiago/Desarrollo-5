@@ -1,5 +1,6 @@
 using InventorySystem;
 using UnityEngine;
+using PlayerStats = Player.PlayerStats;
 using Random = UnityEngine.Random;
 
 namespace EnemyUnits
@@ -26,6 +27,10 @@ namespace EnemyUnits
         {
             currentHealth = maxHealth;
             lastDamageTime = Time.time;
+            if (!playerStats)
+            {
+                playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerStats>();
+            }
         }
 
         public void PerformAction()

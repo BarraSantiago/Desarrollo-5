@@ -1,25 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerStats : MonoBehaviour
+namespace Player
 {
-    [SerializeField] private float maxHealth;
-    private float currentHealth;
-
-    //[SerializeField] private float dmg;
-
-    [SerializeField] private HealthBar healthBar;
-
-    private void Start()
+    public class PlayerStats : MonoBehaviour
     {
-        currentHealth = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
-    }
+        [SerializeField] private float maxHealth;
+        private float currentHealth;
 
-    public void TakeDamage(float damage)
-    {
-        currentHealth -= damage;
-        healthBar.SetHealth(currentHealth);
+        //[SerializeField] private float dmg;
+
+        [SerializeField] private HealthBar healthBar;
+
+        private void Start()
+        {
+            currentHealth = maxHealth;
+            healthBar?.SetMaxHealth(maxHealth);
+        }
+
+        public void TakeDamage(float damage)
+        {
+            currentHealth -= damage;
+            healthBar?.SetHealth(currentHealth);
+        }
     }
 }

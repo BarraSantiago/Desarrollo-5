@@ -141,7 +141,7 @@ namespace Store
         
         private void ChangeScene()
         {
-            SceneManager.LoadScene("MovementScene");
+            SceneManager.LoadScene("Dungeon");
         }
 
         private void UpdateCurrentPrices()
