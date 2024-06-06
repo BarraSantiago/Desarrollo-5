@@ -11,15 +11,15 @@ namespace Store
 
         public DisplayItem[] Items;
 
-        private ItemDatabaseObject database;
-        private InventoryObject storeInventory;
+        private ItemDatabaseObject _database;
+        private InventoryObject _storeInventory;
 
         public void Initialize(ItemDatabaseObject database, InventoryObject storeInventory)
         {
-            this.storeInventory = storeInventory;
-            this.database = database;
+            this._storeInventory = storeInventory;
+            this._database = database;
 
-            this.storeInventory.OnItemAdded += OnAddItem;
+            this._storeInventory.OnItemAdded += OnAddItem;
             InventoryObject.OnItemSwapInventory += OnAddItem;
             StoreManager.OnEndCycle += Deinitialize;
             Client.ItemGrabbed += RemoveItem;
@@ -38,7 +38,7 @@ namespace Store
         private void OnDestroy()
         {
             InventoryObject.OnItemSwapInventory -= OnAddItem;
-            storeInventory.OnItemAdded -= OnAddItem;
+            _storeInventory.OnItemAdded -= OnAddItem;
             Client.ItemGrabbed -= RemoveItem;
             ItemDisplay.OnItemUpdate -= UpdateSlot;
         }
@@ -48,7 +48,7 @@ namespace Store
             if (Items[id] == null) return;
 
             Items[id].amount -= amount;
-            if (Items[id].amount <= 0) storeInventory.GetSlots[id].RemoveItem();
+            if (Items[id].amount <= 0) _storeInventory.GetSlots[id].RemoveItem();
             UpdateInventory();
         }
 
@@ -62,9 +62,9 @@ namespace Store
 
         private bool ValidItem(int slotId)
         {
-            if (slotId >= storeInventory.GetSlots.Length || slotId < 0) return false;
+            if (slotId >= _storeInventory.GetSlots.Length || slotId < 0) return false;
 
-            if (storeInventory.GetSlots[slotId].item.id < 0)
+            if (_storeInventory.GetSlots[slotId].item.id < 0)
             {
                 UpdateInventory();
                 return false;
@@ -72,25 +72,22 @@ namespace Store
 
             if (Items[slotId] != null) Destroy(Items[slotId].Object);
 
-            if (storeInventory.GetSlots[slotId].amount == 0)
-            {
-                Items[slotId] = null;
-                return false;
-            }
+            if (_storeInventory.GetSlots[slotId].amount != 0) return true;
 
-            return true;
+            Items[slotId] = null;
+            return false;
         }
 
         private void CreateDisplayItem(int slotId)
         {
             Items[slotId] = new DisplayItem
             {
-                Object = Instantiate(database.ItemObjects[storeInventory.GetSlots[slotId].item.id].characterDisplay,
+                Object = Instantiate(_database.ItemObjects[_storeInventory.GetSlots[slotId].item.id].characterDisplay,
                     objPostition[slotId]),
-                ItemObject = storeInventory.GetSlots[slotId].GetItemObject(),
+                ItemObject = _storeInventory.GetSlots[slotId].GetItemObject(),
                 id = slotId,
                 showPrice = texts[slotId],
-                amount = storeInventory.GetSlots[slotId].amount
+                amount = _storeInventory.GetSlots[slotId].amount
             };
 
             Items[slotId].Initialize(Items[slotId].ItemObject.price);
@@ -106,26 +103,31 @@ namespace Store
 
         private void UpdateInventory()
         {
-            storeInventory.UpdateInventory();
+            _storeInventory.UpdateInventory();
 
             for (int i = 0; i < Items.Length; i++)
             {
-                if (storeInventory.GetSlots[i].amount == 0)
+                switch (_storeInventory.GetSlots[i].amount)
                 {
-                    if (Items[i] != null) Destroy(Items[i].Object);
-                    Items[i] = null;
-                    texts[i].text = string.Empty;
-                }
-                else if (storeInventory.GetSlots[i].amount > 0)
-                {
-                    if (Items[i] == null)
+                    case 0:
                     {
-                        OnAddItem(i);
+                        if (Items[i] != null) Destroy(Items[i].Object);
+                        Items[i] = null;
+                        texts[i].text = string.Empty;
+                        break;
                     }
-                    else if (Items[i].ItemObject != storeInventory.GetSlots[i].GetItemObject())
-                    {
-                        RemoveItem(i, Items[i].amount);
+                    case > 0 when Items[i] == null:
                         OnAddItem(i);
+                        break;
+                    case > 0:
+                    {
+                        if (Items[i].ItemObject != _storeInventory.GetSlots[i].GetItemObject())
+                        {
+                            RemoveItem(i, Items[i].amount);
+                            OnAddItem(i);
+                        }
+
+                        break;
                     }
                 }
             }

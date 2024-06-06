@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -11,10 +12,12 @@ namespace InventorySystem
     [RequireComponent(typeof(EventTrigger))]
     public abstract class UserInterface : MonoBehaviour
     {
+        [SerializeField] private GameObject itemDisplayPrefab;
+        
         public InventoryObject inventory;
         public Dictionary<GameObject, InventorySlot> slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
-    
-        [SerializeField] private GameObject itemDisplayPrefab;
+        public static Action<GameObject, int> OnDropItem;
+        
         private InventoryObject _previousInventory;
 
         public void Awake()
@@ -30,9 +33,9 @@ namespace InventorySystem
             AddEvent(gameObject, EventTriggerType.PointerExit, delegate { OnExitInterface(gameObject); });
         }
 
-        public abstract void CreateSlots();
+        protected abstract void CreateSlots();
 
-        public void UpdateInventoryLinks()
+        private void UpdateInventoryLinks()
         {
             int i = 0;
             foreach (var key in slotsOnInterface.Keys.ToList())
@@ -90,46 +93,45 @@ namespace InventorySystem
     
         public void OnRightClick(GameObject obj, BaseEventData data)
         {
-            if (data is PointerEventData { button: PointerEventData.InputButton.Right })
-            {
-                // TODO add right click functionality
-                if (slotsOnInterface[obj].item.id < 0) return;
+            if (data is not PointerEventData { button: PointerEventData.InputButton.Right }) return;
             
-                Canvas canvas = FindObjectOfType<Canvas>();
+            if (slotsOnInterface[obj].item.id < 0) return;
+            
+            Canvas canvas = FindObjectOfType<Canvas>();
 
-                RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-                Vector2 itemDisplaySize = itemDisplayPrefab.GetComponent<RectTransform>().sizeDelta;
+            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+            Vector2 itemDisplaySize = itemDisplayPrefab.GetComponent<RectTransform>().sizeDelta;
 
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, null, out var localMousePosition);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, null, out var localMousePosition);
 
-                localMousePosition.x = Mathf.Clamp(localMousePosition.x, -canvasRect.sizeDelta.x / 2 + itemDisplaySize.x / 2, canvasRect.sizeDelta.x / 2 - itemDisplaySize.x / 2);
-                localMousePosition.y = Mathf.Clamp(localMousePosition.y, -canvasRect.sizeDelta.y / 2 + itemDisplaySize.y / 2, canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
+            localMousePosition.x = Mathf.Clamp(localMousePosition.x, -canvasRect.sizeDelta.x / 2 + itemDisplaySize.x / 2, canvasRect.sizeDelta.x / 2 - itemDisplaySize.x / 2);
+            localMousePosition.y = Mathf.Clamp(localMousePosition.y, -canvasRect.sizeDelta.y / 2 + itemDisplaySize.y / 2, canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
 
-                Vector3 worldMousePosition = canvasRect.TransformPoint(localMousePosition);
+            Vector3 worldMousePosition = canvasRect.TransformPoint(localMousePosition);
 
-                GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
-                ItemDisplay display = itemDisplay.GetComponent<ItemDisplay>();
-                display.item = slotsOnInterface[obj].GetItemObject();
-                display.Initialize();
-            }
+            GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
+            ItemDisplay display = itemDisplay.GetComponent<ItemDisplay>();
+            itemDisplay.transform.SetAsLastSibling(); 
+            display.item = slotsOnInterface[obj].GetItemObject();
+            display.Initialize();
         }
 
-        public void OnEnterInterface(GameObject obj)
+        private void OnEnterInterface(GameObject obj)
         {
             MouseData.InterfaceMouseIsOver = obj.GetComponent<UserInterface>();
         }
 
-        public void OnExitInterface(GameObject obj)
+        private void OnExitInterface(GameObject obj)
         {
             MouseData.InterfaceMouseIsOver = null;
         }
 
-        public void OnExit(GameObject obj)
+        protected void OnExit(GameObject obj)
         {
             MouseData.SlotHoveredOver = null;
         }
 
-        public void OnDragStart(GameObject obj)
+        protected void OnDragStart(GameObject obj)
         {
             MouseData.TempItemBeingDragged = CreateTempItem(obj);
         }
@@ -150,13 +152,13 @@ namespace InventorySystem
             return tempItem;
         }
 
-        public void OnDragEnd(GameObject obj)
+        protected void OnDragEnd(GameObject obj)
         {
             Destroy(MouseData.TempItemBeingDragged);
 
             if (MouseData.InterfaceMouseIsOver == null)
             {
-                //TODO drop item on ground
+                OnDropItem?.Invoke(slotsOnInterface[obj].GetItemObject().characterDisplay, slotsOnInterface[obj].amount);
                 slotsOnInterface[obj].RemoveItem();
                 InventoryObject.OnItemSwapInventory?.Invoke(0);
                 return;
@@ -169,7 +171,7 @@ namespace InventorySystem
             inventory.SwapItems(slotsOnInterface[obj], mouseHoverSlotData);
         }
 
-        public void OnDrag(GameObject obj)
+        protected void OnDrag(GameObject obj)
         {
             if (MouseData.TempItemBeingDragged != null)
                 MouseData.TempItemBeingDragged.GetComponent<RectTransform>().position = Input.mousePosition;

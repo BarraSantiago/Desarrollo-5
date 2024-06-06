@@ -6,5 +6,7 @@ namespace InventorySystem
     {
         public ItemObject item;
         public int amount = 1;
+        public bool droppedByPlayer = false;
+        public float droppedTime;
     }
 }

@@ -7,7 +7,8 @@ namespace InventorySystem
     public class StaticInterface : UserInterface
     {
         public GameObject[] slots;
-        public override void CreateSlots()
+
+        protected override void CreateSlots()
         {
             slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
             for (int i = 0; i < inventory.GetSlots.Length; i++)
