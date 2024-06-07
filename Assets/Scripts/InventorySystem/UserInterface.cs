@@ -13,11 +13,11 @@ namespace InventorySystem
     public abstract class UserInterface : MonoBehaviour
     {
         [SerializeField] private GameObject itemDisplayPrefab;
-        
+
         public InventoryObject inventory;
         public Dictionary<GameObject, InventorySlot> slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
         public static Action<GameObject, int> OnDropItem;
-        
+
         private InventoryObject _previousInventory;
 
         public void Awake()
@@ -47,6 +47,10 @@ namespace InventorySystem
 
         public void OnSlotUpdate(InventorySlot slot)
         {
+            if (!slot.slotDisplay || !slot.slotDisplay.transform.GetChild(0))
+            {
+                return;
+            }
             if (slot.item.id <= -1)
             {
                 slot.slotDisplay.transform.GetChild(0).GetComponent<Image>().sprite = null;
@@ -90,28 +94,34 @@ namespace InventorySystem
         {
             MouseData.SlotHoveredOver = obj;
         }
-    
+
         public void OnRightClick(GameObject obj, BaseEventData data)
         {
             if (data is not PointerEventData { button: PointerEventData.InputButton.Right }) return;
-            
+
             if (slotsOnInterface[obj].item.id < 0) return;
-            
+
             Canvas canvas = FindObjectOfType<Canvas>();
 
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
             Vector2 itemDisplaySize = itemDisplayPrefab.GetComponent<RectTransform>().sizeDelta;
 
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, null, out var localMousePosition);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, null,
+                out var localMousePosition);
 
-            localMousePosition.x = Mathf.Clamp(localMousePosition.x, -canvasRect.sizeDelta.x / 2 + itemDisplaySize.x / 2, canvasRect.sizeDelta.x / 2 - itemDisplaySize.x / 2);
-            localMousePosition.y = Mathf.Clamp(localMousePosition.y, -canvasRect.sizeDelta.y / 2 + itemDisplaySize.y / 2, canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
+            localMousePosition.x = Mathf.Clamp(localMousePosition.x,
+                -canvasRect.sizeDelta.x / 2 + itemDisplaySize.x / 2,
+                canvasRect.sizeDelta.x / 2 - itemDisplaySize.x / 2);
+            localMousePosition.y = Mathf.Clamp(localMousePosition.y,
+                -canvasRect.sizeDelta.y / 2 + itemDisplaySize.y / 2,
+                canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
 
             Vector3 worldMousePosition = canvasRect.TransformPoint(localMousePosition);
 
-            GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
+            GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity,
+                canvas.transform);
             ItemDisplay display = itemDisplay.GetComponent<ItemDisplay>();
-            itemDisplay.transform.SetAsLastSibling(); 
+            itemDisplay.transform.SetAsLastSibling();
             display.item = slotsOnInterface[obj].GetItemObject();
             display.Initialize();
         }
@@ -140,7 +150,7 @@ namespace InventorySystem
         {
             GameObject tempItem = null;
             if (slotsOnInterface[obj].item.id < 0) return tempItem;
-        
+
             tempItem = new GameObject();
             var rt = tempItem.AddComponent<RectTransform>();
             rt.sizeDelta = new Vector2(50, 50);
@@ -158,14 +168,15 @@ namespace InventorySystem
 
             if (MouseData.InterfaceMouseIsOver == null)
             {
-                OnDropItem?.Invoke(slotsOnInterface[obj].GetItemObject().characterDisplay, slotsOnInterface[obj].amount);
+                OnDropItem?.Invoke(slotsOnInterface[obj].GetItemObject().characterDisplay,
+                    slotsOnInterface[obj].amount);
                 slotsOnInterface[obj].RemoveItem();
                 InventoryObject.OnItemSwapInventory?.Invoke(0);
                 return;
             }
 
             if (!MouseData.SlotHoveredOver) return;
-            
+
             InventorySlot mouseHoverSlotData =
                 MouseData.InterfaceMouseIsOver.slotsOnInterface[MouseData.SlotHoveredOver];
             inventory.SwapItems(slotsOnInterface[obj], mouseHoverSlotData);

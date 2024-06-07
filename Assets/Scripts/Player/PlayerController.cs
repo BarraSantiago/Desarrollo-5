@@ -9,6 +9,7 @@ namespace Input_System
     {
         [SerializeField] private float moveSpeed = 50f;
         [SerializeField] private GameObject inventoryUI;
+        [SerializeField] private GameObject storeInventoryUI;
         [SerializeField] private InventoryObject playerInventory;
         
         private PlayerAttack playerAttack;
@@ -86,10 +87,11 @@ namespace Input_System
         public void OnInventoryOpen(InputValue context)
         {
             inventoryUI.SetActive(!inventoryUI.activeSelf);
-            if (inventoryUI.activeSelf)
-            {
-                playerInventory.UpdateInventory();
-            }
+            if(storeInventoryUI) storeInventoryUI?.SetActive(!storeInventoryUI.activeSelf);
+
+            if (!inventoryUI.activeSelf) return;
+            
+            playerInventory.UpdateInventory();
         }
 
         public void OnPause(InputValue context)

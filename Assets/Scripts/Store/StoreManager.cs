@@ -20,6 +20,7 @@ namespace Store
 
         [Header("Client Setup")] 
         [SerializeField] private Button chargeButton;
+        [SerializeField] private float maxDistance = 7;
         [SerializeField] private GameObject clientPrefab;
         [SerializeField] private Transform clientExit;
 
@@ -41,6 +42,7 @@ namespace Store
         [Header("Demo")] 
         [SerializeField] private Button goToDungeon;
         [SerializeField] private Button startCicle;
+        [SerializeField] private GameObject storeInventoryUI;
 
         #endregion
 
@@ -79,6 +81,8 @@ namespace Store
             chargeButton.onClick.AddListener(_waitingLine.ChargeClient);
             
             itemDisplayer.Initialize(itemDatabase, storeInventory);
+            storeInventory.Load();
+            storeInventoryUI.SetActive(false);
         }
 
         private void Update()
@@ -90,11 +94,12 @@ namespace Store
         {
             goToDungeon.onClick.RemoveListener(ChangeScene);
             goToDungeon.onClick.RemoveListener(EndDayCycle);
+            storeInventory.Save();
         }
 
         private void StartDayCicle()
         {
-            startCicle.onClick.RemoveListener(StartDayCicle);
+            startCicle.interactable = false;
 
             float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
@@ -136,12 +141,12 @@ namespace Store
             }
 
             _clientsLeft = 0;
-            startCicle.onClick.AddListener(StartDayCicle);
+            //startCicle.interactable = true; // TODO fix this
         }
         
         private void ChangeScene()
         {
-            SceneManager.LoadScene("Dungeon");
+            SceneManager.LoadScene("MovementScene");
         }
 
         private void UpdateCurrentPrices()
@@ -252,7 +257,7 @@ namespace Store
             
             float distance = Vector3.Distance(player.transform.position, waitingLineStart.position);
 
-            if (distance > 5)
+            if (distance > maxDistance)
             {
                 chargeButton.gameObject.SetActive(false);
                 return;

@@ -116,7 +116,7 @@ namespace Store
             {
                 _queuePositions[i] = new WaitingPosition
                 {
-                    position = _startingPosition.position + Vector3.forward * (_positionsDistance * i)
+                    position = _startingPosition.position + Vector3.back * (_positionsDistance * i)
                 };
             }
         }

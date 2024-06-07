@@ -27,7 +27,7 @@ namespace Game
 
         private void ChangeScene()
         {
-            SceneManager.LoadScene("Store");
+            SceneManager.LoadScene("Store - Pablo");
         }
 
         public void SpawnItem()

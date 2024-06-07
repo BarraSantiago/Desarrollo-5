@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d1319ef5004103419cddea41bc02cfe, type: 3}
   m_Name: Store inv
   m_EditorClassIdentifier: 
-  savePath: 
+  savePath: /store.inventory.save
   database: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
   type: 2
   Container:
@@ -20,36 +20,36 @@ MonoBehaviour:
     - AllowedItems: 
       item:
         name: 
-        id: 0
+        id: -1
         buffs: []
         listPrice:
-          originalPrice: 50
-        price: 50
-      amount: 1
+          originalPrice: 0
+        price: 0
+      amount: 0
     - AllowedItems: 
       item:
         name: 
-        id: 0
+        id: -1
         buffs: []
         listPrice:
-          originalPrice: 50
-        price: 50
-      amount: 1
+          originalPrice: 0
+        price: 0
+      amount: 0
     - AllowedItems: 
       item:
         name: 
-        id: 0
+        id: -1
         buffs: []
         listPrice:
-          originalPrice: 50
-        price: 50
-      amount: 1
+          originalPrice: 0
+        price: 0
+      amount: 0
     - AllowedItems: 
       item:
         name: 
-        id: 0
+        id: -1
         buffs: []
         listPrice:
-          originalPrice: 50
-        price: 50
-      amount: 1
+          originalPrice: 0
+        price: 0
+      amount: 0

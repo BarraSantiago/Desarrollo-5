@@ -164,28 +164,27 @@ namespace InventorySystem
         [ContextMenu("Load")]
         public void Load()
         {
-            if (File.Exists(string.Concat(Application.persistentDataPath, savePath)))
+            if (!File.Exists(string.Concat(Application.persistentDataPath, savePath))) return;
+
+            #region Optional Load
+
+            //BinaryFormatter bf = new BinaryFormatter();
+            //FileStream file = File.Open(string.Concat(Application.persistentDataPath, savePath), FileMode.Open, FileAccess.Read);
+            //JsonUtility.FromJsonOverwrite(bf.Deserialize(file).ToString(), Container);
+            //file.Close();
+
+            #endregion
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(string.Concat(Application.persistentDataPath, savePath), FileMode.Open,
+                FileAccess.Read);
+            Inventory newContainer = (Inventory)formatter.Deserialize(stream);
+            for (int i = 0; i < GetSlots.Length; i++)
             {
-                #region Optional Load
-
-                //BinaryFormatter bf = new BinaryFormatter();
-                //FileStream file = File.Open(string.Concat(Application.persistentDataPath, savePath), FileMode.Open, FileAccess.Read);
-                //JsonUtility.FromJsonOverwrite(bf.Deserialize(file).ToString(), Container);
-                //file.Close();
-
-                #endregion
-
-                IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream(string.Concat(Application.persistentDataPath, savePath), FileMode.Open,
-                    FileAccess.Read);
-                Inventory newContainer = (Inventory)formatter.Deserialize(stream);
-                for (int i = 0; i < GetSlots.Length; i++)
-                {
-                    GetSlots[i].UpdateSlot(newContainer.Slots[i].item, newContainer.Slots[i].amount);
-                }
-
-                stream.Close();
+                GetSlots[i].UpdateSlot(newContainer.Slots[i].item, newContainer.Slots[i].amount);
             }
+
+            stream.Close();
         }
 
         
