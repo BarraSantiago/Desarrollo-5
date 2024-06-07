@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace InventorySystem
@@ -10,6 +11,11 @@ namespace InventorySystem
         public float pickUpCooldown = 3f;
         public int Money;
 
+
+        private void Start()
+        {
+            inventory.Load();
+        }
 
         private void OnEnable()
         {
@@ -39,8 +45,7 @@ namespace InventorySystem
 
         public void OnApplicationQuit()
         {
-            inventory.Clear();
-            equipment?.Clear();
+            inventory.Save();
         }
 
 

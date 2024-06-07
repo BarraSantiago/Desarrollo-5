@@ -9,10 +9,10 @@ EditorBuildSettings:
     path: Assets/Scenes/Dungeon.unity
     guid: 5d5ddb30926e5f644b5d55a25ff99e90
   - enabled: 1
-    path: Assets/Scenes/MovementScene.unity
-    guid: 26fece738b83541449a6aac2c4107814
-  - enabled: 1
     path: Assets/Scenes/Store - Pablo.unity
     guid: 81d61b6caf95beb448a249ec812e3011
+  - enabled: 1
+    path: Assets/Scenes/MovementScene.unity
+    guid: 26fece738b83541449a6aac2c4107814
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 4af56cad511a32d47b1ab9a2266b0155, type: 2}
