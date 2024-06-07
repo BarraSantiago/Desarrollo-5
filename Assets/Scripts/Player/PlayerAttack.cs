@@ -1,34 +1,34 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class PlayerAttack : MonoBehaviour
+namespace Player
 {
-    public List<AttackSO> combo;
-    public float comboCooldownTime = 0.5f;
-    public float attackInterval = 0.2f;
-    public float exitAttackDelay = 1f;
-
-    private float lastClickedTime;
-    private float lastComboEnd;
-    private int comboCounter;
-    private Animator animator;
-    [SerializeField] private Weapon weapon;
-
-    private void Start()
+    public class PlayerAttack : MonoBehaviour
     {
-        animator = GetComponent<Animator>();
-    }
+        [SerializeField] private Weapon weapon;
+        public List<AttackSO> combo;
+        public float comboCooldownTime = 0.5f;
+        public float attackInterval = 0.2f;
+        public float exitAttackDelay = 1f;
 
-    private void Update()
-    {
-        ExitAttack();
-    }
+        private float lastClickedTime;
+        private float lastComboEnd;
+        private int comboCounter;
+        private Animator animator;
 
-    public void Attack()
-    {
-        if (Time.time - lastComboEnd > comboCooldownTime && comboCounter < combo.Count)
+        private void Start()
         {
+            animator = GetComponent<Animator>();
+        }
+
+        private void Update()
+        {
+            ExitAttack();
+        }
+
+        public void Attack()
+        {
+            if (!(Time.time - lastComboEnd > comboCooldownTime) || comboCounter >= combo.Count) return;
             CancelInvoke(nameof(EndCombo));
 
             if (Time.time - lastClickedTime >= attackInterval)
@@ -46,33 +46,33 @@ public class PlayerAttack : MonoBehaviour
                 weapon.EnableTriggerBox();
             }
         }
-    }
 
-    private void PlayAttackAnimation(int index)
-    {
-        animator.runtimeAnimatorController = combo[index].animatorOV;
-        animator.Play("Attack", 0, 0);
-    }
-
-    void ExitAttack()
-    {
-        if (IsExitingAttack())
+        private void PlayAttackAnimation(int index)
         {
-            Invoke(nameof(EndCombo), exitAttackDelay);
+            animator.runtimeAnimatorController = combo[index].animatorOV;
+            animator.Play("Attack", 0, 0);
         }
-    }
 
-    bool IsExitingAttack()
-    {
-        var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        return stateInfo.normalizedTime > 0.9f && stateInfo.IsTag("Attack");
-    }
+        void ExitAttack()
+        {
+            if (IsExitingAttack())
+            {
+                Invoke(nameof(EndCombo), exitAttackDelay);
+            }
+        }
 
-    void EndCombo()
-    {
-        comboCounter = 0;
-        lastComboEnd = Time.time;
+        bool IsExitingAttack()
+        {
+            var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            return stateInfo.normalizedTime > 0.9f && stateInfo.IsTag("Attack");
+        }
 
-        weapon.DisableTriggerBox();
+        void EndCombo()
+        {
+            comboCounter = 0;
+            lastComboEnd = Time.time;
+
+            weapon.DisableTriggerBox();
+        }
     }
 }
