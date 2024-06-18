@@ -37,7 +37,7 @@ namespace Store
 
         [Header("Misc Setup")] 
         [SerializeField] private UIManager uiManager;
-        [SerializeField] private InventorySystem.Player player;
+        [SerializeField] private player.Player player;
 
         [Header("Demo")] 
         [SerializeField] private Button goToDungeon;
@@ -174,14 +174,14 @@ namespace Store
 
         private void SpawnText(int money)
         {
-            player.Money += money;
+            player.money += money;
             uiManager.SpawnFlyingText(money);
-            uiManager.UpdateMoneyText(player.Money);
+            uiManager.UpdateMoneyText(player.money);
         }
 
         private void UpdateMoneyText()
         {
-            uiManager.UpdateMoneyText(player.Money);
+            uiManager.UpdateMoneyText(player.money);
         }
 
         private void ItemBought(DisplayItem displayItem)

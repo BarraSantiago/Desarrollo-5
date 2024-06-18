@@ -1,20 +1,32 @@
 ﻿using System;
+using InventorySystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace InventorySystem
+namespace player
 {
     public class Player : MonoBehaviour
     {
+        public static Action<int> OnMoneyUpdate;
         public InventoryObject inventory;
         public InventoryObject equipment;
         public float pickUpCooldown = 3f;
-        public int Money;
+        private int _money;
+        public int money
+        {
+            get => _money;
+            set
+            {
+                if (_money == value) return;
+                _money = value;
+                OnMoneyUpdate?.Invoke(_money);
+            }
+        }
 
 
         private void Start()
         {
-            inventory.Load();
+            //inventory.Load();
         }
 
         private void OnEnable()

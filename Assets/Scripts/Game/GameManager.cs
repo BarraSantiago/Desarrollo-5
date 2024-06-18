@@ -7,7 +7,7 @@ namespace Game
 {
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] private InventorySystem.Player _player;
+        [SerializeField] private player.Player _player;
         [SerializeField] private GameObject groundItemPrefab;
         [SerializeField] private ItemDatabaseObject itemDatabase;
         [SerializeField] private Button goToStore;

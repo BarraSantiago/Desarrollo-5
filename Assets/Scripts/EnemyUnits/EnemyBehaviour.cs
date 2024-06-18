@@ -1,6 +1,6 @@
 using InventorySystem;
 using UnityEngine;
-using PlayerStats = Player.PlayerStats;
+using PlayerStats = player.PlayerStats;
 using Random = UnityEngine.Random;
 
 namespace EnemyUnits

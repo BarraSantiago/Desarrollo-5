@@ -89,7 +89,7 @@ namespace Store
                 showPrice = texts[slotId],
                 amount = _storeInventory.GetSlots[slotId].amount
             };
-
+            Items[slotId].Object.GetComponent<GroundItem>().enabled = false;
             Items[slotId].Initialize(Items[slotId].ItemObject.price);
         }
 

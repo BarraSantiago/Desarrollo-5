@@ -1,6 +1,6 @@
 using System.Collections;
 using InventorySystem;
-using Player;
+using player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

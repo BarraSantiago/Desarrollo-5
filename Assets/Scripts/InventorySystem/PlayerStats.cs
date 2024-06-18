@@ -12,7 +12,7 @@ namespace InventorySystem
 
         private void Start()
         {
-            _equipment = GetComponent<Player>().equipment;
+            _equipment = GetComponent<player.Player>().equipment;
         
             for (int i = 0; i < attributes.Length; i++)
             {

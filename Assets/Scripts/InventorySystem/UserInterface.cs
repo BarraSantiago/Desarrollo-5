@@ -143,14 +143,18 @@ namespace InventorySystem
 
         protected void OnDragStart(GameObject obj)
         {
-            MouseData.TempItemBeingDragged = CreateTempItem(obj);
+            var slot = slotsOnInterface[obj];
+            if (slot.item.id >= 0)
+            {
+                MouseData.TempItemBeingDragged = CreateTempItem(obj);
+            }
         }
 
         private GameObject CreateTempItem(GameObject obj)
         {
             GameObject tempItem = null;
             if (slotsOnInterface[obj].item.id < 0) return tempItem;
-
+            
             tempItem = new GameObject();
             var rt = tempItem.AddComponent<RectTransform>();
             rt.sizeDelta = new Vector2(50, 50);
@@ -158,7 +162,6 @@ namespace InventorySystem
             var img = tempItem.AddComponent<Image>();
             img.sprite = slotsOnInterface[obj].GetItemObject().uiDisplay;
             img.raycastTarget = false;
-
             return tempItem;
         }
 
