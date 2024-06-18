@@ -1,3 +1,4 @@
+using Input_System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -25,11 +26,16 @@ namespace EnemyUnits
         private bool playerInSight;
         private bool playerInAttackRange;
 
+        private Animator animator;
+        private BoxCollider boxCollider;
+
         private void Start()
         {
             agent = GetComponent<NavMeshAgent>();
             player = GameObject.Find("Player");
             enemyBehavior = GetComponent<EnemyBehaviour>();
+            animator = GetComponent<Animator>();
+            boxCollider = GetComponentInChildren<BoxCollider>();
         }
 
         private void Update()
@@ -49,6 +55,9 @@ namespace EnemyUnits
 
         private void Attack()
         {
+            if(!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+            animator.SetTrigger("attack");
+
             agent.SetDestination(transform.position);
 
             if (enemyBehavior != null)
@@ -78,6 +87,26 @@ namespace EnemyUnits
 
             if (Physics.Raycast(destPoint, Vector3.down, groundLayer))
                 walkPointSet = true;
+        }
+
+        void EnableAttack()
+        {
+            boxCollider.enabled = true;
+        }
+
+        void DisableAttack()
+        {
+            boxCollider.enabled = false;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            var player = other.GetComponent<PlayerController>();
+
+            if (player != null)
+            {
+                print("HIT");
+            }
         }
 
         private void OnDrawGizmosSelected()

@@ -55,12 +55,12 @@ namespace EnemyUnits
 
         private void DoMeleeAction()
         {
-            if (Time.time - lastDamageTime < attackCooldown) return;
+            //if (Time.time - lastDamageTime < attackCooldown) return;
             
             
-            lastDamageTime = Time.time;
+            //lastDamageTime = Time.time;
             
-            playerStats.TakeDamage(damage);
+            //playerStats.TakeDamage(damage);
         }
 
         public void TakeDamage(float damage)
