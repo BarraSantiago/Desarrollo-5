@@ -1,10 +1,13 @@
 using EnemyUnits;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
     [SerializeField] private float damage = 0;
     private float initialDamage;
+
+    private HashSet<EnemyBehaviour> hitEnemies; // Almacena los enemigos que ya han sido golpeados en la animación actual
 
     public float Damage
     {
@@ -19,22 +22,26 @@ public class Weapon : MonoBehaviour
         triggerBox = GetComponent<BoxCollider>();
         triggerBox.enabled = false;
         initialDamage = damage;
+
+        hitEnemies = new HashSet<EnemyBehaviour>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         var enemy = other.gameObject.GetComponent<EnemyBehaviour>();
-        if (enemy != null)
+        if (enemy != null && !hitEnemies.Contains(enemy))
         {
             Debug.Log("Dmg");
             Debug.Log(damage);
             enemy.RecibeDamageFromPlayer(damage);
+            hitEnemies.Add(enemy); // Agrega el enemigo a la lista de golpeados
         }
     }
 
     public void EnableTriggerBox()
     {
         triggerBox.enabled = true;
+        hitEnemies.Clear();
     }
 
     public void DisableTriggerBox()
