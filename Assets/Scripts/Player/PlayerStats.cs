@@ -7,8 +7,6 @@ namespace player
         [SerializeField] private float maxHealth;
         private float currentHealth;
 
-        //[SerializeField] private float dmg;
-
         [SerializeField] private HealthBar healthBar;
 
         private void Start()
@@ -17,7 +15,7 @@ namespace player
             healthBar?.SetMaxHealth(maxHealth);
         }
 
-        public void TakeDamage(float damage)
+        public void RecibeDamageFromEnemy(float damage)
         {
             currentHealth -= damage;
             healthBar?.SetHealth(currentHealth);

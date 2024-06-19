@@ -10,10 +10,6 @@ namespace EnemyUnits
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private LayerMask playerLayer;
 
-        private GameObject player;
-        private NavMeshAgent agent;
-        private EnemyBehaviour enemyBehavior;
-
         //Patrol
         [SerializeField] float range;
         private Vector3 destPoint;
@@ -26,16 +22,15 @@ namespace EnemyUnits
         private bool playerInSight;
         private bool playerInAttackRange;
 
+        private GameObject player;
+        private NavMeshAgent agent;
         private Animator animator;
-        private BoxCollider boxCollider;
 
         private void Start()
         {
             agent = GetComponent<NavMeshAgent>();
             player = GameObject.Find("Player");
-            enemyBehavior = GetComponent<EnemyBehaviour>();
             animator = GetComponent<Animator>();
-            boxCollider = GetComponentInChildren<BoxCollider>();
         }
 
         private void Update()
@@ -56,13 +51,9 @@ namespace EnemyUnits
         private void Attack()
         {
             if(!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-            animator.SetTrigger("attack");
-
-            agent.SetDestination(transform.position);
-
-            if (enemyBehavior != null)
             {
-                enemyBehavior.PerformAction();
+                animator.SetTrigger("attack");
+                agent.SetDestination(transform.position);
             }
         }
 
@@ -87,26 +78,6 @@ namespace EnemyUnits
 
             if (Physics.Raycast(destPoint, Vector3.down, groundLayer))
                 walkPointSet = true;
-        }
-
-        void EnableAttack()
-        {
-            boxCollider.enabled = true;
-        }
-
-        void DisableAttack()
-        {
-            boxCollider.enabled = false;
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            var player = other.GetComponent<PlayerController>();
-
-            if (player != null)
-            {
-                print("HIT");
-            }
         }
 
         private void OnDrawGizmosSelected()

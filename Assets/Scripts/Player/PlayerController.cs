@@ -19,7 +19,7 @@ namespace Input_System
         public float dashTime;
         public Animator animator;
 
-        private PlayerInput input;
+        private PlayerInput playerInput;
         private Vector2 moveInput;
         private Rigidbody rb;
         private Vector3 dashDirection;
@@ -27,44 +27,44 @@ namespace Input_System
 
         private void Awake()
         {
-            input = new PlayerInput();
             rb = GetComponent<Rigidbody>();
+            playerInput = new PlayerInput();
             playerAttack = GetComponent<PlayerAttack>();
-            input.Gameplay.Attack.performed += ctx => playerAttack.Attack();
+            playerInput.Gameplay.Attack.performed += ctx => playerAttack.Attack();
         }
 
         private void Update()
         {
             if (!isDashing)
             {
-                RotatePlayer();
+                MovePlayer();
             }
+
             float speed = moveInput.magnitude * moveSpeed;
             animator.SetFloat("speed", speed);
 
         }
 
-        private void FixedUpdate()
-        {
-            if (!isDashing)
-            {
-                MovePlayer();
-            }
-        }
-
         private void MovePlayer()
         {
-            Vector3 movement = new Vector3(moveInput.x, 0, moveInput.y);
-            rb.MovePosition(rb.position + movement * (moveSpeed * Time.deltaTime));
+            Vector3 movement = new Vector3(moveInput.x, 0, moveInput.y) * moveSpeed * Time.deltaTime;
+            rb.MovePosition(transform.position + movement);
+
+            OnRotate();
         }
 
-        private void RotatePlayer()
+        private void Movement(InputAction.CallbackContext context)
         {
-            if (moveInput == Vector2.zero) return;
-            
-            Vector3 direction = new Vector3(moveInput.x, 0, moveInput.y);
-            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
-            rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, moveSpeed * Time.deltaTime);
+            moveInput = context.ReadValue<Vector2>();
+        }
+
+        private void OnRotate()
+        {
+            if (moveInput != Vector2.zero)
+            {
+                float targetAngle = Mathf.Atan2(moveInput.x, moveInput.y) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
+            }
         }
 
         public void OnAttack(InputValue context)
@@ -78,11 +78,6 @@ namespace Input_System
             {
                 StartCoroutine(Dash());
             }
-        }
-
-        public void OnMovement(InputValue context)
-        {
-            moveInput = context.Get<Vector2>();
         }
 
         public void OnInventoryOpen(InputValue context)
@@ -102,12 +97,16 @@ namespace Input_System
 
         private void OnEnable()
         {
-            input.Enable();
+            playerInput.Enable();
+            playerInput.Gameplay.Movement.performed += Movement;
+            playerInput.Gameplay.Movement.canceled += Movement;
         }
 
         private void OnDisable()
         {
-            input.Disable();
+            playerInput.Disable();
+            playerInput.Gameplay.Movement.performed -= Movement;
+            playerInput.Gameplay.Movement.canceled -= Movement;
         }
 
         private IEnumerator Dash()

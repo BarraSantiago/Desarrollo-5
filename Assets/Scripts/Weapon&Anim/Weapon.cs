@@ -19,7 +19,7 @@ public class Weapon : MonoBehaviour
         if (enemy != null)
         {
             Debug.Log("Dmg");
-            enemy.TakeDamage(damage);
+            enemy.RecibeDamageFromPlayer(damage);
         }
     }
 

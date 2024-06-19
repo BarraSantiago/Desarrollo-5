@@ -5,20 +5,24 @@ namespace player
 {
     public class PlayerAttack : MonoBehaviour
     {
-        [SerializeField] private Weapon weapon;
-        public List<AttackSO> combo;
-        public float comboCooldownTime = 0.5f;
-        public float attackInterval = 0.2f;
-        public float exitAttackDelay = 1f;
+        private Animator animator;                                  // Reference to the Animator component
+        private Weapon weapon;                                      // Reference to the player s weapon
 
-        private float lastClickedTime;
-        private float lastComboEnd;
-        private int comboCounter;
-        private Animator animator;
+        // Attack Settings
+        [SerializeField] private List<AttackSO> combo;              // List of combo attacks
+        [SerializeField] private float comboCooldownTime = 0.5f;    // Time to wait before starting a new combo
+        [SerializeField] private float attackInterval = 0.2f;       // Minimum time between attacks
+        [SerializeField] private float exitAttackDelay = 1f;        // Delay before exiting attack state
+
+        // Internal state
+        private float lastClickedTime;                              // Last time the attack button was clicked
+        private float lastComboEnd;                                 // Last time the combo ended
+        private int comboCounter;                                   // Counter for current combo attack
 
         private void Start()
         {
             animator = GetComponent<Animator>();
+            weapon = GetComponentInChildren<Weapon>();
         }
 
         private void Update()
@@ -26,10 +30,11 @@ namespace player
             ExitAttack();
         }
 
+        // Method to handle player attack input
         public void Attack()
         {
             if (!(Time.time - lastComboEnd > comboCooldownTime) || comboCounter >= combo.Count) return;
-            CancelInvoke(nameof(EndCombo));
+            CancelInvoke(nameof(ResetCombo));
 
             if (Time.time - lastClickedTime >= attackInterval)
             {
@@ -47,27 +52,31 @@ namespace player
             }
         }
 
+        // Play the attack animation based on the current combo index
         private void PlayAttackAnimation(int index)
         {
             animator.runtimeAnimatorController = combo[index].animatorOV;
             animator.Play("Attack", 0, 0);
         }
 
-        void ExitAttack()
+        // Check if the player is exiting the attack state
+        private void ExitAttack()
         {
             if (IsExitingAttack())
             {
-                Invoke(nameof(EndCombo), exitAttackDelay);
+                Invoke(nameof(ResetCombo), exitAttackDelay);
             }
         }
 
-        bool IsExitingAttack()
+        // Determine if the current animation state is exiting an attack
+        private bool IsExitingAttack()
         {
             var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             return stateInfo.normalizedTime > 0.9f && stateInfo.IsTag("Attack");
         }
 
-        void EndCombo()
+        // Reset combo counter and disable the weapon s trigger box
+        private void ResetCombo()
         {
             comboCounter = 0;
             lastComboEnd = Time.time;

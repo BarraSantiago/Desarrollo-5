@@ -1,3 +1,4 @@
+using Input_System;
 using InventorySystem;
 using UnityEngine;
 using PlayerStats = player.PlayerStats;
@@ -21,49 +22,30 @@ namespace EnemyUnits
         [SerializeField] private float maxHealth = 50;
 
         private float currentHealth;
-        private float lastDamageTime;
+
+        private BoxCollider boxCollider;
 
         private void Start()
         {
             currentHealth = maxHealth;
-            lastDamageTime = Time.time;
             if (!playerStats)
             {
                 playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerStats>();
             }
-        }
-
-        public void PerformAction()
-        {
-            switch (enemyType)
-            {
-                case EnemyType.Melee:
-                    DoMeleeAction();
-                    break;
-                case EnemyType.Ranged:
-                    DoRangedAction();
-                    break;
-                default:
-                    break;
-            }
+            boxCollider = GetComponentInChildren<BoxCollider>();
         }
 
         private void DoRangedAction()
         {
-            Debug.Log("Ataque Range");
+            playerStats.RecibeDamageFromEnemy(damage);
         }
 
         private void DoMeleeAction()
-        {
-            //if (Time.time - lastDamageTime < attackCooldown) return;
-            
-            
-            //lastDamageTime = Time.time;
-            
-            //playerStats.TakeDamage(damage);
+        {   
+            playerStats.RecibeDamageFromEnemy(damage);
         }
 
-        public void TakeDamage(float damage)
+        public void RecibeDamageFromPlayer(float damage)
         {
             currentHealth -= damage;
 
@@ -71,6 +53,36 @@ namespace EnemyUnits
 
             currentHealth = 0;
             Die();
+        }
+
+        void EnableAttack()
+        {
+            boxCollider.enabled = true;
+        }
+
+        void DisableAttack()
+        {
+            boxCollider.enabled = false;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            var player = other.GetComponent<PlayerController>();
+
+            if (player != null)
+            {
+                switch (enemyType)
+                {
+                    case EnemyType.Melee:
+                        DoMeleeAction();
+                        break;
+                    case EnemyType.Ranged:
+                        DoRangedAction();
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private void Die()
