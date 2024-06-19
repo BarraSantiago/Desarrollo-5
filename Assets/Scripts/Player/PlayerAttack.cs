@@ -39,12 +39,14 @@ namespace player
             if (Time.time - lastClickedTime >= attackInterval)
             {
                 PlayAttackAnimation(comboCounter);
-                weapon.damage = combo[comboCounter].damage;
+                weapon.Damage *= combo[comboCounter].damage;
                 comboCounter++;
+                Debug.Log("Combo counter" + comboCounter);
                 lastClickedTime = Time.time;
 
                 if (comboCounter > combo.Count)
                 {
+                    Debug.Log("combo count" + combo.Count);
                     comboCounter = 0;
                 }
 
@@ -80,6 +82,7 @@ namespace player
         {
             comboCounter = 0;
             lastComboEnd = Time.time;
+            weapon.ResetDamage();
 
             weapon.DisableTriggerBox();
         }

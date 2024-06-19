@@ -3,14 +3,22 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    public float damage;
+    [SerializeField] private float damage = 0;
+    private float initialDamage;
 
-    BoxCollider triggerBox;
+    public float Damage
+    {
+        get { return damage; }
+        set { damage = value; }
+    }
+
+    private BoxCollider triggerBox;
 
     private void Start()
     {
         triggerBox = GetComponent<BoxCollider>();
         triggerBox.enabled = false;
+        initialDamage = damage;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -19,6 +27,7 @@ public class Weapon : MonoBehaviour
         if (enemy != null)
         {
             Debug.Log("Dmg");
+            Debug.Log(damage);
             enemy.RecibeDamageFromPlayer(damage);
         }
     }
@@ -31,6 +40,11 @@ public class Weapon : MonoBehaviour
     public void DisableTriggerBox()
     {
         triggerBox.enabled = false;
+    }
+
+    public void ResetDamage()
+    {
+        damage = initialDamage;
     }
 }
 
