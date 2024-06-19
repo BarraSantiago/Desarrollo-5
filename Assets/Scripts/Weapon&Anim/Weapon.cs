@@ -7,7 +7,7 @@ public class Weapon : MonoBehaviour
     [SerializeField] private float damage = 0;
     private float initialDamage;
 
-    private HashSet<EnemyBehaviour> hitEnemies; // Almacena los enemigos que ya han sido golpeados en la animación actual
+    private HashSet<EnemyBehaviour> hitEnemies;
 
     public float Damage
     {
@@ -34,7 +34,7 @@ public class Weapon : MonoBehaviour
             Debug.Log("Dmg");
             Debug.Log(damage);
             enemy.RecibeDamageFromPlayer(damage);
-            hitEnemies.Add(enemy); // Agrega el enemigo a la lista de golpeados
+            hitEnemies.Add(enemy);
         }
     }
 
