@@ -193,5 +193,31 @@ namespace InventorySystem
         {
             Container.Clear();
         }
+
+        public int GetItemCount(Item item)
+        {
+            var slots = FindAllItemsOnInventory(item);
+           
+            return slots.Sum(slot => slot.amount);
+        }
+
+        public void RemoveItem(Item currentEntryData, int amount)
+        {
+            List<InventorySlot> slots = FindAllItemsOnInventory(currentEntryData);
+            foreach (InventorySlot slot in slots)
+            {
+                if (slot.amount <= amount)
+                {
+                    amount -= slot.amount;
+                    slot.RemoveItem();
+                    if(amount > 0) RemoveItem(currentEntryData, amount);
+                }
+                else
+                {
+                    slot.AddAmount(-amount);
+                    break;
+                }
+            }
+        }
     }
 }

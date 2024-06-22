@@ -1,4 +1,5 @@
 using System.Collections;
+using Interactable;
 using InventorySystem;
 using player;
 using UnityEngine;
@@ -12,7 +13,8 @@ namespace Input_System
         [SerializeField] private GameObject inventoryUI;
         [SerializeField] private GameObject storeInventoryUI;
         [SerializeField] private InventoryObject playerInventory;
-        
+        [SerializeField] private float interactionRadius = 5f;
+
         private PlayerAttack playerAttack;
 
         public float dashSpeed;
@@ -30,7 +32,6 @@ namespace Input_System
             rb = GetComponent<Rigidbody>();
             playerInput = new PlayerInput();
             playerAttack = GetComponent<PlayerAttack>();
-            playerInput.Gameplay.Attack.performed += ctx => playerAttack.Attack();
         }
 
         private void Update()
@@ -42,12 +43,11 @@ namespace Input_System
 
             float speed = moveInput.magnitude * moveSpeed;
             animator.SetFloat("speed", speed);
-
         }
 
         private void MovePlayer()
         {
-            Vector3 movement = new Vector3(moveInput.x, 0, moveInput.y) * moveSpeed * Time.deltaTime;
+            Vector3 movement = new Vector3(moveInput.x, 0, moveInput.y) * (moveSpeed * Time.deltaTime);
             rb.MovePosition(transform.position + movement);
 
             OnRotate();
@@ -60,18 +60,18 @@ namespace Input_System
 
         private void OnRotate()
         {
-            if (moveInput != Vector2.zero)
-            {
-                float targetAngle = Mathf.Atan2(moveInput.x, moveInput.y) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
-            }
+            if (moveInput == Vector2.zero) return;
+
+            float targetAngle = Mathf.Atan2(moveInput.x, moveInput.y) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
         }
 
         public void OnAttack(InputValue context)
         {
+            if(!playerAttack) return;
             playerAttack?.Attack();
         }
-        
+
         public void OnDash(InputValue context)
         {
             if (!isDashing)
@@ -83,10 +83,10 @@ namespace Input_System
         public void OnInventoryOpen(InputValue context)
         {
             inventoryUI.SetActive(!inventoryUI.activeSelf);
-            if(storeInventoryUI) storeInventoryUI?.SetActive(!storeInventoryUI.activeSelf);
+            if (storeInventoryUI) storeInventoryUI?.SetActive(!storeInventoryUI.activeSelf);
 
             if (!inventoryUI.activeSelf) return;
-            
+
             playerInventory.UpdateInventory();
         }
 
@@ -94,6 +94,23 @@ namespace Input_System
         {
             Application.Quit();
         }
+
+        public void OnInteract(InputValue context)
+        {
+            InteractWithNearbyObjects();
+        }
+
+        private void InteractWithNearbyObjects()
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, interactionRadius);
+
+            foreach (var hitCollider in hitColliders)
+            {
+                IInteractable interactable = hitCollider.GetComponent<IInteractable>();
+                interactable?.Interact();
+            }
+        }
+
 
         private void OnEnable()
         {

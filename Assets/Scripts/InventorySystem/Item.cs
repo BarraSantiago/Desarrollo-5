@@ -10,6 +10,8 @@ namespace InventorySystem
         public ItemBuff[] buffs;
         public ListPrice listPrice;
         public int price;
+        public bool craftable;
+        public ItemRecipe recipe;
         public Item()
         {
             name = "";

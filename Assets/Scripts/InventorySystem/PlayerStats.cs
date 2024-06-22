@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using player;
+using UnityEngine;
 
 namespace InventorySystem
 {
@@ -12,17 +13,17 @@ namespace InventorySystem
 
         private void Start()
         {
-            _equipment = GetComponent<player.Player>().equipment;
+            _equipment = GetComponent<Player>().equipment;
         
-            for (int i = 0; i < attributes.Length; i++)
+            foreach (var t in attributes)
             {
-                attributes[i].SetParent(this);
+                t.SetParent(this);
             }
 
-            for (int i = 0; i < _equipment.GetSlots.Length; i++)
+            foreach (var t in _equipment.GetSlots)
             {
-                _equipment.GetSlots[i].onBeforeUpdated += OnRemoveItem;
-                _equipment.GetSlots[i].onAfterUpdated += OnEquipItem;
+                t.onBeforeUpdated += OnRemoveItem;
+                t.onAfterUpdated += OnEquipItem;
             }
         }
     
@@ -66,7 +67,7 @@ namespace InventorySystem
 
         public void OnEquipItem(InventorySlot slot)
         {
-            if (slot.GetItemObject() == null)
+            if (!slot.GetItemObject())
                 return;
             switch (slot.parent.inventory.type)
             {

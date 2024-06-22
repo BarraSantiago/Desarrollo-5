@@ -8,8 +8,9 @@
         Pants,
         Boots,
         Sword,
-        shield,
+        Shield,
         Gloves,
+        Potion,
         Default
     }
 }

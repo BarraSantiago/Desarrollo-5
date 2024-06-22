@@ -3,7 +3,7 @@
     public enum Attributes
     {
         Agility,
-        Intellect,
+        Health,
         Stamina,
         Strength
     }
