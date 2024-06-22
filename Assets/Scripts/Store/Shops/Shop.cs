@@ -131,6 +131,13 @@ namespace Store.Shops
             upgradeText.color = money < _shopUpgradeCost ? Color.red : Color.green;
             costText.color = money < _shopUpgradeCost ? Color.red : Color.green;
             
+            for (int i = 0; i < _selectedItem.data.recipe.items.Length; i++)
+            {
+                ItemObject currentEntry = completeDatabase.ItemObjects[_selectedItem.data.recipe.items[i].itemID];
+                shopRecipes[i].UpdateAbailability( _selectedItem.data.recipe.items[i].amount,
+                    player.inventory.GetItemCount(currentEntry.data));
+            }
+            
             CheckLevel();
         }
 
@@ -138,7 +145,7 @@ namespace Store.Shops
         {
             if (_shopLevel < _shopMaxLevel) return;
             upgradeButton.interactable = false;
-            costText.text = "Max Level";
+            upgradeText.text = "Max Level";
         }
 
         private void UpgradeShop()
@@ -156,7 +163,7 @@ namespace Store.Shops
 
             player.money -= _shopUpgradeCost;
             _shopUpgradeCost *= _shopUpgradeCostMultiplier;
-            costText.text = _shopUpgradeCost.ToString();
+            upgradeText.text = _shopUpgradeCost.ToString();
             _shopLevel++;
         }
 

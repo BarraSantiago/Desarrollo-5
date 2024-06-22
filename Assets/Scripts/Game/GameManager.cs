@@ -1,4 +1,5 @@
 ﻿using InventorySystem;
+using player;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -7,7 +8,6 @@ namespace Game
 {
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] private player.Player _player;
         [SerializeField] private GameObject groundItemPrefab;
         [SerializeField] private ItemDatabaseObject itemDatabase;
         [SerializeField] private Button goToStore;
@@ -27,7 +27,7 @@ namespace Game
 
         private void ChangeScene()
         {
-            SceneManager.LoadScene("Store - Pablo");
+            SceneManager.LoadScene("Store - Santi");
         }
 
         public void SpawnItem()

@@ -90,7 +90,8 @@ namespace EnemyUnits
             Debug.Log($"{enemyType} enemy died.");
             int rand = Random.Range(0, itemDatabase.ItemObjects.Length);
 
-            Instantiate(itemDatabase.ItemObjects[rand].characterDisplay, transform.position, Quaternion.identity);
+            GameObject drop = Instantiate(itemDatabase.ItemObjects[rand].characterDisplay, transform.position, Quaternion.identity);
+            drop.transform.position = new Vector3(drop.transform.position.x, 1f, drop.transform.position.z);
             Destroy(gameObject);
         }
     }

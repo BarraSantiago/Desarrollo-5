@@ -20,5 +20,11 @@ namespace Store.Shops
             owned.text = ownedAmount.ToString();
             stateImage.color = requiredAmount <= ownedAmount ? Color.green : Color.red;
         }
+        
+        public void UpdateAbailability(int requiredAmount, int ownedAmount)
+        {
+            owned.text = ownedAmount.ToString();
+            stateImage.color = requiredAmount <= ownedAmount ? Color.green : Color.red;
+        }
     }
 }
