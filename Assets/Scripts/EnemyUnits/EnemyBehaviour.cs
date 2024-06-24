@@ -22,6 +22,7 @@ namespace EnemyUnits
         [SerializeField] private float maxHealth = 50;
 
         private float currentHealth;
+        private bool hasAttacked = false;
 
         private BoxCollider boxCollider;
 
@@ -41,8 +42,13 @@ namespace EnemyUnits
         }
 
         private void DoMeleeAction()
-        {   
-            playerStats.RecibeDamageFromEnemy(damage);
+        {
+            if (!hasAttacked)
+            {
+                playerStats.RecibeDamageFromEnemy(damage);
+                hasAttacked = true;
+                AudioManager.instance.Play("EnemyAttack");
+            }
         }
 
         public void RecibeDamageFromPlayer(float damage)
@@ -63,6 +69,7 @@ namespace EnemyUnits
         void DisableAttack()
         {
             boxCollider.enabled = false;
+            hasAttacked = false;
         }
 
         private void OnTriggerEnter(Collider other)
