@@ -34,6 +34,7 @@ public class Weapon : MonoBehaviour
             Debug.Log("Dmg");
             Debug.Log(damage);
             enemy.RecibeDamageFromPlayer(damage);
+            AudioManager.instance.Play("PlayerAttack");
             hitEnemies.Add(enemy);
         }
     }
