@@ -1,11 +1,10 @@
 using System.Collections;
 using Interactable;
 using InventorySystem;
-using player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Input_System
+namespace player
 {
     public class PlayerController : MonoBehaviour
     {
@@ -14,67 +13,72 @@ namespace Input_System
         [SerializeField] private GameObject storeInventoryUI;
         [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private float interactionRadius = 5f;
-
-        private PlayerAttack playerAttack;
+        
+        public float MovementSpeed
+        {
+            get => moveSpeed;
+            set => moveSpeed = value;
+        }
 
         public float dashSpeed;
         public float dashTime;
         public Animator animator;
 
-        private PlayerInput playerInput;
-        private Vector2 moveInput;
-        private Rigidbody rb;
-        private Vector3 dashDirection;
-        private bool isDashing;
+        private PlayerAttack _playerAttack;
+        private PlayerInput _playerInput;
+        private Vector2 _moveInput;
+        private Rigidbody _rb;
+        private Vector3 _dashDirection;
+        private bool _isDashing;
 
         private void Awake()
         {
-            rb = GetComponent<Rigidbody>();
-            playerInput = new PlayerInput();
-            playerAttack = GetComponent<PlayerAttack>();
+            _rb = GetComponent<Rigidbody>();
+            _playerInput = new PlayerInput();
+            _playerAttack = GetComponent<PlayerAttack>();
         }
 
         private void Update()
         {
-            if (!isDashing)
+            if (!_isDashing)
             {
                 MovePlayer();
             }
 
-            float speed = moveInput.magnitude * moveSpeed;
+            float speed = _moveInput.magnitude * MovementSpeed;
             animator.SetFloat("speed", speed);
         }
 
         private void MovePlayer()
         {
-            Vector3 movement = new Vector3(moveInput.x, 0, moveInput.y) * (moveSpeed * Time.deltaTime);
-            rb.MovePosition(transform.position + movement);
+            Vector3 movement = new Vector3(_moveInput.x, 0, _moveInput.y) * (MovementSpeed * Time.deltaTime);
+            _rb.MovePosition(transform.position + movement);
 
             OnRotate();
         }
 
         private void Movement(InputAction.CallbackContext context)
         {
-            moveInput = context.ReadValue<Vector2>();
+            _moveInput = context.ReadValue<Vector2>();
         }
 
         private void OnRotate()
         {
-            if (moveInput == Vector2.zero) return;
+            if (_moveInput == Vector2.zero) return;
 
-            float targetAngle = Mathf.Atan2(moveInput.x, moveInput.y) * Mathf.Rad2Deg;
+            float targetAngle = Mathf.Atan2(_moveInput.x, _moveInput.y) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
         }
 
         public void OnAttack(InputValue context)
         {
-            if(!playerAttack) return;
-            playerAttack?.Attack();
+            if (!_playerAttack) return;
+            _playerAttack?.Attack();
         }
 
         public void OnDash(InputValue context)
         {
-            if (!isDashing)
+            if (!_isDashing)
             {
                 StartCoroutine(Dash());
             }
@@ -107,38 +111,42 @@ namespace Input_System
             foreach (var hitCollider in hitColliders)
             {
                 IInteractable interactable = hitCollider.GetComponent<IInteractable>();
-                interactable?.Interact();
+                if (interactable == null) continue;
+
+                bool interactionSuccess = interactable.Interact();
+
+                if (interactionSuccess) break;
             }
         }
 
 
         private void OnEnable()
         {
-            playerInput.Enable();
-            playerInput.Gameplay.Movement.performed += Movement;
-            playerInput.Gameplay.Movement.canceled += Movement;
+            _playerInput.Enable();
+            _playerInput.Gameplay.Movement.performed += Movement;
+            _playerInput.Gameplay.Movement.canceled += Movement;
         }
 
         private void OnDisable()
         {
-            playerInput.Disable();
-            playerInput.Gameplay.Movement.performed -= Movement;
-            playerInput.Gameplay.Movement.canceled -= Movement;
+            _playerInput.Disable();
+            _playerInput.Gameplay.Movement.performed -= Movement;
+            _playerInput.Gameplay.Movement.canceled -= Movement;
         }
 
         private IEnumerator Dash()
         {
-            isDashing = true;
-            dashDirection = new Vector3(moveInput.x, 0, moveInput.y).normalized;
+            _isDashing = true;
+            _dashDirection = new Vector3(_moveInput.x, 0, _moveInput.y).normalized;
             float startTime = Time.time;
 
             while (Time.time < startTime + dashTime)
             {
-                rb.MovePosition(rb.position + dashDirection * (dashSpeed * Time.deltaTime));
+                _rb.MovePosition(_rb.position + _dashDirection * (dashSpeed * Time.deltaTime));
                 yield return null;
             }
 
-            isDashing = false;
+            _isDashing = false;
         }
     }
 }

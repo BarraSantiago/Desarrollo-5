@@ -12,20 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
   m_Name: item 05
   m_EditorClassIdentifier: 
-  uiDisplay: {fileID: 21300000, guid: c0c15f243a4fc774db5be737a366c79c, type: 3}
+  uiDisplay: {fileID: 21300000, guid: 9a925de2acff60e4fbfc377b2494c181, type: 3}
   characterDisplay: {fileID: 3138242233395258418, guid: fbbd14df82baacf42adb2899bfc30b1d, type: 3}
   stackable: 1
   maxStack: 3
   type: 8
-  description: 
+  description: Heals 50 hit points;
   data:
     name: Minor Potion
     id: 4
     buffs:
-    - stat: 1
-      value: 50
+    - max: 0
       min: 0
-      max: 0
+      duration: 0
+      stat: 1
+      value: 50
     listPrice:
       originalPrice: 75
     price: 0

@@ -9,15 +9,17 @@ namespace Store.Shops
 {
     public class Shop : MonoBehaviour
     {
-        [Header("Shop setup")]
-        [SerializeField] private ItemDatabaseObject completeDatabase;
+        [Header("Shop setup")] [SerializeField]
+        private ItemDatabaseObject completeDatabase;
+
         [SerializeField] private ItemDatabaseObject[] databases;
         [SerializeField] private Button upgradeButton;
         [SerializeField] private Player player;
         [SerializeField] private TMP_Text upgradeText;
-        
-        [Header("Item setup")]
-        [SerializeField] private GameObject shopItemPrefab;
+
+        [Header("Item setup")] [SerializeField]
+        private GameObject shopItemPrefab;
+
         [SerializeField] private Transform shopItemsParent;
         [SerializeField] private Button buyButton;
         [SerializeField] private ShopRecipe[] shopRecipes;
@@ -49,7 +51,7 @@ namespace Store.Shops
             UpdateAvailability(player.money);
             Player.OnMoneyUpdate += UpdateAvailability;
             ShopItem.OnSelectItem += SelectItem;
-            
+
             SelectItem(databases[0].ItemObjects[0].data.id);
         }
 
@@ -61,7 +63,7 @@ namespace Store.Shops
         private void SelectItem(int itemId)
         {
             _selectedItem = completeDatabase.ItemObjects[itemId];
-            
+
             int recipeItemsLength = _selectedItem.data.recipe?.items?.Length ?? 0;
             for (int i = 0; i < shopRecipes.Length; i++)
             {
@@ -93,11 +95,12 @@ namespace Store.Shops
             {
                 return;
             }
-            if(_selectedItem.data.craftable && !CheckRecipe())
+
+            if (_selectedItem.data.craftable && !CheckRecipe())
             {
                 return;
             }
-            else if(_selectedItem.data.craftable)
+            else if (_selectedItem.data.craftable)
             {
                 foreach (var itemEntry in _selectedItem.data.recipe.items)
                 {
@@ -105,7 +108,7 @@ namespace Store.Shops
                     player.inventory.RemoveItem(currentEntry.data, itemEntry.amount);
                 }
             }
-           
+
 
             player.money -= _currentCost;
             player.inventory.AddItem(_selectedItem.data, 1);
@@ -125,20 +128,22 @@ namespace Store.Shops
 
             return true;
         }
-        
+
         public void UpdateAvailability(int money)
         {
             upgradeText.color = money < _shopUpgradeCost ? Color.red : Color.green;
             costText.color = money < _shopUpgradeCost ? Color.red : Color.green;
+
+            CheckLevel();
+            
+            if (!_selectedItem || !_selectedItem.data.craftable) return;
             
             for (int i = 0; i < _selectedItem.data.recipe.items.Length; i++)
             {
                 ItemObject currentEntry = completeDatabase.ItemObjects[_selectedItem.data.recipe.items[i].itemID];
-                shopRecipes[i].UpdateAbailability( _selectedItem.data.recipe.items[i].amount,
+                shopRecipes[i].UpdateAbailability(_selectedItem.data.recipe.items[i].amount,
                     player.inventory.GetItemCount(currentEntry.data));
             }
-            
-            CheckLevel();
         }
 
         private void CheckLevel()
@@ -146,6 +151,7 @@ namespace Store.Shops
             if (_shopLevel < _shopMaxLevel) return;
             upgradeButton.interactable = false;
             upgradeText.text = "Max Level";
+            upgradeText.color = Color.gray;
         }
 
         private void UpgradeShop()

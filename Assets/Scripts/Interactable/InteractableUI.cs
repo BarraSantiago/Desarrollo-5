@@ -5,7 +5,7 @@ namespace Interactable
     public class InteractableUI : MonoBehaviour
     {
         [SerializeField] private Transform playerTransform;
-        [SerializeField] private float distance = 5f;
+        [SerializeField] private float distance = 2.5f;
         [SerializeField] private GameObject text;
         
         private void Update()

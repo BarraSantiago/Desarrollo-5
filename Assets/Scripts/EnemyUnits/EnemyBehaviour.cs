@@ -1,4 +1,4 @@
-using Input_System;
+using player;
 using InventorySystem;
 using UnityEngine;
 using PlayerStats = player.PlayerStats;
@@ -38,14 +38,14 @@ namespace EnemyUnits
 
         private void DoRangedAction()
         {
-            playerStats.RecibeDamageFromEnemy(damage);
+            playerStats.ReceiveDamage(damage);
         }
 
         private void DoMeleeAction()
         {
             if (!hasAttacked)
             {
-                playerStats.RecibeDamageFromEnemy(damage);
+                playerStats.ReceiveDamage(damage);
                 hasAttacked = true;
                 AudioManager.instance.Play("EnemyAttack");
             }

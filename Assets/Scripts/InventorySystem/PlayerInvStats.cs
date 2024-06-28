@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace InventorySystem
 {
-    public class PlayerStats : MonoBehaviour
+    public class PlayerInvStats : MonoBehaviour
     {
     
         public Attribute[] attributes;

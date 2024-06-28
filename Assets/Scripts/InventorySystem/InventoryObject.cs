@@ -96,7 +96,7 @@ namespace InventorySystem
             for (int i = 0; i < GetSlots.Length; i++)
             {
                 if (GetSlots[i].item.id > -1) continue;
-                
+
                 OnItemAdded?.Invoke(i);
                 return GetSlots[i];
             }
@@ -154,11 +154,19 @@ namespace InventorySystem
 
             #endregion
 
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream(string.Concat(Application.persistentDataPath, savePath), FileMode.Create,
-                FileAccess.Write);
-            formatter.Serialize(stream, Container);
-            stream.Close();
+            try
+            {
+                IFormatter formatter = new BinaryFormatter();
+                Stream stream = new FileStream(string.Concat(Application.persistentDataPath, savePath), FileMode.Create,
+                    FileAccess.Write);
+                formatter.Serialize(stream, Container);
+                stream.Close();
+            }
+            catch (SerializationException e)
+            {
+                Debug.LogError("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
         }
 
         [ContextMenu("Load")]
@@ -166,28 +174,25 @@ namespace InventorySystem
         {
             if (!File.Exists(string.Concat(Application.persistentDataPath, savePath))) return;
 
-            #region Optional Load
-
-            //BinaryFormatter bf = new BinaryFormatter();
-            //FileStream file = File.Open(string.Concat(Application.persistentDataPath, savePath), FileMode.Open, FileAccess.Read);
-            //JsonUtility.FromJsonOverwrite(bf.Deserialize(file).ToString(), Container);
-            //file.Close();
-
-            #endregion
-
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream(string.Concat(Application.persistentDataPath, savePath), FileMode.Open,
-                FileAccess.Read);
-            Inventory newContainer = (Inventory)formatter.Deserialize(stream);
-            for (int i = 0; i < GetSlots.Length; i++)
+            try
             {
-                GetSlots[i].UpdateSlot(newContainer.Slots[i].item, newContainer.Slots[i].amount);
+                using Stream stream = new FileStream(string.Concat(Application.persistentDataPath, savePath),
+                    FileMode.Open, FileAccess.Read);
+                IFormatter formatter = new BinaryFormatter();
+                Inventory newContainer = (Inventory)formatter.Deserialize(stream);
+                for (int i = 0; i < GetSlots.Length; i++)
+                {
+                    GetSlots[i].UpdateSlot(newContainer.Slots[i].item, newContainer.Slots[i].amount);
+                }
             }
-
-            stream.Close();
+            catch (SerializationException e)
+            {
+                Debug.LogError("Failed to deserialize. Reason: " + e.Message);
+                throw;
+            }
         }
 
-        
+
         [ContextMenu("Clear")]
         public void Clear()
         {
@@ -197,7 +202,7 @@ namespace InventorySystem
         public int GetItemCount(Item item)
         {
             var slots = FindAllItemsOnInventory(item);
-           
+
             return slots.Sum(slot => slot.amount);
         }
 
@@ -210,7 +215,7 @@ namespace InventorySystem
                 {
                     amount -= slot.amount;
                     slot.RemoveItem();
-                    if(amount > 0) RemoveItem(currentEntryData, amount);
+                    if (amount > 0) RemoveItem(currentEntryData, amount);
                 }
                 else
                 {

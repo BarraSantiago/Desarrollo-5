@@ -6,9 +6,10 @@ namespace Interactable
     {
         [SerializeField] private GameObject menu;
         
-        public void Interact()
+        public bool Interact()
         {
             menu?.SetActive(!menu.activeSelf);
+            return menu;
         }
     }
 }

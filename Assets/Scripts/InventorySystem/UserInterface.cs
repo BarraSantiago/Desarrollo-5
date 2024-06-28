@@ -13,6 +13,7 @@ namespace InventorySystem
     public abstract class UserInterface : MonoBehaviour
     {
         [SerializeField] private GameObject itemDisplayPrefab;
+        [SerializeField] private GameObject consumableDisplayPrefab;
 
         public InventoryObject inventory;
         public Dictionary<GameObject, InventorySlot> slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
@@ -51,6 +52,7 @@ namespace InventorySystem
             {
                 return;
             }
+
             if (slot.item.id <= -1)
             {
                 slot.slotDisplay.transform.GetChild(0).GetComponent<Image>().sprite = null;
@@ -100,10 +102,10 @@ namespace InventorySystem
             if (data is not PointerEventData { button: PointerEventData.InputButton.Right }) return;
 
             if (slotsOnInterface[obj].item.id < 0) return;
-
             Canvas canvas = FindObjectOfType<Canvas>();
-
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+
+
             Vector2 itemDisplaySize = itemDisplayPrefab.GetComponent<RectTransform>().sizeDelta;
 
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, null,
@@ -117,9 +119,13 @@ namespace InventorySystem
                 canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
 
             Vector3 worldMousePosition = canvasRect.TransformPoint(localMousePosition);
+            GameObject itemDisplay;
+            itemDisplay =
+                Instantiate(
+                    slotsOnInterface[obj].GetItemObject().type == ItemType.Potion
+                        ? consumableDisplayPrefab
+                        : itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
 
-            GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity,
-                canvas.transform);
             ItemDisplay display = itemDisplay.GetComponent<ItemDisplay>();
             itemDisplay.transform.SetAsLastSibling();
             display.item = slotsOnInterface[obj].GetItemObject();
@@ -154,7 +160,7 @@ namespace InventorySystem
         {
             GameObject tempItem = null;
             if (slotsOnInterface[obj].item.id < 0) return tempItem;
-            
+
             tempItem = new GameObject();
             var rt = tempItem.AddComponent<RectTransform>();
             rt.sizeDelta = new Vector2(50, 50);

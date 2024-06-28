@@ -1,4 +1,5 @@
 ﻿using System;
+using player;
 using UnityEngine;
 
 namespace InventorySystem
@@ -6,12 +7,14 @@ namespace InventorySystem
     [Serializable]
     public class ItemBuff : IModifiers
     {
+        [SerializeField] private int max; //buff max value roll
+        [SerializeField] private int min; //buff min value roll
+        [SerializeField] private float duration = 0; //buff duration
         public Attributes stat;
         public int value;
-        [SerializeField] private int min; //buff min value roll
         public int Min => min;
-        [SerializeField] private int max; //buff max value roll
         public int Max => max;
+        public float Duration => duration;
 
         public ItemBuff(int _min, int _max)
         {
@@ -28,6 +31,11 @@ namespace InventorySystem
         public void GenerateField()
         {
             value = UnityEngine.Random.Range(min, max);
+        }
+
+        public void UseBuff()
+        {
+            PlayerStats.OnBuffReceived?.Invoke(this);
         }
     }
 }

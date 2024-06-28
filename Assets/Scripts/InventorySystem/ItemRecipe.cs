@@ -4,7 +4,7 @@ using UnityEngine;
 namespace InventorySystem
 {
     [CreateAssetMenu(fileName = "New Item Recipe", menuName = "Inventory System/Items/New Recipe")]
-
+    [Serializable]
     public class ItemRecipe : ScriptableObject
     {
         [Serializable]

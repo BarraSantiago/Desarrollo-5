@@ -1,4 +1,5 @@
 ﻿using System;
+using player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,18 +9,19 @@ namespace InventorySystem
 {
     public class ItemDisplay : MonoBehaviour
     {
-        public ItemObject item;
-        public static Action OnItemUpdate;
-        
         [SerializeField] private Image icon;
         [SerializeField] private TMP_Text itemName;
         [SerializeField] private TMP_Text price;
         [SerializeField] private TMP_Text listPrice;
         [SerializeField] private TMP_Text description;
         [SerializeField] private TMP_InputField inputField;
+        [SerializeField] private Button useButton;
+
+        public static Action OnItemUpdate;
+        public ItemObject item;
 
         private EventTrigger eventTrigger;
-        
+
         public void Initialize()
         {
             icon.sprite = item.uiDisplay;
@@ -27,7 +29,7 @@ namespace InventorySystem
             price.text = item.price.ToString();
             listPrice.text = item.data.listPrice.CurrentPrice.ToString();
             description.text = item.description;
-            
+
             eventTrigger = GetComponent<EventTrigger>();
             if (eventTrigger == null)
             {
@@ -35,6 +37,7 @@ namespace InventorySystem
             }
 
             AddPointerExitEvent();
+            if(item.type == ItemType.Potion) useButton.onClick.AddListener(UseItem);
         }
 
         private void AddPointerExitEvent()
@@ -45,10 +48,10 @@ namespace InventorySystem
 
             eventTrigger.triggers.Add(entry);
         }
-        
+
         public void ChangeItemPrice()
         {
-            if(int.TryParse(inputField.text, out int result))
+            if (int.TryParse(inputField.text, out int result))
             {
                 item.price = result;
                 OnItemUpdate?.Invoke();
@@ -58,13 +61,19 @@ namespace InventorySystem
                 // TODO fail to change value
             }
         }
-        
+
         private void Close()
         {
             // TODO make object pooling
             Destroy(gameObject);
         }
 
-        
+        private void UseItem()
+        {
+            foreach (var buff in item.data.buffs)
+            {
+                PlayerStats.OnBuffReceived?.Invoke(buff);
+            }
+        }
     }
 }

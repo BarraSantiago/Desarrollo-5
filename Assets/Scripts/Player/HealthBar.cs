@@ -1,18 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthBar : MonoBehaviour
+namespace player
 {
-    [SerializeField] private Slider slider;
-
-    public void SetMaxHealth(float health)
+    public class HealthBar : MonoBehaviour
     {
-        slider.maxValue = health;
-        slider.value = health;
-    }
+        [SerializeField] private Slider slider;
 
-    public void SetHealth(float health)
-    {
-        slider.value = health;
+        public void SetMaxHealth(float health)
+        {
+            slider.maxValue = health;
+            slider.value = health;
+        }
+
+        public void SetHealth(float health)
+        {
+            slider.value = health;
+        }
     }
 }
