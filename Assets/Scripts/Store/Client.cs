@@ -113,8 +113,7 @@ namespace Store
         {
             this.id = id;
 
-            //CurrentState = State.Idle;
-            ChooseItemToGrab();
+            CurrentState = State.Idle;
         }
 
         public void Deinitialize()
