@@ -8,18 +8,28 @@ using UnityEngine;
 
 namespace InventorySystem
 {
+    [Serializable]
+    public class SerializableInventorySlot
+    {
+        public int SlotIndex;
+        public Item Item;
+        public int Amount;
+    }
+    [Serializable]
+    public class SerializableInventory
+    {
+        public SerializableInventorySlot[] Slots;
+    }
     [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
     public class InventoryObject : ScriptableObject
     {
+        [SerializeField] private Inventory Container = new Inventory();
+
         public Action<int> OnItemAdded;
         public static Action<int> OnItemSwapInventory;
         public string savePath;
         public ItemDatabaseObject database;
-
         public InterfaceType type;
-
-        //public int MAX_ITEMS;
-        [SerializeField] private Inventory Container = new Inventory();
         public InventorySlot[] GetSlots => Container.Slots;
 
         public void UpdateInventory()
@@ -42,6 +52,7 @@ namespace InventorySystem
                     if (totalAmount <= itemObject.maxStack)
                     {
                         slot.AddAmount(amount);
+                        OnItemAdded?.Invoke(Array.IndexOf(GetSlots, slot));
                         return true;
                     }
                     else
@@ -58,6 +69,7 @@ namespace InventorySystem
 
                 if (emptySlot == null) return false;
                 emptySlot.UpdateSlot(item, amount);
+                OnItemAdded?.Invoke(Array.IndexOf(GetSlots, emptySlot));
 
                 return true;
             }
@@ -67,6 +79,7 @@ namespace InventorySystem
                 InventorySlot emptySlot = GetEmptySlot();
                 if (emptySlot == null) return false;
                 emptySlot.UpdateSlot(item, amount);
+                OnItemAdded?.Invoke(Array.IndexOf(GetSlots, emptySlot));
                 return true;
             }
         }
@@ -144,51 +157,37 @@ namespace InventorySystem
         [ContextMenu("Save")]
         public void Save()
         {
-            #region Optional Save
-
-            //string saveData = JsonUtility.ToJson(Container, true);
-            //BinaryFormatter bf = new BinaryFormatter();
-            //FileStream file = File.Create(string.Concat(Application.persistentDataPath, savePath));
-            //bf.Serialize(file, saveData);
-            //file.Close();
-
-            #endregion
-
-            try
+            SerializableInventory serializableInventory = new SerializableInventory
             {
-                IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream(string.Concat(Application.persistentDataPath, savePath), FileMode.Create,
-                    FileAccess.Write);
-                formatter.Serialize(stream, Container);
-                stream.Close();
-            }
-            catch (SerializationException e)
-            {
-                Debug.LogError("Failed to serialize. Reason: " + e.Message);
-                throw;
-            }
+                Slots = GetSlots.Select((slot, index) => new SerializableInventorySlot
+                {
+                    SlotIndex = index,
+                    Item = slot.item,
+                    Amount = slot.amount
+                }).ToArray()
+            };
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(string.Concat(Application.persistentDataPath, savePath), FileMode.Create,
+                FileAccess.Write);
+            formatter.Serialize(stream, serializableInventory);
+            stream.Close();
         }
 
         [ContextMenu("Load")]
         public void Load()
         {
-            if (!File.Exists(string.Concat(Application.persistentDataPath, savePath))) return;
+            string filePath = string.Concat(Application.persistentDataPath, savePath);
+            if (!File.Exists(filePath)) return;
 
-            try
+            using Stream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            if (stream.Length == 0) return; // Check if the file is empty
+
+            IFormatter formatter = new BinaryFormatter();
+            SerializableInventory newContainer = (SerializableInventory)formatter.Deserialize(stream);
+            foreach (var slot in newContainer.Slots)
             {
-                using Stream stream = new FileStream(string.Concat(Application.persistentDataPath, savePath),
-                    FileMode.Open, FileAccess.Read);
-                IFormatter formatter = new BinaryFormatter();
-                Inventory newContainer = (Inventory)formatter.Deserialize(stream);
-                for (int i = 0; i < GetSlots.Length; i++)
-                {
-                    GetSlots[i].UpdateSlot(newContainer.Slots[i].item, newContainer.Slots[i].amount);
-                }
-            }
-            catch (SerializationException e)
-            {
-                Debug.LogError("Failed to deserialize. Reason: " + e.Message);
-                throw;
+                GetSlots[slot.SlotIndex].UpdateSlot(slot.Item, slot.Amount);
             }
         }
 

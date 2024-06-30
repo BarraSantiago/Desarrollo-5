@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace InventorySystem
 {
+    [Serializable]
     [CreateAssetMenu(fileName = "New Item", menuName = "Inventory System/Items/New Item")]
     public class ItemObject : ScriptableObject
     {

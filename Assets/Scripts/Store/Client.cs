@@ -25,6 +25,7 @@ namespace Store
         #region Serialized Variables
 
         [SerializeField] public NavMeshAgent agent;
+        [SerializeField] private float _minimumDistance = 1.6f;
 
         #endregion
 
@@ -69,8 +70,6 @@ namespace Store
 
         private bool _paid;
         private int _tipValue;
-        private int _itemAmount;
-        [SerializeField] private float _minimumDistance = 1.6f;
         private State _currentState;
         private DisplayItem _desiredItem;
         private GameObject _itemInstance;
@@ -98,7 +97,6 @@ namespace Store
         {
             this.id = id;
             _desiredItem = item;
-            _itemAmount = Random.Range(1, _desiredItem.amount + 1);
 
             EnterStore();
         }
@@ -106,7 +104,6 @@ namespace Store
         public void Deinitialize()
         {
             if (_desiredItem != null) _desiredItem.BeingViewed = false;
-            _itemAmount = 0;
             _desiredItem = null;
         }
 
@@ -181,11 +178,11 @@ namespace Store
         private void GrabItem()
         {
             if (!CheckBuyItem()) return;
-            agent.SetDestination(_desiredItem.Object.transform.position);
+            agent.SetDestination(_desiredItem.displayObject.transform.position);
 
             if (!NearItem()) return;
-            _desiredItem.Object.transform.SetParent(gameObject.transform);
-            ItemGrabbed?.Invoke(_desiredItem.id, _itemAmount);
+            _desiredItem.displayObject.transform.SetParent(gameObject.transform);
+            ItemGrabbed?.Invoke(_desiredItem.id, _desiredItem.amount);
             _desiredItem.BeingViewed = false;
             _currentState = State.WaitingInline;
         }
@@ -199,13 +196,13 @@ namespace Store
 
         private bool CheckBuyItem()
         {
-            if (_desiredItem == null) return false;
+            if (!_desiredItem) return false;
 
-            ListPrice itemList = ItemDatabase.ItemObjects[_desiredItem.ItemObject.data.id].data.listPrice;
-            float difference = _desiredItem.ItemObject.price - itemList.CurrentPrice;
+            ListPrice itemList = ItemDatabase.ItemObjects[_desiredItem.item.data.id].data.listPrice;
+            float difference = _desiredItem.item.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
-            if (_desiredItem.ItemObject.price >= itemList.CurrentPrice)
+            if (_desiredItem.item.price >= itemList.CurrentPrice)
             {
                 // Client buys item and leaves the store
                 if (!(percentageDifference > _willingnessToPay)) return true;
@@ -223,7 +220,7 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            int finalPrice = _desiredItem.ItemObject.price * _itemAmount;
+            int finalPrice = _desiredItem.item.price * _desiredItem.amount;
             OnMoneyAdded?.Invoke(finalPrice);
             OnItemBought?.Invoke(_desiredItem);
         }
@@ -270,7 +267,7 @@ namespace Store
 
         private bool NearItem()
         {
-            return CheckDistance(_desiredItem.Object.transform.position, _minimumDistance);
+            return CheckDistance(_desiredItem.displayObject.transform.position, _minimumDistance);
         }
 
         private bool NearExit()

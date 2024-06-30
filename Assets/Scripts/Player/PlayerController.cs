@@ -10,7 +10,6 @@ namespace player
     {
         [SerializeField] private float moveSpeed = 50f;
         [SerializeField] private GameObject inventoryUI;
-        [SerializeField] private GameObject storeInventoryUI;
         [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private float interactionRadius = 5f;
         
@@ -87,7 +86,6 @@ namespace player
         public void OnInventoryOpen(InputValue context)
         {
             inventoryUI.SetActive(!inventoryUI.activeSelf);
-            if (storeInventoryUI) storeInventoryUI?.SetActive(!storeInventoryUI.activeSelf);
 
             if (!inventoryUI.activeSelf) return;
 

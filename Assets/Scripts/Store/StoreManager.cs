@@ -37,12 +37,12 @@ namespace Store
 
         [Header("Misc Setup")] 
         [SerializeField] private UIManager uiManager;
+        [SerializeField] private Canvas mainCanvas;
         [SerializeField] private player.Player player;
 
         [Header("Demo")] 
         [SerializeField] private Button goToDungeon;
         [SerializeField] private Button startCicle;
-        [SerializeField] private GameObject storeInventoryUI;
 
         #endregion
 
@@ -81,8 +81,8 @@ namespace Store
             chargeButton.onClick.AddListener(_waitingLine.ChargeClient);
             
             itemDisplayer.Initialize(itemDatabase, storeInventory);
+            UIManager.MainCanvas = mainCanvas;
             storeInventory.Load();
-            storeInventoryUI.SetActive(false);
         }
 
         private void Update()
@@ -186,7 +186,7 @@ namespace Store
 
         private void ItemBought(DisplayItem displayItem)
         {
-            int id = displayItem.ItemObject.data.id;
+            int id = displayItem.item.data.id;
 
             displayItem.Bought = true;
 
@@ -196,7 +196,7 @@ namespace Store
 
         private bool AvailableItem()
         {
-            return itemDisplayer.Items.Any(displayItem => displayItem is { BeingViewed: false, Bought: false });
+            return itemDisplayer.items.Any(displayItem => displayItem is { BeingViewed: false, Bought: false });
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace Store
             if (!AvailableItem()) return null; // TODO handle this better
 
             DisplayItem[] avaliableItems =
-                Array.FindAll(itemDisplayer.Items, displayItem => displayItem is { BeingViewed: false, Bought: false });
+                Array.FindAll(itemDisplayer.items, displayItem => displayItem is { BeingViewed: false, Bought: false });
 
             int randomItem = Random.Range(0, avaliableItems.Length);
             avaliableItems[randomItem].BeingViewed = true;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UI;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -14,6 +15,7 @@ namespace InventorySystem
     {
         [SerializeField] private GameObject itemDisplayPrefab;
         [SerializeField] private GameObject consumableDisplayPrefab;
+        [SerializeField] private Canvas canvas;
 
         public InventoryObject inventory;
         public Dictionary<GameObject, InventorySlot> slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
@@ -63,6 +65,7 @@ namespace InventorySystem
             {
                 slot.slotDisplay.transform.GetChild(0).GetComponent<Image>().sprite = slot.GetItemObject().uiDisplay;
                 slot.slotDisplay.transform.GetChild(0).GetComponent<Image>().color = new Color(1, 1, 1, 1);
+                slot.slotDisplay.transform.GetChild(0).GetComponent<Image>().preserveAspect = true;
                 slot.slotDisplay.GetComponentInChildren<TextMeshProUGUI>().text =
                     slot.amount == 1 ? string.Empty : slot.amount.ToString("n0");
             }
@@ -102,7 +105,7 @@ namespace InventorySystem
             if (data is not PointerEventData { button: PointerEventData.InputButton.Right }) return;
 
             if (slotsOnInterface[obj].item.id < 0) return;
-            Canvas canvas = FindObjectOfType<Canvas>();
+            
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
 
 
@@ -119,17 +122,16 @@ namespace InventorySystem
                 canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
 
             Vector3 worldMousePosition = canvasRect.TransformPoint(localMousePosition);
-            GameObject itemDisplay;
-            itemDisplay =
-                Instantiate(
-                    slotsOnInterface[obj].GetItemObject().type == ItemType.Potion
-                        ? consumableDisplayPrefab
-                        : itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
+            var itemDisplay = Instantiate(
+                slotsOnInterface[obj].GetItemObject().type == ItemType.Potion
+                    ? consumableDisplayPrefab
+                    : itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
 
-            ItemDisplay display = itemDisplay.GetComponent<ItemDisplay>();
+            ItemInfoPanel infoPanel = itemDisplay.GetComponent<ItemInfoPanel>();
+            infoPanel.slot = slotsOnInterface[obj];
             itemDisplay.transform.SetAsLastSibling();
-            display.item = slotsOnInterface[obj].GetItemObject();
-            display.Initialize();
+            infoPanel.item = slotsOnInterface[obj].GetItemObject();
+            infoPanel.Initialize();
         }
 
         private void OnEnterInterface(GameObject obj)
@@ -153,6 +155,7 @@ namespace InventorySystem
             if (slot.item.id >= 0)
             {
                 MouseData.TempItemBeingDragged = CreateTempItem(obj);
+                MouseData.TempItemBeingDragged.transform.parent = UIManager.MainCanvas.transform;
             }
         }
 
@@ -163,18 +166,18 @@ namespace InventorySystem
 
             tempItem = new GameObject();
             var rt = tempItem.AddComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(50, 50);
-            tempItem.transform.SetParent(transform.parent.parent);
+            rt.sizeDelta = new Vector2(75, 75);
             var img = tempItem.AddComponent<Image>();
             img.sprite = slotsOnInterface[obj].GetItemObject().uiDisplay;
             img.raycastTarget = false;
+            img.preserveAspect = true;
             return tempItem;
         }
 
         protected void OnDragEnd(GameObject obj)
         {
             Destroy(MouseData.TempItemBeingDragged);
-
+            if(!obj) return;
             if (MouseData.InterfaceMouseIsOver == null)
             {
                 OnDropItem?.Invoke(slotsOnInterface[obj].GetItemObject().characterDisplay,

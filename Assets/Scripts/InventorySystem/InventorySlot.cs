@@ -36,6 +36,11 @@ namespace InventorySystem
             onBeforeUpdated?.Invoke(this);
             item = itemValue;
             amount = amountValue;
+            if (amount <= 0)
+            {
+                item = new Item();
+                amount = 0;
+            }
             onAfterUpdated?.Invoke(this);
         }
 

@@ -1242,7 +1242,7 @@ MonoBehaviour:
   playerStats: {fileID: 0}
   damage: 5
   attackCooldown: 1
-  maxHealth: 50
+  maxHealth: 30
 --- !u!114 &1203642391655862455
 MonoBehaviour:
   m_ObjectHideFlags: 0

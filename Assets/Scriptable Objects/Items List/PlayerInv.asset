@@ -19,12 +19,47 @@ MonoBehaviour:
     Slots:
     - AllowedItems: 
       item:
+        name: item 04
+        id: 3
+        buffs: []
+        listPrice:
+          originalPrice: 0
+        price: 0
+        craftable: 0
+        recipe: {fileID: 0}
+      amount: 1
+    - AllowedItems: 
+      item:
+        name: item 01
+        id: 0
+        buffs: []
+        listPrice:
+          originalPrice: 0
+        price: 0
+        craftable: 0
+        recipe: {fileID: 0}
+      amount: 1
+    - AllowedItems: 
+      item:
+        name: 
+        id: 4
+        buffs: []
+        listPrice:
+          originalPrice: 0
+        price: 0
+        craftable: 0
+        recipe: {fileID: 0}
+      amount: 2
+    - AllowedItems: 
+      item:
         name: 
         id: -1
         buffs: []
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -34,6 +69,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -43,6 +80,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -52,6 +91,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -61,6 +102,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -70,6 +113,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -79,6 +124,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -88,6 +135,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -97,6 +146,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -106,6 +157,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -115,6 +168,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -124,6 +179,8 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0
     - AllowedItems: 
       item:
@@ -133,31 +190,6 @@ MonoBehaviour:
         listPrice:
           originalPrice: 0
         price: 0
-      amount: 0
-    - AllowedItems: 
-      item:
-        name: 
-        id: -1
-        buffs: []
-        listPrice:
-          originalPrice: 0
-        price: 0
-      amount: 0
-    - AllowedItems: 
-      item:
-        name: 
-        id: -1
-        buffs: []
-        listPrice:
-          originalPrice: 0
-        price: 0
-      amount: 0
-    - AllowedItems: 
-      item:
-        name: 
-        id: -1
-        buffs: []
-        listPrice:
-          originalPrice: 0
-        price: 0
+        craftable: 0
+        recipe: {fileID: 0}
       amount: 0

@@ -1,5 +1,6 @@
 ﻿using InventorySystem;
 using player;
+using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ namespace Game
         [SerializeField] private GameObject groundItemPrefab;
         [SerializeField] private ItemDatabaseObject itemDatabase;
         [SerializeField] private Button goToStore;
+        [SerializeField] private Canvas mainCanvas;
 
         private Inventory _inventory;
 
@@ -21,6 +23,7 @@ namespace Game
 
         private void Initialize()
         {
+            UIManager.MainCanvas = mainCanvas;
             LoadInventory();
             goToStore?.onClick.AddListener(ChangeScene);
         }

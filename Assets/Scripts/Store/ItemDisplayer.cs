@@ -9,7 +9,7 @@ namespace Store
         [SerializeField] private Transform[] objPostition;
         [SerializeField] private TextMeshPro[] texts;
 
-        public DisplayItem[] Items;
+        public DisplayItem[] items;
 
         private ItemDatabaseObject _database;
         private InventoryObject _storeInventory;
@@ -23,9 +23,12 @@ namespace Store
             InventoryObject.OnItemSwapInventory += OnAddItem;
             StoreManager.OnEndCycle += Deinitialize;
             Client.ItemGrabbed += RemoveItem;
-            ItemDisplay.OnItemUpdate += UpdateSlot;
+            DisplayItem.OnItemUpdate += UpdateSlot;
 
-            Items = new DisplayItem[storeInventory.GetSlots.Length];
+            for (int i = 0; i < items.Length; i++)
+            {
+                items[i].itemPosition = objPostition[i];
+            }
 
             UpdateInventory();
         }
@@ -40,15 +43,15 @@ namespace Store
             InventoryObject.OnItemSwapInventory -= OnAddItem;
             _storeInventory.OnItemAdded -= OnAddItem;
             Client.ItemGrabbed -= RemoveItem;
-            ItemDisplay.OnItemUpdate -= UpdateSlot;
+            DisplayItem.OnItemUpdate -= UpdateSlot;
         }
 
         private void RemoveItem(int id, int amount)
         {
-            if (Items[id] == null) return;
+            if (!items[id]) return;
 
-            Items[id].amount -= amount;
-            if (Items[id].amount <= 0) _storeInventory.GetSlots[id].RemoveItem();
+            items[id].amount = 0;
+            if (items[id].amount <= 0) items[id].CleanDisplay();
             UpdateInventory();
         }
 
@@ -70,67 +73,61 @@ namespace Store
                 return false;
             }
 
-            if (Items[slotId] != null) Destroy(Items[slotId].Object);
-
-            if (_storeInventory.GetSlots[slotId].amount != 0) return true;
-
-            Items[slotId] = null;
-            return false;
+            return _storeInventory.GetSlots[slotId].amount != 0;
         }
 
         private void CreateDisplayItem(int slotId)
         {
-            Items[slotId] = new DisplayItem
-            {
-                Object = Instantiate(_database.ItemObjects[_storeInventory.GetSlots[slotId].item.id].characterDisplay,
-                    objPostition[slotId]),
-                ItemObject = _storeInventory.GetSlots[slotId].GetItemObject(),
-                id = slotId,
-                showPrice = texts[slotId],
-                amount = _storeInventory.GetSlots[slotId].amount
-            };
-            Items[slotId].Object.GetComponent<GroundItem>().enabled = false;
-            Items[slotId].Initialize(Items[slotId].ItemObject.price);
+            items[slotId].id = slotId;
+            items[slotId].showPrice = texts[slotId];
+            items[slotId].itemPosition = objPostition[slotId];
+            items[slotId].displayObject.GetComponent<GroundItem>().enabled = false;
+            items[slotId].Initialize(_storeInventory.GetSlots[slotId].GetItemObject());
         }
 
         private void UpdateSlot()
         {
-            foreach (var item in Items)
+            foreach (var item in items)
             {
-                item?.Initialize(item.ItemObject.price);
+                item?.Initialize(item.item);
             }
         }
 
         private void UpdateInventory()
         {
-            _storeInventory.UpdateInventory();
-
-            for (int i = 0; i < Items.Length; i++)
+            foreach (var item in items)
             {
-                switch (_storeInventory.GetSlots[i].amount)
+                item.inventory.UpdateInventory();
+            }
+            /*
+            foreach (var item in items)
+            {
+                for (int i = 0; i < item.inventory.GetSlots.Length; i++)
                 {
-                    case 0:
+                    switch (_storeInventory.GetSlots[i].amount)
                     {
-                        if (Items[i] != null) Destroy(Items[i].Object);
-                        Items[i] = null;
-                        texts[i].text = string.Empty;
-                        break;
-                    }
-                    case > 0 when Items[i] == null:
-                        OnAddItem(i);
-                        break;
-                    case > 0:
-                    {
-                        if (Items[i].ItemObject != _storeInventory.GetSlots[i].GetItemObject())
+                        case 0:
                         {
-                            RemoveItem(i, Items[i].amount);
-                            OnAddItem(i);
+                            if (items[i]) Destroy(items[i].displayObject);
+                            texts[i].text = string.Empty;
+                            break;
                         }
+                        case > 0 when !items[i]:
+                            OnAddItem(i);
+                            break;
+                        case > 0:
+                        {
+                            if (items[i].item != _storeInventory.GetSlots[i].GetItemObject())
+                            {
+                                RemoveItem(i, items[i].amount);
+                                OnAddItem(i);
+                            }
 
-                        break;
+                            break;
+                        }
                     }
                 }
-            }
+            }*/
         }
     }
 }

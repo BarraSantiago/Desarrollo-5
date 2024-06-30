@@ -901,6 +901,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6728761193159637351, guid: 7678681d93318754ba26d4fbcd7be85d, type: 3}
+      propertyPath: canvas
+      value: 
+      objectReference: {fileID: 1421938191}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7678681d93318754ba26d4fbcd7be85d, type: 3}
 --- !u!224 &354528128 stripped
@@ -6916,6 +6920,10 @@ PrefabInstance:
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 1227774101}
+    - target: {fileID: 2416183442353312328, guid: 524da82d02c467b478c69aa1ef62ca98, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 8134230607009496294}
     - target: {fileID: 2416183442353312329, guid: 524da82d02c467b478c69aa1ef62ca98, type: 3}
       propertyPath: m_Camera
       value: 
@@ -6978,3 +6986,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 524da82d02c467b478c69aa1ef62ca98, type: 3}
+--- !u!114 &8134230607009496294 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2416183442353312335, guid: 524da82d02c467b478c69aa1ef62ca98, type: 3}
+  m_PrefabInstance: {fileID: 8134230607009496293}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 922b9cd77f8673b4da07d662650a6d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

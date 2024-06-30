@@ -9,7 +9,7 @@ namespace UI
         [SerializeField] private Transform flyingTextLocation;
         [SerializeField] private TMP_Text showMoney;
 
-
+        public static Canvas MainCanvas;
         public void SpawnFlyingText(int num)
         {
             GameObject text = Instantiate(flyingtext, flyingTextLocation);
