@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using InventorySystem;
 using UnityEngine;
 using UnityEngine.AI;
@@ -33,7 +34,10 @@ namespace Store
 
         public int id;
         public static Transform Exit;
+        public static Transform Entrance;
         public static Transform WaitingLineStart;
+        public static Transform WanderBounds1;
+        public static Transform WanderBounds2;
         public static ItemDatabaseObject ItemDatabase;
         public static Action<Client> OnStartLine;
         public static Action OnLeaveLine;
@@ -70,7 +74,20 @@ namespace Store
 
         private bool _paid;
         private int _tipValue;
+        private int _timesCheckedItems = 0;
+        private int _maxCheckItems = 0;
         private State _currentState;
+
+        private State CurrentState
+        {
+            get => _currentState;
+            set
+            {
+                _currentState = value;
+                ClientBehaviour();
+            }
+        }
+
         private DisplayItem _desiredItem;
         private GameObject _itemInstance;
 
@@ -84,62 +101,53 @@ namespace Store
 
         private void Update()
         {
-            if (_currentState == State.None) return;
-            ClientBehaviour();
-
+            if (CurrentState == State.None) return;
             if (!(agent.velocity.magnitude > 0.1f)) return;
 
             Quaternion toRotation = Quaternion.LookRotation(agent.velocity, Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, Time.deltaTime * 10f);
         }
 
-        public void Initialize(int id, DisplayItem item)
+        public void Initialize(int id)
         {
             this.id = id;
-            _desiredItem = item;
 
-            EnterStore();
+            //CurrentState = State.Idle;
+            ChooseItemToGrab();
         }
 
         public void Deinitialize()
         {
-            if (_desiredItem != null) _desiredItem.BeingViewed = false;
+            if (_desiredItem) _desiredItem.BeingViewed = false;
             _desiredItem = null;
         }
 
         private void ClientBehaviour()
         {
-            switch (_currentState)
+            switch (CurrentState)
             {
                 case State.None:
                     break;
                 case State.Idle:
-                    // in this state, the client should wonder around until an item has been choosen or if there are no available items
-                    _currentState = State.ChoosingItem;
+                    StartCoroutine(EnterStoreAndWander());
                     break;
                 case State.ChoosingItem:
-                    // in this state, the client should go to the item and decide if they want to buy it
-                    _currentState = State.GrabbingItem;
+                    StartCoroutine(WanderAndChooseItem());
                     break;
 
                 case State.GrabbingItem:
-                    GrabItem();
+                    StartCoroutine(GrabItem());
                     break;
 
                 case State.WaitingInline:
-                    agent.SetDestination(WaitingLineStart.position);
-                    if (NearWaitingLine())
-                    {
-                        OnStartLine?.Invoke(this);
-                        _currentState = State.Buying;
-                    }
+                    StartCoroutine(StartWaitingLine());
                     break;
 
                 case State.Buying:
                     if (_paid)
                     {
                         firstInLine = false;
-                        _currentState = State.Leaving;
+                        CurrentState = State.Leaving;
                     }
 
                     break;
@@ -149,7 +157,7 @@ namespace Store
                     break;
 
                 case State.LeftStore:
-                    CheckLeftStore();
+                    StartCoroutine(CheckLeftStore());
                     break;
 
                 case State.Happy:
@@ -167,32 +175,100 @@ namespace Store
             }
         }
 
-        private void EnterStore()
+
+        private IEnumerator EnterStoreAndWander()
         {
-            _currentState = State.Idle;
+            agent.SetDestination(Entrance.position);
+
+            while (!CheckDistance(Entrance.position, _minimumDistance))
+            {
+                yield return null;
+            }
+
+            CurrentState++;
+        }
+
+        private IEnumerator WanderAndChooseItem()
+        {
+            float wanderTime = Random.Range(5f, 10f);
+            float startTime = Time.time;
+
+            while (Time.time - startTime < wanderTime)
+            {
+                Vector3 randomPosition =
+                    new Vector3(Random.Range(WanderBounds1.position.x, WanderBounds2.position.x), 0,
+                        Random.Range(WanderBounds1.position.z, WanderBounds2.position.z));
+                agent.SetDestination(randomPosition);
+
+                yield return new WaitForSeconds(3f);
+            }
+
+            ChooseItemToGrab();
+        }
+
+        private void ChooseItemToGrab()
+        {
+            // Get all available items
+            DisplayItem[] availableItems = Array.FindAll(ItemDisplayer.DisplayItems,
+                displayItem => displayItem is { BeingViewed: false, Bought: false, amount: > 0 });
+
+            if (availableItems.Length > 0)
+            {
+                // Choose a random item from the available items
+                int randomItemIndex = Random.Range(0, availableItems.Length);
+                _desiredItem = availableItems[randomItemIndex];
+                _desiredItem.BeingViewed = true;
+
+                // Move to the chosen item
+                CurrentState = State.GrabbingItem;
+            }
+            else
+            {
+                if (_timesCheckedItems >= _maxCheckItems)
+                {
+                    CurrentState = State.Leaving;
+                }
+                else
+                {
+                    _timesCheckedItems++;
+                    CurrentState = State.ChoosingItem;
+                }
+            }
         }
 
         /// <summary>
         /// The client goes to the item and grabs it
         /// </summary>
-        private void GrabItem()
+        private IEnumerator GrabItem()
         {
-            if (!CheckBuyItem()) return;
             agent.SetDestination(_desiredItem.displayObject.transform.position);
 
-            if (!NearItem()) return;
-            _desiredItem.displayObject.transform.SetParent(gameObject.transform);
+            while (!NearItem())
+            {
+                yield return null;
+            }
+
+            if (!CheckBuyItem()) yield break;
+
+            _desiredItem.displayObject.transform.SetParent(transform);
             ItemGrabbed?.Invoke(_desiredItem.id, _desiredItem.amount);
             _desiredItem.BeingViewed = false;
-            _currentState = State.WaitingInline;
+            CurrentState++;
         }
 
-        public void PayItem()
+        private IEnumerator StartWaitingLine()
         {
-            _paid = true;
-            BuyItem();
-            //OnLeaveLine?.Invoke();
+            agent.SetDestination(WaitingLineStart.position);
+            while (!NearWaitingLine())
+            {
+                yield return null; // Wait for the next frame
+            }
+
+            OnStartLine?.Invoke(this);
+            CurrentState = State.Buying;
         }
+
+   
 
         private bool CheckBuyItem()
         {
@@ -208,13 +284,22 @@ namespace Store
                 if (!(percentageDifference > _willingnessToPay)) return true;
 
                 // If the item is too expensive, the client leaves angry
-                _currentState = State.Angry;
+                CurrentState = State.Angry;
                 return false;
             }
 
             return true;
         }
+        
+        public void PayItem()
+        {
+            _paid = true;
+            BuyItem();
+            CurrentState = State.Leaving;
 
+            //OnLeaveLine?.Invoke();
+        }
+        
         /// <summary>
         /// Gives the player money and removes the item from being displayed
         /// </summary>
@@ -248,16 +333,19 @@ namespace Store
             // TODO update this
             //move to outside of store
             agent.SetDestination(Exit.transform.position);
-            _currentState = State.LeftStore;
+            CurrentState++;
         }
 
-        private void CheckLeftStore()
+        private IEnumerator CheckLeftStore()
         {
-            if (!NearExit()) return;
+            while (!NearExit())
+            {
+                yield return null; // Wait for the next frame
+            }
 
             OnLeftStore?.Invoke();
             gameObject.SetActive(false);
-            _currentState = State.None;
+            CurrentState = State.None;
         }
 
         private bool NearWaitingLine()
