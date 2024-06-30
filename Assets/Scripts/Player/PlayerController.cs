@@ -23,16 +23,17 @@ namespace player
         public float dashTime;
         public Animator animator;
 
+        private CharacterController _characterController;
         private PlayerAttack _playerAttack;
         private PlayerInput _playerInput;
         private Vector2 _moveInput;
-        private Rigidbody _rb;
         private Vector3 _dashDirection;
         private bool _isDashing;
 
         private void Awake()
         {
-            _rb = GetComponent<Rigidbody>();
+            _characterController = GetComponent<CharacterController>();
+
             _playerInput = new PlayerInput();
             _playerAttack = GetComponent<PlayerAttack>();
         }
@@ -50,10 +51,14 @@ namespace player
 
         private void MovePlayer()
         {
-            Vector3 movement = new Vector3(_moveInput.x, 0, _moveInput.y) * (MovementSpeed * Time.deltaTime);
-            _rb.MovePosition(transform.position + movement);
+            if (_moveInput == Vector2.zero) return;
 
-            OnRotate();
+            Vector3 movement = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * (MovementSpeed * Time.deltaTime);
+            _characterController.Move(movement);
+
+            float targetAngle = Mathf.Atan2(_moveInput.x, _moveInput.y) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * MovementSpeed);
         }
 
         private void Movement(InputAction.CallbackContext context)
@@ -140,7 +145,7 @@ namespace player
 
             while (Time.time < startTime + dashTime)
             {
-                _rb.MovePosition(_rb.position + _dashDirection * (dashSpeed * Time.deltaTime));
+                _characterController.Move(_dashDirection * (dashSpeed * Time.deltaTime));
                 yield return null;
             }
 
