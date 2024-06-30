@@ -1,6 +1,7 @@
 ﻿using InventorySystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Store
 {
@@ -9,25 +10,24 @@ namespace Store
         [SerializeField] private Transform[] objPostition;
         [SerializeField] private TextMeshPro[] texts;
 
-        public DisplayItem[] items;
+        [FormerlySerializedAs("items")] public DisplayItem[] displayItems;
 
         private ItemDatabaseObject _database;
-        private InventoryObject _storeInventory;
+        private InventoryObject[] _storeInventories;
 
-        public void Initialize(ItemDatabaseObject database, InventoryObject storeInventory)
+        public void Initialize(ItemDatabaseObject database, InventoryObject[] storeInventories)
         {
-            this._storeInventory = storeInventory;
+            this._storeInventories = storeInventories;
             this._database = database;
 
-            this._storeInventory.OnItemAdded += OnAddItem;
-            InventoryObject.OnItemSwapInventory += OnAddItem;
             StoreManager.OnEndCycle += Deinitialize;
             Client.ItemGrabbed += RemoveItem;
-            DisplayItem.OnItemUpdate += UpdateSlot;
 
-            for (int i = 0; i < items.Length; i++)
+            for (int i = 0; i < displayItems.Length; i++)
             {
-                items[i].itemPosition = objPostition[i];
+                displayItems[i].inventory = storeInventories[i];
+                displayItems[i].itemPosition = objPostition[i];
+                displayItems[i].showPrice = texts[i];
             }
 
             UpdateInventory();
@@ -40,54 +40,29 @@ namespace Store
 
         private void OnDestroy()
         {
-            InventoryObject.OnItemSwapInventory -= OnAddItem;
-            _storeInventory.OnItemAdded -= OnAddItem;
             Client.ItemGrabbed -= RemoveItem;
-            DisplayItem.OnItemUpdate -= UpdateSlot;
         }
 
         private void RemoveItem(int id, int amount)
         {
-            if (!items[id]) return;
+            if (!displayItems[id]) return;
 
-            items[id].amount = 0;
-            if (items[id].amount <= 0) items[id].CleanDisplay();
+            displayItems[id].amount = 0;
+            if (displayItems[id].amount <= 0) displayItems[id].CleanDisplay();
             UpdateInventory();
-        }
-
-        private void OnAddItem(int slotId)
-        {
-            if (!ValidItem(slotId)) return;
-
-            CreateDisplayItem(slotId);
-            UpdateInventory();
-        }
-
-        private bool ValidItem(int slotId)
-        {
-            if (slotId >= _storeInventory.GetSlots.Length || slotId < 0) return false;
-
-            if (_storeInventory.GetSlots[slotId].item.id < 0)
-            {
-                UpdateInventory();
-                return false;
-            }
-
-            return _storeInventory.GetSlots[slotId].amount != 0;
         }
 
         private void CreateDisplayItem(int slotId)
         {
-            items[slotId].id = slotId;
-            items[slotId].showPrice = texts[slotId];
-            items[slotId].itemPosition = objPostition[slotId];
-            items[slotId].displayObject.GetComponent<GroundItem>().enabled = false;
-            items[slotId].Initialize(_storeInventory.GetSlots[slotId].GetItemObject());
+            displayItems[slotId].id = slotId;
+            displayItems[slotId].showPrice = texts[slotId];
+            displayItems[slotId].itemPosition = objPostition[slotId];
+            displayItems[slotId].displayObject.GetComponent<GroundItem>().enabled = false;
         }
 
         private void UpdateSlot()
         {
-            foreach (var item in items)
+            foreach (var item in displayItems)
             {
                 item?.Initialize(item.item);
             }
@@ -95,9 +70,9 @@ namespace Store
 
         private void UpdateInventory()
         {
-            foreach (var item in items)
+            foreach (var displayItem in displayItems)
             {
-                item.inventory.UpdateInventory();
+                displayItem.Initialize();
             }
             /*
             foreach (var item in items)

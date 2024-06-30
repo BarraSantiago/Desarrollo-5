@@ -25,7 +25,7 @@ namespace Store
         [SerializeField] private Transform clientExit;
 
         [Header("Items Setup")] 
-        [SerializeField] private InventoryObject storeInventory;
+        [SerializeField] private InventoryObject[] storeInventories;
         [SerializeField] public ItemDatabaseObject itemDatabase;
         [SerializeField] private ItemDisplayer itemDisplayer;
 
@@ -80,9 +80,12 @@ namespace Store
             _waitingLine = new WaitingLine();
             chargeButton.onClick.AddListener(_waitingLine.ChargeClient);
             
-            itemDisplayer.Initialize(itemDatabase, storeInventory);
+            itemDisplayer.Initialize(itemDatabase, storeInventories);
             UIManager.MainCanvas = mainCanvas;
-            storeInventory.Load();
+            foreach (var storeInventory in storeInventories)
+            {
+                storeInventory.Load();
+            }
         }
 
         private void Update()
@@ -94,7 +97,10 @@ namespace Store
         {
             goToDungeon.onClick.RemoveListener(ChangeScene);
             goToDungeon.onClick.RemoveListener(EndDayCycle);
-            storeInventory.Save();
+            foreach (var storeInventory in storeInventories)
+            {
+                storeInventory.Save();
+            }
         }
 
         private void StartDayCicle()
@@ -196,7 +202,7 @@ namespace Store
 
         private bool AvailableItem()
         {
-            return itemDisplayer.items.Any(displayItem => displayItem is { BeingViewed: false, Bought: false });
+            return itemDisplayer.displayItems.Any(displayItem => displayItem is { BeingViewed: false, Bought: false });
         }
 
         /// <summary>
@@ -227,7 +233,7 @@ namespace Store
             if (!AvailableItem()) return null; // TODO handle this better
 
             DisplayItem[] avaliableItems =
-                Array.FindAll(itemDisplayer.items, displayItem => displayItem is { BeingViewed: false, Bought: false });
+                Array.FindAll(itemDisplayer.displayItems, displayItem => displayItem is { BeingViewed: false, Bought: false });
 
             int randomItem = Random.Range(0, avaliableItems.Length);
             avaliableItems[randomItem].BeingViewed = true;

@@ -7,10 +7,11 @@ namespace Interactable
     public class OpenMenus : MonoBehaviour, IInteractable
     {
         [SerializeField] private GameObject[] menus;
-        [SerializeField] private GameObject playerInventory;
+        [SerializeField] private GameObject playerInventoryUi;
+        [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private Transform inventoryOriginalTransform;
         [SerializeField] private Transform inventoryNewTransform;
-
+        
         public bool State
         {
             get
@@ -25,9 +26,9 @@ namespace Interactable
             {
                 menu?.SetActive(!menu.activeSelf);
             }
-            playerInventory.SetActive(true);
-            playerInventory.GetComponent<InventoryObject>().UpdateInventory();
-            playerInventory.transform.position = inventoryNewTransform.position;
+            playerInventoryUi.SetActive(true);
+            playerInventoryUi.transform.position = inventoryNewTransform.position;
+            playerInventory.UpdateInventory();
             return true;
         }
 
@@ -37,7 +38,8 @@ namespace Interactable
             {
                 menu?.SetActive(false);
             }
-            playerInventory.transform.position = inventoryOriginalTransform.position;
+            playerInventoryUi.SetActive(false);
+            playerInventoryUi.transform.position = inventoryOriginalTransform.position;
         }
     }
 }

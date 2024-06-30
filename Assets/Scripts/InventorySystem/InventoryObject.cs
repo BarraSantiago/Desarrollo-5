@@ -157,6 +157,7 @@ namespace InventorySystem
         [ContextMenu("Save")]
         public void Save()
         {
+            
             SerializableInventory serializableInventory = new SerializableInventory
             {
                 Slots = GetSlots.Select((slot, index) => new SerializableInventorySlot

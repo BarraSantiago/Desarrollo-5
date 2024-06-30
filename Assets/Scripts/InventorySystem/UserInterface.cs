@@ -176,10 +176,11 @@ namespace InventorySystem
 
         protected void OnDragEnd(GameObject obj)
         {
-            Destroy(MouseData.TempItemBeingDragged);
             if(!obj) return;
-            if (MouseData.InterfaceMouseIsOver == null)
+            Destroy(MouseData.TempItemBeingDragged);
+            if (!MouseData.InterfaceMouseIsOver)
             {
+                if(!slotsOnInterface.ContainsKey(obj) || slotsOnInterface[obj].amount <= 0) return;
                 OnDropItem?.Invoke(slotsOnInterface[obj].GetItemObject().characterDisplay,
                     slotsOnInterface[obj].amount);
                 slotsOnInterface[obj].RemoveItem();

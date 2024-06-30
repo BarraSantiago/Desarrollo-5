@@ -1,5 +1,4 @@
-﻿using System;
-using InventorySystem;
+﻿using InventorySystem;
 using TMPro;
 using UnityEngine;
 
@@ -9,7 +8,6 @@ namespace Store
     {
         [SerializeField] private TMP_InputField inputField;
         [SerializeField] public InventoryObject inventory;
-        public static Action OnItemUpdate;
         public bool BeingViewed { get; set; }
         public bool Bought { get; set; }
         public TMP_Text showPrice;
@@ -24,16 +22,15 @@ namespace Store
         private const int MaxAmount = 999999;
         private const int MinAmount = 1;
 
-        private void Awake()
+        private void Start()
         {
             foreach (var slot in inventory.GetSlots)
             {
-                slot. onAfterUpdated += UpdateSlot;
+                slot.onAfterUpdated += UpdateSlot;
             }
             inventory.UpdateInventory();
             if (inventory.GetSlots[0].GetItemObject())
             {
-                
                 Initialize(inventory.GetSlots[0].GetItemObject());
             }
             else
@@ -47,14 +44,27 @@ namespace Store
             inventory.UpdateInventory();
         }
 
+        public void Initialize()
+        {
+            foreach (var slot in inventory.GetSlots)
+            {
+                slot.onAfterUpdated += UpdateSlot;
+            }
+            inventory.UpdateInventory();
+            if (inventory.GetSlots[0].GetItemObject())
+            {
+                Initialize(inventory.GetSlots[0].GetItemObject());
+            }
+            else
+            {
+                CleanDisplay();
+            }
+        }
+        
         public void Initialize(ItemObject newItem)
         {
             item = newItem;
             UpdateSlot(inventory.GetSlots[0]);
-        }
-
-        private void OnDestroy()
-        {
         }
 
         private void UpdateSlot(InventorySlot slot)
@@ -77,6 +87,7 @@ namespace Store
         public void CleanDisplay()
         {
             if(displayObject) Destroy(displayObject);
+            item = null;
             amount = 0;
             showPrice.text = "";
             inputField.text = "";
