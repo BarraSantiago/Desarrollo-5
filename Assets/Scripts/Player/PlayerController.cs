@@ -13,7 +13,7 @@ namespace player
         [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private float interactionRadius = 5f;
         [SerializeField] private AudioSource audioSource;
-        
+
         public float MovementSpeed
         {
             get => moveSpeed;
@@ -30,6 +30,7 @@ namespace player
         private Vector2 _moveInput;
         private Vector3 _dashDirection;
         private bool _isDashing;
+        private MouseIndicator _mouseIndicator;
 
         private void Awake()
         {
@@ -37,6 +38,7 @@ namespace player
 
             _playerInput = new PlayerInput();
             _playerAttack = GetComponent<PlayerAttack>();
+            _mouseIndicator = GetComponentInChildren<MouseIndicator>();
         }
 
         private void Update()
@@ -79,7 +81,25 @@ namespace player
         public void OnAttack(InputValue context)
         {
             if (!_playerAttack) return;
+
+            RotateTowardsMouse();
+
             _playerAttack?.Attack();
+        }
+
+        private void RotateTowardsMouse()
+        {
+            if (_mouseIndicator == null) return;
+
+            Vector3 mousePosition = _mouseIndicator.GetMouseWorldPosition();
+            Vector3 playerPosition = transform.position;
+            Vector3 direction = mousePosition - playerPosition;
+            direction.y = 0f;
+
+            float angleRadians = Mathf.Atan2(direction.z, direction.x);
+            float angleDegrees = angleRadians * Mathf.Rad2Deg;
+
+            transform.rotation = Quaternion.Euler(0, -angleDegrees + 90, 0);
         }
 
         public void OnDash(InputValue context)

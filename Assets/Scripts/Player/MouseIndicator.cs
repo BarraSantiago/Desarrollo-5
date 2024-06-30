@@ -31,7 +31,7 @@ namespace player
             transform.rotation = Quaternion.Euler(90, 0, angleDegrees + offset);
         }
 
-        private Vector3 GetMouseWorldPosition()
+        public Vector3 GetMouseWorldPosition()
         {
             Vector3 mouseScreenPosition = Input.mousePosition;
             Ray ray = mainCamera.ScreenPointToRay(mouseScreenPosition);

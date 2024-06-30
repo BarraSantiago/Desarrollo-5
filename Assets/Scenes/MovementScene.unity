@@ -2366,17 +2366,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: PlayerAttack
+  - name: PlayerHit
     clip: {fileID: 8300000, guid: 53b9454839a16f349b255d3155dd4a2b, type: 3}
     volume: 1
     pitch: 1
     loop: 0
-  - name: EnemyAttack
+  - name: EnemyHit
     clip: {fileID: 8300000, guid: bc0ef74d3a6473f4faa934aac2ac75d7, type: 3}
     volume: 1
     pitch: 1
     loop: 0
   - name: PickUp
+    clip: {fileID: 8300000, guid: 138a9726692806f4894665e348a5b4b3, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+  - name: ChargeAtttack
     clip: {fileID: 8300000, guid: 138a9726692806f4894665e348a5b4b3, type: 3}
     volume: 1
     pitch: 1
