@@ -47,7 +47,7 @@ namespace EnemyUnits
             {
                 playerStats.ReceiveDamage(damage);
                 hasAttacked = true;
-                AudioManager.instance.Play("EnemyAttack");
+                AudioManager.instance.Play("EnemyHit");
             }
         }
 
