@@ -80,7 +80,7 @@ namespace Store
             _waitingLine = new WaitingLine();
             chargeButton.onClick.AddListener(_waitingLine.ChargeClient);
             
-            itemDisplayer.Initialize(itemDatabase, storeInventories);
+            itemDisplayer.Initialize(storeInventories);
             UIManager.MainCanvas = mainCanvas;
             foreach (var storeInventory in storeInventories)
             {
@@ -103,6 +103,16 @@ namespace Store
             }
         }
 
+        public void OnApplicationQuit()
+        {
+            foreach (var inventory in storeInventories)
+            {
+                inventory.Save();
+            }
+        }
+        
+        
+        
         private void StartDayCicle()
         {
             startCicle.interactable = false;
@@ -192,7 +202,7 @@ namespace Store
 
         private void ItemBought(DisplayItem displayItem)
         {
-            int id = displayItem.item.data.id;
+            int id = displayItem.Item.data.id;
 
             displayItem.Bought = true;
 
@@ -270,6 +280,11 @@ namespace Store
             }
             
             chargeButton.gameObject.SetActive(true);
+        }
+
+        private void SaveInventories()
+        {
+            
         }
     }
 }

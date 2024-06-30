@@ -1,22 +1,33 @@
-﻿using Store;
+﻿using System;
+using Store;
 
 namespace InventorySystem
 {
     [System.Serializable]
     public class Item
     {
+        public Action OnPriceChange;
         public string name;
         public int id = -1;
         public ItemBuff[] buffs;
         public ListPrice listPrice;
-        public int price;
+        private int _price;
+        public int Price{
+            get => _price;
+            set
+            {
+                if (value < 0) throw new ArgumentOutOfRangeException(nameof(value));
+                _price = value;
+                OnPriceChange?.Invoke();
+            }
+        }
         public bool craftable;
         public ItemRecipe recipe;
         public Item()
         {
             name = "";
             id = -1;
-            listPrice = new ListPrice(price);
+            listPrice = new ListPrice(Price);
         }
         public Item(ItemObject item)
         {

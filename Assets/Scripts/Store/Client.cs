@@ -198,11 +198,11 @@ namespace Store
         {
             if (!_desiredItem) return false;
 
-            ListPrice itemList = ItemDatabase.ItemObjects[_desiredItem.item.data.id].data.listPrice;
-            float difference = _desiredItem.item.price - itemList.CurrentPrice;
+            ListPrice itemList = ItemDatabase.ItemObjects[_desiredItem.Item.data.id].data.listPrice;
+            float difference = _desiredItem.Item.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
-            if (_desiredItem.item.price >= itemList.CurrentPrice)
+            if (_desiredItem.Item.price >= itemList.CurrentPrice)
             {
                 // Client buys item and leaves the store
                 if (!(percentageDifference > _willingnessToPay)) return true;
@@ -220,7 +220,7 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            int finalPrice = _desiredItem.item.price * _desiredItem.amount;
+            int finalPrice = _desiredItem.Item.price * _desiredItem.amount;
             OnMoneyAdded?.Invoke(finalPrice);
             OnItemBought?.Invoke(_desiredItem);
         }

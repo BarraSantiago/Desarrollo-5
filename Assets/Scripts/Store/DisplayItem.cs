@@ -14,7 +14,32 @@ namespace Store
         public TMP_Text amountText;
         public TMP_Text totalPriceText;
         public GameObject displayObject;
-        public ItemObject item;
+        private ItemObject _item;
+        public ItemObject Item
+        {
+            get => _item;
+            private set
+            {
+                if (_item)
+                {
+                    _item.data.OnPriceChange -= ChangePrice;
+                }
+
+                _item = value;
+
+                if (_item)
+                {
+                    _item.data.OnPriceChange += ChangePrice;
+                }
+            }
+        }
+
+        private void ChangePrice()
+        {
+            showPrice.text = "$" + Item.price;
+            totalPriceText.text = "$" + (Item.price * amount);
+        }
+
         public Transform itemPosition;
         public int id;
         public int amount;
@@ -24,11 +49,17 @@ namespace Store
 
         private void Start()
         {
+            inputField.onEndEdit.AddListener(delegate { ChangeItemPrice(); });
+            inputField.onDeselect.AddListener(delegate { ChangeItemPrice(); });
+            inputField.onSelect.AddListener(delegate { OnSelectInput(); });
+            
             foreach (var slot in inventory.GetSlots)
             {
                 slot.onAfterUpdated += UpdateSlot;
             }
+            
             inventory.UpdateInventory();
+            
             if (inventory.GetSlots[0].GetItemObject())
             {
                 Initialize(inventory.GetSlots[0].GetItemObject());
@@ -63,7 +94,7 @@ namespace Store
         
         public void Initialize(ItemObject newItem)
         {
-            item = newItem;
+            Item = newItem;
             UpdateSlot(inventory.GetSlots[0]);
         }
 
@@ -76,18 +107,18 @@ namespace Store
                 return;
             }
             amount = slot.amount;
-            item = slot.GetItemObject();
-            CreateDisplayItem(item);
-            showPrice.text = "$" + item.price;
-            inputField.text = "$" + item.price;
-            totalPriceText.text = "$" + (item.price * amount);
+            Item = slot.GetItemObject();
+            CreateDisplayItem(Item);
+            showPrice.text = "$" + Item.price;
+            inputField.text = "$" + Item.price;
+            totalPriceText.text = "$" + (Item.price * amount);
             amountText.text = amount.ToString();
         }
 
         public void CleanDisplay()
         {
             if(displayObject) Destroy(displayObject);
-            item = null;
+            Item = null;
             amount = 0;
             showPrice.text = "";
             inputField.text = "";
@@ -126,10 +157,10 @@ namespace Store
                 _ => "$" + inputField.text
             };
             
-            item.price = result;
-            inputField.text = "$" + item.price;
-            showPrice.text = "$" + item.price;
-            totalPriceText.text = "$" + (item.price * amount);
+            Item.price = result;
+            inputField.text = "$" + Item.price;
+            showPrice.text = "$" + Item.price;
+            totalPriceText.text = "$" + (Item.price * amount);
         }
     }
 }

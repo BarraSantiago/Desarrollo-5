@@ -19,7 +19,12 @@ namespace InventorySystem
 
         public ItemObject GetItemObject()
         {
-            return item.id >= 0 ? parent.inventory.database.ItemObjects[item.id] : null;
+            if (!parent || !parent.inventory || !parent.inventory.database || item.id < 0 || item.id >= parent.inventory.database.ItemObjects.Length)
+            {
+                return null;
+            }
+            return parent.inventory.database.ItemObjects[item.id];
+            
         }
 
         public InventorySlot() => UpdateSlot(new Item(), 0);

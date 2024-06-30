@@ -50,10 +50,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 8878269646090004208}
+  _minimumDistance: 1.9
   id: 0
   inShop: 0
   firstInLine: 0
-  _minimumDistance: 1.6
 --- !u!195 &8878269646090004208
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -12,13 +12,9 @@ namespace Store
 
         [FormerlySerializedAs("items")] public DisplayItem[] displayItems;
 
-        private ItemDatabaseObject _database;
-        private InventoryObject[] _storeInventories;
-
-        public void Initialize(ItemDatabaseObject database, InventoryObject[] storeInventories)
+        public void Initialize(InventoryObject[] storeInventories)
         {
-            this._storeInventories = storeInventories;
-            this._database = database;
+           
 
             StoreManager.OnEndCycle += Deinitialize;
             Client.ItemGrabbed += RemoveItem;
@@ -64,7 +60,7 @@ namespace Store
         {
             foreach (var item in displayItems)
             {
-                item?.Initialize(item.item);
+                item?.Initialize(item.Item);
             }
         }
 
