@@ -1,7 +1,6 @@
 ﻿using InventorySystem;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Store
 {
@@ -10,18 +9,18 @@ namespace Store
         [SerializeField] private Transform[] objPostition;
         [SerializeField] private TextMeshPro[] texts;
 
-        [FormerlySerializedAs("items")] public DisplayItem[] displayItems;
+        public static DisplayItem[] DisplayItems;
 
         public void Initialize(InventoryObject[] storeInventories)
         {
             StoreManager.OnEndCycle += Deinitialize;
             Client.ItemGrabbed += RemoveItem;
 
-            for (int i = 0; i < displayItems.Length; i++)
+            for (int i = 0; i < DisplayItems.Length; i++)
             {
-                displayItems[i].inventory = storeInventories[i];
-                displayItems[i].itemPosition = objPostition[i];
-                displayItems[i].showPrice = texts[i];
+                DisplayItems[i].inventory = storeInventories[i];
+                DisplayItems[i].itemPosition = objPostition[i];
+                DisplayItems[i].showPrice = texts[i];
             }
 
             UpdateInventory();
@@ -39,16 +38,16 @@ namespace Store
 
         private void RemoveItem(int id, int amount)
         {
-            if (!displayItems[id]) return;
+            if (!DisplayItems[id]) return;
 
-            displayItems[id].amount = 0;
-            if (displayItems[id].amount <= 0) displayItems[id].CleanDisplay();
+            DisplayItems[id].amount = 0;
+            if (DisplayItems[id].amount <= 0) DisplayItems[id].CleanDisplay();
             UpdateInventory();
         }
         
         private void UpdateInventory()
         {
-            foreach (var displayItem in displayItems)
+            foreach (var displayItem in DisplayItems)
             {
                 displayItem.Initialize();
             }

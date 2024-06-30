@@ -1,4 +1,5 @@
-﻿using InventorySystem;
+﻿using System;
+using InventorySystem;
 using TMPro;
 using UnityEngine;
 
@@ -9,7 +10,11 @@ namespace Store
         [SerializeField] private TMP_InputField inputField;
         [SerializeField] public InventoryObject inventory;
         [SerializeField] public GameObject inventoryParent;
-        
+        [SerializeField] private GameObject showEmpty;
+
+        public Transform itemPosition;
+        public int id;
+        public int amount;
         public bool BeingViewed { get; set; }
         public bool Bought { get; set; }
         public TMP_Text showPrice;
@@ -17,6 +22,7 @@ namespace Store
         public TMP_Text totalPriceText;
         public GameObject displayObject;
         private ItemObject _item;
+
         public ItemObject Item
         {
             get => _item;
@@ -36,16 +42,6 @@ namespace Store
             }
         }
 
-        private void ChangePrice()
-        {
-            showPrice.text = "$" + Item.price;
-            totalPriceText.text = "$" + (Item.price * amount);
-        }
-
-        public Transform itemPosition;
-        public int id;
-        public int amount;
-
         private const int MaxAmount = 999999;
         private const int MinAmount = 1;
 
@@ -54,14 +50,14 @@ namespace Store
             inputField.onEndEdit.AddListener(delegate { ChangeItemPrice(); });
             inputField.onDeselect.AddListener(delegate { ChangeItemPrice(); });
             inputField.onSelect.AddListener(delegate { OnSelectInput(); });
-            
+
             inventoryParent.SetActive(true);
-            
+
             foreach (var slot in inventory.GetSlots)
             {
                 slot.onAfterUpdated += UpdateSlot;
             }
-            
+
             if (inventory.GetSlots[0].GetItemObject())
             {
                 Initialize(inventory.GetSlots[0].GetItemObject());
@@ -70,6 +66,7 @@ namespace Store
             {
                 CleanDisplay();
             }
+
             inventory.UpdateInventory();
             inventoryParent.SetActive(false);
         }
@@ -81,10 +78,13 @@ namespace Store
 
         public void Initialize()
         {
+            inventoryParent.SetActive(true);
+
             foreach (var slot in inventory.GetSlots)
             {
                 slot.onAfterUpdated += UpdateSlot;
             }
+
             inventory.UpdateInventory();
             if (inventory.GetSlots[0].GetItemObject())
             {
@@ -94,8 +94,9 @@ namespace Store
             {
                 CleanDisplay();
             }
+            inventoryParent.SetActive(false);
         }
-        
+
         public void Initialize(ItemObject newItem)
         {
             UpdateSlot(inventory.GetSlots[0]);
@@ -103,12 +104,14 @@ namespace Store
 
         private void UpdateSlot(InventorySlot slot)
         {
-            if(displayObject) Destroy(displayObject);
+            if (displayObject) Destroy(displayObject);
             if (!slot.GetItemObject() || slot.amount == 0)
             {
+                UpdateShowEmpty();
                 CleanDisplay();
                 return;
             }
+
             amount = slot.amount;
             Item = slot.GetItemObject();
             CreateDisplayItem(Item);
@@ -116,11 +119,12 @@ namespace Store
             inputField.text = "$" + Item.price;
             totalPriceText.text = "$" + (Item.price * amount);
             amountText.text = amount.ToString();
+            UpdateShowEmpty();
         }
 
         public void CleanDisplay()
         {
-            if(displayObject) Destroy(displayObject);
+            if (displayObject) Destroy(displayObject);
             Item = null;
             amount = 0;
             showPrice.text = "";
@@ -140,8 +144,8 @@ namespace Store
         {
             inputField.text = inputField.text.Replace("$", "");
         }
-        
-        
+
+
         public void ChangeItemPrice()
         {
             if (!int.TryParse(inputField.text, out int result))
@@ -152,18 +156,29 @@ namespace Store
                     return;
                 }
             }
-            
+
             inputField.text = result switch
             {
                 < MinAmount => MinAmount.ToString(),
                 > MaxAmount => MaxAmount.ToString(),
                 _ => "$" + inputField.text
             };
-            
+
             Item.price = result;
             inputField.text = "$" + Item.price;
             showPrice.text = "$" + Item.price;
             totalPriceText.text = "$" + (Item.price * amount);
+        }
+
+        private void ChangePrice()
+        {
+            showPrice.text = "$" + Item.price;
+            totalPriceText.text = "$" + (Item.price * amount);
+        }
+
+        private void UpdateShowEmpty()
+        {
+            showEmpty.SetActive(!_item || amount == 0);
         }
     }
 }

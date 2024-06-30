@@ -20,22 +20,27 @@ namespace Store
 
         [Header("Client Setup")] 
         [SerializeField] private Button chargeButton;
+        [SerializeField] private GameObject chargeSign;
         [SerializeField] private float maxDistance = 7;
         [SerializeField] private GameObject clientPrefab;
         [SerializeField] private Transform clientExit;
+        [SerializeField] private Transform clientEntrance;
+        [SerializeField] private Transform clientWanderBounds1;
+        [SerializeField] private Transform clientWanderBounds2;
 
-        [Header("Items Setup")] 
+        [Header("Items Setup")]
         [SerializeField] private InventoryObject[] storeInventories;
+        [SerializeField] private DisplayItem[] displayItems;
         [SerializeField] public ItemDatabaseObject itemDatabase;
         [SerializeField] private ItemDisplayer itemDisplayer;
 
-        [Header("Waiting Line Setup")] 
+        [Header("Waiting Line Setup")]
         [SerializeField] private Transform checkOut;
         [SerializeField] private Transform waitingLineStart;
         [SerializeField] private int posAmount;
         [SerializeField] private float distanceBetweenPos;
 
-        [Header("Misc Setup")] 
+        [Header("Misc Setup")]
         [SerializeField] private UIManager uiManager;
         [SerializeField] private Canvas mainCanvas;
         [SerializeField] private player.Player player;
@@ -61,7 +66,7 @@ namespace Store
         private readonly float _popularity = 0.5f;
         private readonly int _maxClients = 4;
         private readonly int _minClients = 3;
-        
+
         #endregion
 
         private void Start()
@@ -70,8 +75,12 @@ namespace Store
             goToDungeon.onClick.AddListener(EndDayCycle);
             startCicle.onClick.AddListener(StartDayCicle);
             
+            ItemDisplayer.DisplayItems = displayItems;
             Client.ItemDatabase = itemDatabase;
             Client.Exit = clientExit;
+            Client.Entrance = clientEntrance;
+            Client.WanderBounds1 = clientWanderBounds1;
+            Client.WanderBounds2 = clientWanderBounds2;
             Client.WaitingLineStart = waitingLineStart;
 
             UpdateMoneyText();
@@ -79,7 +88,7 @@ namespace Store
 
             _waitingLine = new WaitingLine();
             chargeButton.onClick.AddListener(_waitingLine.ChargeClient);
-            
+
             itemDisplayer.Initialize(storeInventories);
             UIManager.MainCanvas = mainCanvas;
             foreach (var storeInventory in storeInventories)
@@ -110,9 +119,8 @@ namespace Store
                 inventory.Save();
             }
         }
-        
-        
-        
+
+
         private void StartDayCicle()
         {
             startCicle.interactable = false;
@@ -121,13 +129,13 @@ namespace Store
             _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
 
             _waitingLine.Initialize(waitingLineStart, _dailyClients, distanceBetweenPos, checkOut);
-            
+
             Client.OnItemBought += ItemBought;
             Client.OnMoneyAdded += SpawnText;
             Client.OnStartLine += AddToQueue;
             Client.OnLeaveLine += RemoveFromQueue;
             Client.OnLeftStore += CheckEndCicle;
-            
+
             foreach (var item in itemDatabase.ItemObjects)
             {
                 item.data.listPrice.UpdatePrice();
@@ -145,10 +153,10 @@ namespace Store
 
             Client.OnItemBought -= ItemBought;
             Client.OnMoneyAdded -= SpawnText;
-            Client.OnStartLine  -= AddToQueue;
-            Client.OnLeaveLine  -= RemoveFromQueue;
-            Client.OnLeftStore  -= CheckEndCicle;
-            
+            Client.OnStartLine -= AddToQueue;
+            Client.OnLeaveLine -= RemoveFromQueue;
+            Client.OnLeftStore -= CheckEndCicle;
+
             for (int i = _clients.Count - 1; i >= 0; i--)
             {
                 _clients[i].Deinitialize();
@@ -159,7 +167,7 @@ namespace Store
             _clientsLeft = 0;
             //startCicle.interactable = true; // TODO fix this
         }
-        
+
         private void ChangeScene()
         {
             SceneManager.LoadScene("MovementScene");
@@ -212,7 +220,7 @@ namespace Store
 
         private bool AvailableItem()
         {
-            return itemDisplayer.displayItems.Any(displayItem => displayItem is { BeingViewed: false, Bought: false });
+            return ItemDisplayer.DisplayItems.Any(displayItem => displayItem is { BeingViewed: false, Bought: false });
         }
 
         /// <summary>
@@ -229,25 +237,10 @@ namespace Store
 
                 //_clients.Add(newClient.GetComponent<Client>());
 
-                _clients[i].Initialize(i, ChooseItem());
+                _clients[i].Initialize(i);
 
                 yield return new WaitForSeconds(_clientTimer);
             }
-        }
-
-        /// <summary>
-        /// Chooses a random item for the client
-        /// </summary>
-        private DisplayItem ChooseItem()
-        {
-            if (!AvailableItem()) return null; // TODO handle this better
-
-            DisplayItem[] avaliableItems =
-                Array.FindAll(itemDisplayer.displayItems, displayItem => displayItem is { BeingViewed: false, Bought: false });
-
-            int randomItem = Random.Range(0, avaliableItems.Length);
-            avaliableItems[randomItem].BeingViewed = true;
-            return avaliableItems[randomItem];
         }
 
         private void RemoveFromQueue()
@@ -267,24 +260,26 @@ namespace Store
         {
             if (!_clients.Any(client => client.firstInLine))
             {
+                chargeSign.SetActive(false);
                 chargeButton.gameObject.SetActive(false);
                 return;
             }
-            
+
             float distance = Vector3.Distance(player.transform.position, waitingLineStart.position);
 
             if (distance > maxDistance)
             {
+                chargeSign.SetActive(true);
                 chargeButton.gameObject.SetActive(false);
                 return;
             }
-            
+
+            chargeSign.SetActive(false);
             chargeButton.gameObject.SetActive(true);
         }
 
         private void SaveInventories()
         {
-            
         }
     }
 }
