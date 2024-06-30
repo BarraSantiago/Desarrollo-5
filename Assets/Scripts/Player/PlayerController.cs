@@ -49,12 +49,13 @@ namespace player
                 MovePlayer();
                 float speed = _moveInput.magnitude * MovementSpeed;
                 animator.SetFloat("speed", speed);
-            } 
+            }
         }
 
         private void MovePlayer()
         {
-            audioSource.enabled = _moveInput != Vector2.zero;
+            if (audioSource != null)
+                audioSource.enabled = _moveInput != Vector2.zero;
             if (_moveInput == Vector2.zero) return;
 
             Vector3 movement = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * (MovementSpeed * Time.deltaTime);

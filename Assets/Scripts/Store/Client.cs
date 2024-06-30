@@ -92,12 +92,15 @@ namespace Store
         private DisplayItem _desiredItem;
         private GameObject _itemInstance;
 
+        private Animator animator;
+
         #endregion
 
         private void Start()
         {
             agent.updateRotation = false;
             agent.updateUpAxis = false;
+            animator = GetComponent<Animator>();
         }
 
         private void Update()
@@ -107,6 +110,8 @@ namespace Store
 
             Quaternion toRotation = Quaternion.LookRotation(agent.velocity, Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, Time.deltaTime * 10f);
+
+            animator.SetFloat("speed", agent.velocity.magnitude);
         }
 
         public void Initialize(int id)
