@@ -31,6 +31,7 @@ namespace player
         private Vector3 _dashDirection;
         private bool _isDashing;
         private MouseIndicator _mouseIndicator;
+        private bool _canMove = true;
 
         private void Awake()
         {
@@ -43,13 +44,12 @@ namespace player
 
         private void Update()
         {
-            if (!_isDashing)
+            if (!_isDashing && _canMove)
             {
                 MovePlayer();
-            }
-
-            float speed = _moveInput.magnitude * MovementSpeed;
-            animator.SetFloat("speed", speed);
+                float speed = _moveInput.magnitude * MovementSpeed;
+                animator.SetFloat("speed", speed);
+            } 
         }
 
         private void MovePlayer()
@@ -172,6 +172,16 @@ namespace player
             }
 
             _isDashing = false;
+        }
+
+        public void EnableMovement()
+        {
+            _canMove = true;
+        }
+
+        public void DisableMovement()
+        {
+            _canMove = false;
         }
     }
 }

@@ -7,6 +7,7 @@ namespace player
     {
         private Animator animator;                                  // Reference to the Animator component
         private Weapon weapon;                                      // Reference to the player s weapon
+        private PlayerController playerController;
 
         // Attack Settings
         [SerializeField] private List<AttackSO> combo;              // List of combo attacks
@@ -23,10 +24,12 @@ namespace player
         {
             animator = GetComponent<Animator>();
             weapon = GetComponentInChildren<Weapon>();
+            playerController = GetComponent<PlayerController>();
         }
 
         private void Update()
         {
+            EnableMovementDuringCombo();
             ExitAttack();
         }
 
@@ -38,6 +41,7 @@ namespace player
 
             if (Time.time - lastClickedTime >= attackInterval)
             {
+                playerController.DisableMovement();
                 PlayAttackAnimation(comboCounter);
                 weapon.Damage *= combo[comboCounter].damage;
                 comboCounter++;
@@ -77,6 +81,16 @@ namespace player
             return stateInfo.normalizedTime > 0.9f && stateInfo.IsTag("Attack");
         }
 
+        // Enable movement during combo attack
+        private void EnableMovementDuringCombo()
+        {
+            var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.normalizedTime > 0.9f && stateInfo.IsTag("Attack"))
+            {
+                playerController.EnableMovement();
+            }
+        }
+
         // Reset combo counter and disable the weapon s trigger box
         private void ResetCombo()
         {
@@ -85,6 +99,7 @@ namespace player
             weapon.ResetDamage();
 
             weapon.DisableTriggerBox();
+            playerController.EnableMovement();
         }
     }
 }
