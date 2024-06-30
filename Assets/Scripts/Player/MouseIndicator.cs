@@ -4,7 +4,7 @@ namespace player
 {
     public class MouseIndicator : MonoBehaviour
     {
-        [SerializeField] private float offset = 40;
+        [SerializeField] private float offset = -90;
         private Camera mainCamera;
         
         private void Start()
@@ -45,6 +45,11 @@ namespace player
             }
 
             return Vector3.zero;
+        }
+
+        public float GetOffset()
+        {
+            return offset;
         }
     }
 }

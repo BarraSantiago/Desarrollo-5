@@ -99,7 +99,7 @@ namespace player
             float angleRadians = Mathf.Atan2(direction.z, direction.x);
             float angleDegrees = angleRadians * Mathf.Rad2Deg;
 
-            transform.rotation = Quaternion.Euler(0, -angleDegrees + 90, 0);
+            transform.rotation = Quaternion.Euler(0, -angleDegrees - _mouseIndicator.GetOffset(), 0);
         }
 
         public void OnDash(InputValue context)
