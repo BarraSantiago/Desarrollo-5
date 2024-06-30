@@ -429,6 +429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputField: {fileID: 514359631}
   inventory: {fileID: 11400000, guid: 00d02fdec0107414e90e2b91d899f4b0, type: 2}
+  inventoryParent: {fileID: 1855886987}
   showPrice: {fileID: 1468411913}
   amountText: {fileID: 739901085}
   totalPriceText: {fileID: 1993037089}
@@ -1580,6 +1581,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputField: {fileID: 787639364}
   inventory: {fileID: 11400000, guid: b0cc085a510dd4142bfdb60a5f9d4a24, type: 2}
+  inventoryParent: {fileID: 1756919083}
   showPrice: {fileID: 6095889}
   amountText: {fileID: 964316887}
   totalPriceText: {fileID: 570647463}
@@ -7824,6 +7826,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputField: {fileID: 298870396}
   inventory: {fileID: 11400000, guid: ac4eea057a5178442a676742e9e948a2, type: 2}
+  inventoryParent: {fileID: 1291903122}
   showPrice: {fileID: 1660583077}
   amountText: {fileID: 427219158}
   totalPriceText: {fileID: 1714661520}
@@ -11210,6 +11213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputField: {fileID: 825196513}
   inventory: {fileID: 11400000, guid: c015ec50c58ed384291ecb78f0a333fd, type: 2}
+  inventoryParent: {fileID: 2119430525}
   showPrice: {fileID: 148338393}
   amountText: {fileID: 994208880}
   totalPriceText: {fileID: 2029616105}

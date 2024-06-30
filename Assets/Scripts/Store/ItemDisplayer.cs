@@ -14,8 +14,6 @@ namespace Store
 
         public void Initialize(InventoryObject[] storeInventories)
         {
-           
-
             StoreManager.OnEndCycle += Deinitialize;
             Client.ItemGrabbed += RemoveItem;
 
@@ -47,58 +45,13 @@ namespace Store
             if (displayItems[id].amount <= 0) displayItems[id].CleanDisplay();
             UpdateInventory();
         }
-
-        private void CreateDisplayItem(int slotId)
-        {
-            displayItems[slotId].id = slotId;
-            displayItems[slotId].showPrice = texts[slotId];
-            displayItems[slotId].itemPosition = objPostition[slotId];
-            displayItems[slotId].displayObject.GetComponent<GroundItem>().enabled = false;
-        }
-
-        private void UpdateSlot()
-        {
-            foreach (var item in displayItems)
-            {
-                item?.Initialize(item.Item);
-            }
-        }
-
+        
         private void UpdateInventory()
         {
             foreach (var displayItem in displayItems)
             {
                 displayItem.Initialize();
             }
-            /*
-            foreach (var item in items)
-            {
-                for (int i = 0; i < item.inventory.GetSlots.Length; i++)
-                {
-                    switch (_storeInventory.GetSlots[i].amount)
-                    {
-                        case 0:
-                        {
-                            if (items[i]) Destroy(items[i].displayObject);
-                            texts[i].text = string.Empty;
-                            break;
-                        }
-                        case > 0 when !items[i]:
-                            OnAddItem(i);
-                            break;
-                        case > 0:
-                        {
-                            if (items[i].item != _storeInventory.GetSlots[i].GetItemObject())
-                            {
-                                RemoveItem(i, items[i].amount);
-                                OnAddItem(i);
-                            }
-
-                            break;
-                        }
-                    }
-                }
-            }*/
         }
     }
 }

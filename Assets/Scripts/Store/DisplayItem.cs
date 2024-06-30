@@ -8,6 +8,8 @@ namespace Store
     {
         [SerializeField] private TMP_InputField inputField;
         [SerializeField] public InventoryObject inventory;
+        [SerializeField] public GameObject inventoryParent;
+        
         public bool BeingViewed { get; set; }
         public bool Bought { get; set; }
         public TMP_Text showPrice;
@@ -53,12 +55,12 @@ namespace Store
             inputField.onDeselect.AddListener(delegate { ChangeItemPrice(); });
             inputField.onSelect.AddListener(delegate { OnSelectInput(); });
             
+            inventoryParent.SetActive(true);
+            
             foreach (var slot in inventory.GetSlots)
             {
                 slot.onAfterUpdated += UpdateSlot;
             }
-            
-            inventory.UpdateInventory();
             
             if (inventory.GetSlots[0].GetItemObject())
             {
@@ -68,6 +70,8 @@ namespace Store
             {
                 CleanDisplay();
             }
+            inventory.UpdateInventory();
+            inventoryParent.SetActive(false);
         }
 
         private void OnEnable()
@@ -94,7 +98,6 @@ namespace Store
         
         public void Initialize(ItemObject newItem)
         {
-            Item = newItem;
             UpdateSlot(inventory.GetSlots[0]);
         }
 
