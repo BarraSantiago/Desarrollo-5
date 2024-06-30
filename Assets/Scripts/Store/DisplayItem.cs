@@ -1,5 +1,4 @@
-﻿using System;
-using InventorySystem;
+﻿using InventorySystem;
 using TMPro;
 using UnityEngine;
 
@@ -41,7 +40,7 @@ namespace Store
                 }
             }
         }
-
+        private const string ItemPlacedSound = "ItemPlaced";
         private const int MaxAmount = 999999;
         private const int MinAmount = 1;
 
@@ -120,6 +119,8 @@ namespace Store
             totalPriceText.text = "$" + (Item.price * amount);
             amountText.text = amount.ToString();
             UpdateShowEmpty();
+            AudioManager.instance.Play(ItemPlacedSound);
+
         }
 
         public void CleanDisplay()

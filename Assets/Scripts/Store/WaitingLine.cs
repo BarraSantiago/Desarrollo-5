@@ -12,6 +12,10 @@ namespace Store
 
     public class WaitingLine
     {
+        public int QueueCount
+        {
+            get { return _queuePositions.Count(x => x.occupied); }
+        }
         private int _positionsAmount;
         private float _positionsDistance;
         private Transform _startingPosition;

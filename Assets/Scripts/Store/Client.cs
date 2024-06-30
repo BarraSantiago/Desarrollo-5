@@ -76,6 +76,7 @@ namespace Store
         private int _tipValue;
         private int _timesCheckedItems = 0;
         private int _maxCheckItems = 0;
+        private const string SoldSoundKey = "ItemSold";
         private State _currentState;
 
         private State CurrentState
@@ -295,11 +296,13 @@ namespace Store
         {
             _paid = true;
             BuyItem();
+            AudioManager.instance.Play(SoldSoundKey);
             CurrentState = State.Leaving;
 
             //OnLeaveLine?.Invoke();
         }
-        
+
+
         /// <summary>
         /// Gives the player money and removes the item from being displayed
         /// </summary>

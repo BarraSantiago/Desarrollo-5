@@ -12,6 +12,8 @@ namespace player
         public InventoryObject equipment;
         public float pickUpCooldown = 3f;
         private int _money;
+        private const string PickUpSoundKey = "PickUp";
+
         public int money
         {
             get => _money;
@@ -50,10 +52,12 @@ namespace player
             if (item.droppedByPlayer && Time.time - item.droppedTime < pickUpCooldown) return;
 
             if (!inventory.AddItem(new Item(item.item), item.amount)) return;
-
+            
+            AudioManager.instance.Play(PickUpSoundKey);
             Destroy(other.gameObject);
             inventory.UpdateInventory();
         }
+
 
         public void OnApplicationQuit()
         {

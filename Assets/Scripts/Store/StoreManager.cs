@@ -54,6 +54,7 @@ namespace Store
         #region Private Variables
 
         [SerializeField] private List<Client> _clients = new List<Client>();
+        private const string WaitingSoundKey = "ClientWaiting";
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
@@ -218,11 +219,6 @@ namespace Store
             itemDatabase.ItemObjects[id].data.listPrice.amountSoldLastDay++;
         }
 
-        private bool AvailableItem()
-        {
-            return ItemDisplayer.DisplayItems.Any(displayItem => displayItem is { BeingViewed: false, Bought: false });
-        }
-
         /// <summary>
         /// Sends clients to the store
         /// </summary>
@@ -253,6 +249,11 @@ namespace Store
             if (!_waitingLine.AddToQueue(agent))
             {
                 //No empty spaces in queue
+            }
+            if (_waitingLine.QueueCount == 1 && Vector3.Distance(player.transform.position, waitingLineStart.position) > maxDistance)
+            {
+                // Play the sound
+                AudioManager.instance.Play(WaitingSoundKey);
             }
         }
 
