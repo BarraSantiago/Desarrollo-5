@@ -155,6 +155,7 @@ MonoBehaviour:
   groundItemPrefab: {fileID: 5920758140201309097, guid: f62c6b258c081874cbe00b97c765cc30, type: 3}
   itemDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
   goToStore: {fileID: 1276161667}
+  mainCanvas: {fileID: 0}
 --- !u!4 &80805435
 Transform:
   m_ObjectHideFlags: 0
@@ -3217,7 +3218,7 @@ Transform:
   m_GameObject: {fileID: 992089413}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -43.635414, y: 0, z: 0}
-  m_LocalScale: {x: 7.602528, y: 1, z: 4.1732807}
+  m_LocalScale: {x: 21.445341, y: 1, z: 21.736757}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

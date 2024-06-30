@@ -37,7 +37,12 @@ namespace player
             Ray ray = mainCamera.ScreenPointToRay(mouseScreenPosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit)) return hit.point;
+            int layerMask = 1 << LayerMask.NameToLayer("NavMesh");
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
+            {
+                return hit.point;
+            }
 
             return Vector3.zero;
         }
