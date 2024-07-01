@@ -346,6 +346,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1916395780, guid: d00d1ca9e923d104fb1c9ca124a541d5, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1916395780, guid: d00d1ca9e923d104fb1c9ca124a541d5, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1203642391655862452, guid: d00d1ca9e923d104fb1c9ca124a541d5, type: 3}
       propertyPath: playerStats
       value: 
@@ -356,7 +364,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5067709240253221580, guid: d00d1ca9e923d104fb1c9ca124a541d5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -52.385616
+      value: -55.635616
       objectReference: {fileID: 0}
     - target: {fileID: 5067709240253221580, guid: d00d1ca9e923d104fb1c9ca124a541d5, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1426,7 +1434,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -3.4581, y: 0}
+  m_AnchoredPosition: {x: -3.45813, y: 0}
   m_SizeDelta: {x: -25.6887, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &412206492
@@ -4266,11 +4274,11 @@ RectTransform:
   m_Father: {fileID: 1421938192}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 381.3, y: -483.2}
-  m_SizeDelta: {x: 293.9017, y: 96.221}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -50, y: 50}
+  m_SizeDelta: {x: 293.90173, y: 96.22101}
+  m_Pivot: {x: 1, y: 0}
 --- !u!1001 &1338650893
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4480,10 +4488,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -6759,6 +6767,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1916395780, guid: d00d1ca9e923d104fb1c9ca124a541d5, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1916395780, guid: d00d1ca9e923d104fb1c9ca124a541d5, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1203642391655862452, guid: d00d1ca9e923d104fb1c9ca124a541d5, type: 3}
       propertyPath: playerStats
       value: 
@@ -6811,10 +6827,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: New Enemy Melee
       objectReference: {fileID: 0}
-    - target: {fileID: 5557387071312777334, guid: d00d1ca9e923d104fb1c9ca124a541d5, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d00d1ca9e923d104fb1c9ca124a541d5, type: 3}
 --- !u!114 &5866666021079707309 stripped
@@ -6855,6 +6867,10 @@ PrefabInstance:
       propertyPath: mouseIndicator
       value: 
       objectReference: {fileID: 354448624}
+    - target: {fileID: 8134230606630487204, guid: 524da82d02c467b478c69aa1ef62ca98, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8604178621606365238, guid: 524da82d02c467b478c69aa1ef62ca98, type: 3}
       propertyPath: m_RootOrder
       value: 7

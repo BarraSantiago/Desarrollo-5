@@ -21,19 +21,24 @@ namespace EnemyUnits
         [SerializeField] private float attackCooldown = 1f;
         [SerializeField] private float maxHealth = 50;
 
-        private float currentHealth;
+        private HealthBar _healthBar;
+        private float _currentHealth;
         private bool hasAttacked = false;
 
         private BoxCollider boxCollider;
 
         private void Start()
         {
-            currentHealth = maxHealth;
+            _currentHealth = maxHealth;
             if (!playerStats)
             {
                 playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerStats>();
             }
             boxCollider = GetComponentInChildren<BoxCollider>();
+            _healthBar = GetComponentInChildren<HealthBar>();
+
+            _currentHealth = maxHealth;
+            _healthBar?.SetMaxHealth(maxHealth);
         }
 
         private void DoRangedAction()
@@ -53,11 +58,12 @@ namespace EnemyUnits
 
         public void RecibeDamageFromPlayer(float damage)
         {
-            currentHealth -= damage;
+            _currentHealth -= damage;
+            _healthBar?.SetHealth(_currentHealth);
 
-            if (currentHealth > 0) return;
+            if (_currentHealth > 0) return;
 
-            currentHealth = 0;
+            _currentHealth = 0;
             Die();
         }
 
