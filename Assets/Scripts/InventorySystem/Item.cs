@@ -33,6 +33,8 @@ namespace InventorySystem
         {
             name = item.name;
             id = item.data.id;
+            
+            if(item.data.buffs == null) return;
             buffs = new ItemBuff[item.data.buffs.Length];
             for (int i = 0; i < buffs.Length; i++)
             {

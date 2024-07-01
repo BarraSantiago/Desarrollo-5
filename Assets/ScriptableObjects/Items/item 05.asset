@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
+  m_Name: item 05
+  m_EditorClassIdentifier: 
+  uiDisplay: {fileID: 21300000, guid: 9a925de2acff60e4fbfc377b2494c181, type: 3}
+  characterDisplay: {fileID: 3138242233395258418, guid: fbbd14df82baacf42adb2899bfc30b1d, type: 3}
+  stackable: 1
+  maxStack: 3
+  type: 8
+  description: Heals 50 hit points.
+  data:
+    name: Minor Potion
+    id: 4
+    buffs:
+    - max: 0
+      min: 0
+      duration: 0
+      stat: 1
+      value: 50
+    listPrice:
+      originalPrice: 75
+    craftable: 1
+    recipe: {fileID: 11400000, guid: 122d8ece4dc30cf4f90b15b61d91fff3, type: 2}
+  boneNames: []
+  price: 70

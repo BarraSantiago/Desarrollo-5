@@ -15,5 +15,17 @@ namespace InventorySystem
             }
         }
 
+        public void AddItem(ItemObject itemObject)
+        {
+            // Resize the array
+            System.Array.Resize(ref ItemObjects, ItemObjects.Length + 1);
+
+            // Add the new item to the end of the array
+            ItemObjects[^1] = itemObject;
+            // Check if data is null and if so, initialize it
+            itemObject.data ??= new Item();
+            // Update the ID of the new item
+            itemObject.data.id = ItemObjects.Length - 1;
+        }
     }
 }

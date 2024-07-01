@@ -12,9 +12,20 @@ namespace InventorySystem
         [SerializeField] private float duration = 0; //buff duration
         public Attributes stat;
         public int value;
-        public int Min => min;
-        public int Max => max;
-        public float Duration => duration;
+        public int Min
+        {
+            get => min;
+            set => min = value;
+        }
+
+        public int Max {
+            get => max;
+            set => max = value;
+        }
+        public float Duration {
+            get => duration;
+            set => duration = value;
+        }
 
         public ItemBuff(int _min, int _max)
         {

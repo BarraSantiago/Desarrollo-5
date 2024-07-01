@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
+  m_Name: item 02
+  m_EditorClassIdentifier: 
+  uiDisplay: {fileID: 21300000, guid: a0d3b68b3f9b184469a06f453735b48d, type: 3}
+  characterDisplay: {fileID: 3138242233395258418, guid: 35ca0a924335e294bbf14a8a00ae76e0, type: 3}
+  stackable: 1
+  maxStack: 5
+  type: 9
+  description: Wood.
+  data:
+    name: Wood log
+    id: 1
+    buffs: []
+    listPrice:
+      originalPrice: 30
+    craftable: 0
+    recipe: {fileID: 0}
+  boneNames: []
+  price: 20
