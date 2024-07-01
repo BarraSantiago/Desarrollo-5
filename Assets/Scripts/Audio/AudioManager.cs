@@ -24,7 +24,6 @@ public class AudioManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -55,6 +54,11 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    public AudioSource GetAudioSource(string name)
+    {
+        return soundDictionary[name];
+    }
+    
     public void Stop(string name)
     {
         if (soundDictionary.ContainsKey(name))

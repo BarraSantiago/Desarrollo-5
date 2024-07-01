@@ -14,8 +14,6 @@ namespace UI
         {
             GameObject text = Instantiate(flyingtext, flyingTextLocation);
             
-            text.transform.position = Vector3.zero;
-            
             text.GetComponent<TMP_Text>().text = "+" + num.ToString();
         }
         public void UpdateMoneyText(int money)

@@ -9,23 +9,28 @@ namespace Store.Shops
 {
     public class Shop : MonoBehaviour
     {
-        [Header("Shop setup")] [SerializeField]
-        private ItemDatabaseObject completeDatabase;
-
+        #region Serialized Fields
+        
+        [Header("Shop setup")] 
+        [SerializeField] private ItemDatabaseObject completeDatabase;
         [SerializeField] private ItemDatabaseObject[] databases;
         [SerializeField] private Button upgradeButton;
         [SerializeField] private Player player;
         [SerializeField] private TMP_Text upgradeText;
 
-        [Header("Item setup")] [SerializeField]
-        private GameObject shopItemPrefab;
-
+        [Header("Item setup")] 
+        [SerializeField] private GameObject shopItemPrefab;
+        [SerializeField] private Image selectedItemImage;
         [SerializeField] private Transform shopItemsParent;
         [SerializeField] private Button buyButton;
         [SerializeField] private ShopRecipe[] shopRecipes;
         [SerializeField] private TMP_Text costText;
         [SerializeField] private float itemCostMultiplier = 2.5f;
 
+        #endregion
+
+        #region Properties
+        
         private List<ShopItem> _shopItems = new List<ShopItem>();
         private int _shopLevel;
         private int _shopMaxLevel;
@@ -34,6 +39,8 @@ namespace Store.Shops
         private int _currentCost;
         private ItemObject _selectedItem;
 
+        #endregion
+        
         private void Start()
         {
             ShopItem.OnSelectItem += SelectItem;
@@ -52,6 +59,7 @@ namespace Store.Shops
             Player.OnMoneyUpdate += UpdateAvailability;
             ShopItem.OnSelectItem += SelectItem;
 
+            selectedItemImage.preserveAspect = true;
             SelectItem(databases[0].ItemObjects[0].data.id);
         }
 
@@ -63,8 +71,10 @@ namespace Store.Shops
         private void SelectItem(int itemId)
         {
             _selectedItem = completeDatabase.ItemObjects[itemId];
-
+            selectedItemImage.sprite = _selectedItem.uiDisplay;
+            
             int recipeItemsLength = _selectedItem.data.recipe?.items?.Length ?? 0;
+            
             for (int i = 0; i < shopRecipes.Length; i++)
             {
                 shopRecipes[i].gameObject.SetActive(i < recipeItemsLength);

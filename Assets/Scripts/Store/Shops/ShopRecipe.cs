@@ -15,6 +15,7 @@ namespace Store.Shops
         
         public void SetRecipe(ItemObject item, int requiredAmount, int ownedAmount)
         {
+            materialImage.preserveAspect = true;
             materialImage.sprite = item.uiDisplay;
             required.text = requiredAmount.ToString();
             owned.text = ownedAmount.ToString();

@@ -10,6 +10,7 @@ namespace player
     {
         [SerializeField] private float moveSpeed = 50f;
         [SerializeField] private GameObject inventoryUI;
+        [SerializeField] private GameObject debugUI;
         [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private float interactionRadius = 5f;
         [SerializeField] private AudioSource audioSource;
@@ -50,12 +51,12 @@ namespace player
                 float speed = _moveInput.magnitude * MovementSpeed;
                 animator.SetFloat("speed", speed);
             }
+            if (audioSource) audioSource.enabled = _moveInput != Vector2.zero && !_isDashing && _canMove;
         }
 
         private void MovePlayer()
         {
-            if (audioSource != null)
-                audioSource.enabled = _moveInput != Vector2.zero;
+           
             if (_moveInput == Vector2.zero) return;
 
             Vector3 movement = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * (MovementSpeed * Time.deltaTime);
@@ -123,6 +124,11 @@ namespace player
         public void OnPause(InputValue context)
         {
             Application.Quit();
+        }
+
+        public void OnDebug(InputValue ctx)
+        {
+            debugUI?.SetActive(!debugUI.activeSelf);
         }
 
         public void OnInteract(InputValue context)

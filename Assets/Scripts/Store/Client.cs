@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace Store
 {
-    [System.Serializable]
+    [Serializable]
     public class ClientTransforms
     {
         public Transform SpawnPoint;
@@ -38,13 +38,13 @@ namespace Store
         [SerializeField] public NavMeshAgent agent;
         [SerializeField] private float _minimumDistance = 1.6f;
         [SerializeField] private Transform itemPosition;
+        [SerializeField] private AudioSource audioSource;
 
         #endregion
 
         #region Public Variables
     
         public int id;
-
         public static ClientTransforms ClientTransforms;
         public static ItemDatabaseObject ItemDatabase;
         public static Action<Client> OnStartLine;
@@ -61,7 +61,7 @@ namespace Store
 
         #endregion
 
-        #region Priavete Variables
+        #region Private Variables
 
         /// <summary>
         /// Percentage that reprecents how much the client is willing to pay over the list price
@@ -79,13 +79,16 @@ namespace Store
         private int _tipChanceModifier = 0;
 
         private bool _paid;
-        private int _tipValue;
+        private int tipValue => (int)(_itemPrice * _itemAmount * 0.1f);
+
         private int _timesCheckedItems = 0;
         private int _maxCheckItems = 0;
         private int _desiredItemIndex;
         private int _itemPrice;
         private int _itemAmount;
         private int _itemId;
+        private float _wanderTimemin = 7f;
+        private float _wanderTimeMax = 15f;
         private const string SoldSoundKey = "ItemSold";
         private State _currentState;
 
@@ -102,6 +105,9 @@ namespace Store
         private GameObject _itemInstance;
 
         private Animator animator;
+        private bool _leaveTip;
+        private float _tipChance = 85f;
+        private float _waitTime = 0.3f;
 
         #endregion
 
@@ -115,7 +121,8 @@ namespace Store
         private void Update()
         {
             if (CurrentState == State.None) return;
-            if (!(agent.velocity.magnitude > 0.1f)) return;
+            audioSource.enabled = agent.velocity.magnitude > 0.1f;
+            if (agent.velocity.magnitude < 0.1f) return;
 
             Quaternion toRotation = Quaternion.LookRotation(agent.velocity, Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, Time.deltaTime * 10f);
@@ -204,7 +211,7 @@ namespace Store
 
         private IEnumerator WanderAndChooseItem()
         {
-            float wanderTime = Random.Range(5f, 10f);
+            float wanderTime = Random.Range(_wanderTimemin, _wanderTimeMax);
             float startTime = Time.time;
 
             while (Time.time - startTime < wanderTime)
@@ -258,9 +265,15 @@ namespace Store
         private IEnumerator GrabItem()
         {
             agent.SetDestination(ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position);
+            float startTime = Time.time;
+            float maxWaitTime = 5f;
 
             while (!NearItem())
             {
+                if (Time.time - startTime > maxWaitTime)
+                {
+                    break;
+                }
                 yield return null;
             }
 
@@ -309,7 +322,8 @@ namespace Store
                 CurrentState = State.Angry;
                 return false;
             }
-
+            
+            _leaveTip = true;
             return true;
         }
         
@@ -319,7 +333,7 @@ namespace Store
             BuyItem();
             AudioManager.instance.Play(SoldSoundKey);
             CurrentState = State.Leaving;
-
+            
             //OnLeaveLine?.Invoke();
         }
 
@@ -332,6 +346,16 @@ namespace Store
             int finalPrice = _itemPrice * _itemAmount;
             OnMoneyAdded?.Invoke(finalPrice);
             OnItemBought?.Invoke(_itemId);
+            StartCoroutine(LeaveTipAfterPayment(_waitTime));
+        }
+        
+        private IEnumerator LeaveTipAfterPayment(float waitTime)
+        {
+            // Wait for the specified time
+            yield return new WaitForSeconds(waitTime);
+
+            // Call the LeaveTip method
+            LeaveTip(_tipChance);
         }
 
         /// <summary>
@@ -345,7 +369,7 @@ namespace Store
 
             if (chance < randomNum + _tipChanceModifier)
             {
-                OnMoneyAdded.Invoke(_tipValue);
+                OnMoneyAdded?.Invoke(tipValue);
             }
         }
 
@@ -367,9 +391,9 @@ namespace Store
                 yield return null; // Wait for the next frame
             }
 
+            CurrentState = State.None;
             OnLeftStore?.Invoke();
             gameObject.SetActive(false);
-            CurrentState = State.None;
         }
 
         private bool NearWaitingLine()

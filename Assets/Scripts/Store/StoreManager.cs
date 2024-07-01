@@ -25,24 +25,25 @@ namespace Store
         [SerializeField] private GameObject clientPrefab;
         [SerializeField] private ClientTransforms clientTransforms;
 
-        [Header("Items Setup")]
+        [Header("Items Setup")] 
         [SerializeField] private InventoryObject[] storeInventories;
         [SerializeField] private DisplayItem[] displayItems;
         [SerializeField] public ItemDatabaseObject itemDatabase;
         [SerializeField] private ItemDisplayer itemDisplayer;
 
-        [Header("Waiting Line Setup")]
+        [Header("Waiting Line Setup")] 
         [SerializeField] private Transform checkOut;
         [SerializeField] private Transform waitingLineStart;
         [SerializeField] private int posAmount;
         [SerializeField] private float distanceBetweenPos;
 
-        [Header("Misc Setup")]
+        [Header("Misc Setup")] 
+        [SerializeField] private Transform chargePosition;
         [SerializeField] private UIManager uiManager;
         [SerializeField] private Canvas mainCanvas;
         [SerializeField] private player.Player player;
 
-        [Header("Demo")] 
+        [Header("Demo")]
         [SerializeField] private Button goToDungeon;
         [SerializeField] private Button startCicle;
 
@@ -52,17 +53,18 @@ namespace Store
 
         private readonly List<Client> _clients = new List<Client>();
         private const string WaitingSoundKey = "ClientWaiting";
+        private const string MurmurSoundKey = "Murmur";
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
         private int _clientsLeft = 0;
         private int _buyersInShop; // amount of clients currently in the shop
         private float _timeBetweenClients;
-        private readonly float _clientTimer = 3.87f;
-        private float _cicleMaxTime = 30f;
+        private readonly float _clientTimer = 2.87f;
+        private const float CicleMaxTime = 30f;
         private float _cilceTimer = 0;
         private readonly float _popularity = 0.5f;
-        private readonly int _maxClients = 4;
+        private readonly int _maxClients = 7;
         private readonly int _minClients = 3;
 
         #endregion
@@ -72,7 +74,7 @@ namespace Store
             goToDungeon.onClick.AddListener(ChangeScene);
             goToDungeon.onClick.AddListener(EndDayCycle);
             startCicle.onClick.AddListener(StartDayCicle);
-            
+
             ItemDisplayer.DisplayItems = displayItems;
             Client.ItemDatabase = itemDatabase;
             Client.ClientTransforms = clientTransforms;
@@ -122,6 +124,7 @@ namespace Store
             Client.OnMoneyAdded += SpawnText;
             Client.OnStartLine += AddToQueue;
             Client.OnLeftStore += CheckEndCicle;
+            Client.OnLeftStore += PlayBackgrounNoise;
 
             foreach (var item in itemDatabase.ItemObjects)
             {
@@ -142,6 +145,7 @@ namespace Store
             Client.OnMoneyAdded -= SpawnText;
             Client.OnStartLine -= AddToQueue;
             Client.OnLeftStore -= CheckEndCicle;
+            Client.OnLeftStore -= PlayBackgrounNoise;
 
             for (int i = _clients.Count - 1; i >= 0; i--)
             {
@@ -182,6 +186,13 @@ namespace Store
             player.inventory.AddItem(itemDatabase.ItemObjects[rand].data, 1);
         }
 
+        public void AddGold()
+        {
+            const int goldAdded = 500;
+            player.money += goldAdded;
+            SpawnText(goldAdded);
+        }
+
         private void SpawnText(int money)
         {
             player.money += money;
@@ -215,7 +226,8 @@ namespace Store
                 _clients.Add(newClient.GetComponent<Client>());
 
                 _clients[i].Initialize(i);
-
+                
+                PlayBackgrounNoise();
                 yield return new WaitForSeconds(_clientTimer);
             }
         }
@@ -226,7 +238,9 @@ namespace Store
             {
                 //No empty spaces in queue
             }
-            if (_waitingLine.QueueCount == 1 && Vector3.Distance(player.transform.position, waitingLineStart.position) > maxDistance)
+
+            if (_waitingLine.QueueCount == 1 &&
+                Vector3.Distance(player.transform.position, waitingLineStart.position) > maxDistance)
             {
                 // Play the sound
                 AudioManager.instance.Play(WaitingSoundKey);
@@ -242,7 +256,7 @@ namespace Store
                 return;
             }
 
-            float distance = Vector3.Distance(player.transform.position, waitingLineStart.position);
+            float distance = Vector3.Distance(player.transform.position, chargePosition.position);
 
             if (distance > maxDistance)
             {
@@ -255,8 +269,29 @@ namespace Store
             chargeButton.gameObject.SetActive(true);
         }
 
+        private void PlayBackgrounNoise()
+        {
+            int clientsInStore = _clients.FindAll(client => client.InShop).Count;
+            
+            if (clientsInStore <= 3)
+            {
+                AudioManager.instance.Stop(MurmurSoundKey);
+                return;
+            }
+            
+            AudioManager.instance.GetAudioSource(MurmurSoundKey).volume = 0.3f * clientsInStore;
+            if (!AudioManager.instance.GetAudioSource(MurmurSoundKey).isPlaying)
+            {
+                AudioManager.instance.Play(MurmurSoundKey);
+            }
+        }
+
         private void SaveInventories()
         {
+            foreach (var inventory in storeInventories)
+            {
+                inventory.Save();
+            }
         }
     }
 }
