@@ -40,8 +40,7 @@ namespace Store
         {
             if (!DisplayItems[id]) return;
 
-            DisplayItems[id].amount = 0;
-            if (DisplayItems[id].amount <= 0) DisplayItems[id].CleanDisplay();
+            DisplayItems[id].CleanDisplay();
             UpdateInventory();
         }
         

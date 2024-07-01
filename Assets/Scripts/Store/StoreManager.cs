@@ -23,10 +23,7 @@ namespace Store
         [SerializeField] private GameObject chargeSign;
         [SerializeField] private float maxDistance = 7;
         [SerializeField] private GameObject clientPrefab;
-        [SerializeField] private Transform clientExit;
-        [SerializeField] private Transform clientEntrance;
-        [SerializeField] private Transform clientWanderBounds1;
-        [SerializeField] private Transform clientWanderBounds2;
+        [SerializeField] private ClientTransforms clientTransforms;
 
         [Header("Items Setup")]
         [SerializeField] private InventoryObject[] storeInventories;
@@ -53,7 +50,7 @@ namespace Store
 
         #region Private Variables
 
-        [SerializeField] private List<Client> _clients = new List<Client>();
+        private readonly List<Client> _clients = new List<Client>();
         private const string WaitingSoundKey = "ClientWaiting";
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
@@ -61,7 +58,7 @@ namespace Store
         private int _clientsLeft = 0;
         private int _buyersInShop; // amount of clients currently in the shop
         private float _timeBetweenClients;
-        private float _clientTimer = 3f;
+        private readonly float _clientTimer = 3.87f;
         private float _cicleMaxTime = 30f;
         private float _cilceTimer = 0;
         private readonly float _popularity = 0.5f;
@@ -78,11 +75,7 @@ namespace Store
             
             ItemDisplayer.DisplayItems = displayItems;
             Client.ItemDatabase = itemDatabase;
-            Client.Exit = clientExit;
-            Client.Entrance = clientEntrance;
-            Client.WanderBounds1 = clientWanderBounds1;
-            Client.WanderBounds2 = clientWanderBounds2;
-            Client.WaitingLineStart = waitingLineStart;
+            Client.ClientTransforms = clientTransforms;
 
             UpdateMoneyText();
             UpdateCurrentPrices();
@@ -107,18 +100,12 @@ namespace Store
         {
             goToDungeon.onClick.RemoveListener(ChangeScene);
             goToDungeon.onClick.RemoveListener(EndDayCycle);
-            foreach (var storeInventory in storeInventories)
-            {
-                storeInventory.Save();
-            }
+            SaveInventories();
         }
 
         public void OnApplicationQuit()
         {
-            foreach (var inventory in storeInventories)
-            {
-                inventory.Save();
-            }
+            SaveInventories();
         }
 
 
@@ -134,7 +121,6 @@ namespace Store
             Client.OnItemBought += ItemBought;
             Client.OnMoneyAdded += SpawnText;
             Client.OnStartLine += AddToQueue;
-            Client.OnLeaveLine += RemoveFromQueue;
             Client.OnLeftStore += CheckEndCicle;
 
             foreach (var item in itemDatabase.ItemObjects)
@@ -155,7 +141,6 @@ namespace Store
             Client.OnItemBought -= ItemBought;
             Client.OnMoneyAdded -= SpawnText;
             Client.OnStartLine -= AddToQueue;
-            Client.OnLeaveLine -= RemoveFromQueue;
             Client.OnLeftStore -= CheckEndCicle;
 
             for (int i = _clients.Count - 1; i >= 0; i--)
@@ -209,12 +194,8 @@ namespace Store
             uiManager.UpdateMoneyText(player.money);
         }
 
-        private void ItemBought(DisplayItem displayItem)
+        private void ItemBought(int id)
         {
-            int id = displayItem.Item.data.id;
-
-            displayItem.Bought = true;
-
             itemDatabase.ItemObjects[id].data.listPrice.wasSold = true;
             itemDatabase.ItemObjects[id].data.listPrice.amountSoldLastDay++;
         }
@@ -228,20 +209,15 @@ namespace Store
             // TODO improve this with object pooling
             for (int i = 0; i < _dailyClients; i++)
             {
-                //GameObject newClient = Instantiate(clientPrefab);
-                //newClient.transform.position = clientExit.position;
+                GameObject newClient = Instantiate(clientPrefab);
+                newClient.transform.position = clientTransforms.SpawnPoint.position;
 
-                //_clients.Add(newClient.GetComponent<Client>());
+                _clients.Add(newClient.GetComponent<Client>());
 
                 _clients[i].Initialize(i);
 
                 yield return new WaitForSeconds(_clientTimer);
             }
-        }
-
-        private void RemoveFromQueue()
-        {
-            _waitingLine.AdvanceQueue();
         }
 
         private void AddToQueue(Client agent)

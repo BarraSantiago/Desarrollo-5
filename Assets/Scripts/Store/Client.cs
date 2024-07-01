@@ -7,6 +7,16 @@ using Random = UnityEngine.Random;
 
 namespace Store
 {
+    [System.Serializable]
+    public class ClientTransforms
+    {
+        public Transform SpawnPoint;
+        public Transform Exit;
+        public Transform Entrance;
+        public Transform WaitingLineStart;
+        public Transform WanderBoundsMin;
+        public Transform WanderBoundsMax;
+    }
     public class Client : MonoBehaviour
     {
         private enum State
@@ -27,21 +37,18 @@ namespace Store
 
         [SerializeField] public NavMeshAgent agent;
         [SerializeField] private float _minimumDistance = 1.6f;
+        [SerializeField] private Transform itemPosition;
 
         #endregion
 
         #region Public Variables
-
+    
         public int id;
-        public static Transform Exit;
-        public static Transform Entrance;
-        public static Transform WaitingLineStart;
-        public static Transform WanderBounds1;
-        public static Transform WanderBounds2;
+
+        public static ClientTransforms ClientTransforms;
         public static ItemDatabaseObject ItemDatabase;
         public static Action<Client> OnStartLine;
-        public static Action OnLeaveLine;
-        public static Action<DisplayItem> OnItemBought;
+        public static Action<int> OnItemBought;
         public static Action<int> OnMoneyAdded; //TODO change name
         public static Action<int, int> ItemGrabbed;
         public static Action OnLeftStore;
@@ -49,8 +56,7 @@ namespace Store
         /// <summary>
         /// Bool that indicates if the client is in the shop
         /// </summary>
-        public bool inShop;
-
+        public bool InShop => _currentState < State.LeftStore;
         public bool firstInLine;
 
         #endregion
@@ -76,6 +82,10 @@ namespace Store
         private int _tipValue;
         private int _timesCheckedItems = 0;
         private int _maxCheckItems = 0;
+        private int _desiredItemIndex;
+        private int _itemPrice;
+        private int _itemAmount;
+        private int _itemId;
         private const string SoldSoundKey = "ItemSold";
         private State _currentState;
 
@@ -89,7 +99,6 @@ namespace Store
             }
         }
 
-        private DisplayItem _desiredItem;
         private GameObject _itemInstance;
 
         private Animator animator;
@@ -123,8 +132,8 @@ namespace Store
 
         public void Deinitialize()
         {
-            if (_desiredItem) _desiredItem.BeingViewed = false;
-            _desiredItem = null;
+            if (ItemDisplayer.DisplayItems[_desiredItemIndex]) ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = false;
+            ItemDisplayer.DisplayItems[_desiredItemIndex] = null;
         }
 
         private void ClientBehaviour()
@@ -183,9 +192,9 @@ namespace Store
 
         private IEnumerator EnterStoreAndWander()
         {
-            agent.SetDestination(Entrance.position);
+            agent.SetDestination(ClientTransforms.Entrance.position);
 
-            while (!CheckDistance(Entrance.position, _minimumDistance))
+            while (!CheckDistance(ClientTransforms.Entrance.position, _minimumDistance))
             {
                 yield return null;
             }
@@ -201,17 +210,18 @@ namespace Store
             while (Time.time - startTime < wanderTime)
             {
                 Vector3 randomPosition =
-                    new Vector3(Random.Range(WanderBounds1.position.x, WanderBounds2.position.x), 0,
-                        Random.Range(WanderBounds1.position.z, WanderBounds2.position.z));
+                    new Vector3(Random.Range(ClientTransforms.WanderBoundsMin.position.x, ClientTransforms.WanderBoundsMax.position.x), 0,
+                        Random.Range(ClientTransforms.WanderBoundsMin.position.z, ClientTransforms.WanderBoundsMax.position.z));
                 agent.SetDestination(randomPosition);
 
                 yield return new WaitForSeconds(3f);
             }
 
-            ChooseItemToGrab();
+            ChooseItem();
         }
 
-        private void ChooseItemToGrab()
+
+        private void ChooseItem()
         {
             // Get all available items
             DisplayItem[] availableItems = Array.FindAll(ItemDisplayer.DisplayItems,
@@ -221,10 +231,11 @@ namespace Store
             {
                 // Choose a random item from the available items
                 int randomItemIndex = Random.Range(0, availableItems.Length);
-                _desiredItem = availableItems[randomItemIndex];
-                _desiredItem.BeingViewed = true;
-
-                // Move to the chosen item
+                ItemDisplayer.DisplayItems[_desiredItemIndex] = availableItems[randomItemIndex];
+                _itemInstance = ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject;
+                ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = true;
+                _desiredItemIndex = Array.IndexOf(ItemDisplayer.DisplayItems, ItemDisplayer.DisplayItems[_desiredItemIndex]);
+                
                 CurrentState = State.GrabbingItem;
             }
             else
@@ -246,7 +257,7 @@ namespace Store
         /// </summary>
         private IEnumerator GrabItem()
         {
-            agent.SetDestination(_desiredItem.displayObject.transform.position);
+            agent.SetDestination(ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position);
 
             while (!NearItem())
             {
@@ -254,19 +265,25 @@ namespace Store
             }
 
             if (!CheckBuyItem()) yield break;
-
-            _desiredItem.displayObject.transform.SetParent(transform);
-            ItemGrabbed?.Invoke(_desiredItem.id, _desiredItem.amount);
-            _desiredItem.BeingViewed = false;
+            
+            
+            ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.SetParent(transform);
+            ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = itemPosition.position;
+            _itemPrice = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price;
+            _itemAmount = ItemDisplayer.DisplayItems[_desiredItemIndex].amount;
+            _itemId = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.data.id;
+            ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject = null;
+            ItemDisplayer.DisplayItems[_desiredItemIndex].CleanDisplay();
             CurrentState++;
         }
 
+
         private IEnumerator StartWaitingLine()
         {
-            agent.SetDestination(WaitingLineStart.position);
+            agent.SetDestination(ClientTransforms.WaitingLineStart.position);
             while (!NearWaitingLine())
             {
-                yield return null; // Wait for the next frame
+                yield return null;
             }
 
             OnStartLine?.Invoke(this);
@@ -277,13 +294,13 @@ namespace Store
 
         private bool CheckBuyItem()
         {
-            if (!_desiredItem) return false;
+            if (!ItemDisplayer.DisplayItems[_desiredItemIndex]) return false;
 
-            ListPrice itemList = ItemDatabase.ItemObjects[_desiredItem.Item.data.id].data.listPrice;
-            float difference = _desiredItem.Item.price - itemList.CurrentPrice;
+            ListPrice itemList = ItemDatabase.ItemObjects[ItemDisplayer.DisplayItems[_desiredItemIndex].Item.data.id].data.listPrice;
+            float difference = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
-            if (_desiredItem.Item.price >= itemList.CurrentPrice)
+            if (ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price >= itemList.CurrentPrice)
             {
                 // Client buys item and leaves the store
                 if (!(percentageDifference > _willingnessToPay)) return true;
@@ -312,9 +329,9 @@ namespace Store
         /// </summary>
         private void BuyItem()
         {
-            int finalPrice = _desiredItem.Item.price * _desiredItem.amount;
+            int finalPrice = _itemPrice * _itemAmount;
             OnMoneyAdded?.Invoke(finalPrice);
-            OnItemBought?.Invoke(_desiredItem);
+            OnItemBought?.Invoke(_itemId);
         }
 
         /// <summary>
@@ -333,13 +350,13 @@ namespace Store
         }
 
         /// <summary>
-        /// Exits the store
+        /// ClientTransforms.Exits the store
         /// </summary>
         private void LeaveStore()
         {
             // TODO update this
             //move to outside of store
-            agent.SetDestination(Exit.transform.position);
+            agent.SetDestination(ClientTransforms.Exit .transform.position);
             CurrentState++;
         }
 
@@ -357,17 +374,19 @@ namespace Store
 
         private bool NearWaitingLine()
         {
-            return CheckDistance(WaitingLineStart.position, _minimumDistance + 2f);
+            return CheckDistance(ClientTransforms.WaitingLineStart.position, _minimumDistance + 2f);
         }
 
         private bool NearItem()
         {
-            return CheckDistance(_desiredItem.displayObject.transform.position, _minimumDistance);
+            float combinedRadius = GetComponent<Collider>().bounds.extents.magnitude + ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.GetComponent<Collider>().bounds.extents.magnitude;
+
+            return CheckDistance(ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position, combinedRadius + _minimumDistance);
         }
 
         private bool NearExit()
         {
-            return CheckDistance(Exit.position, _minimumDistance + 1f);
+            return CheckDistance(ClientTransforms.Exit.position, _minimumDistance + 1f);
         }
 
         private bool CheckDistance(Vector3 pos, float distanceDif)

@@ -132,6 +132,8 @@ namespace Store
             inputField.text = "";
             totalPriceText.text = "";
             amountText.text = "";
+            BeingViewed = false;
+            Bought = false;
         }
 
         private void CreateDisplayItem(ItemObject itemObject)
@@ -141,13 +143,13 @@ namespace Store
             displayObject.GetComponent<BoxCollider>().enabled = false;
         }
 
-        public void OnSelectInput()
+        private void OnSelectInput()
         {
             inputField.text = inputField.text.Replace("$", "");
         }
 
 
-        public void ChangeItemPrice()
+        private void ChangeItemPrice()
         {
             if (!int.TryParse(inputField.text, out int result))
             {
