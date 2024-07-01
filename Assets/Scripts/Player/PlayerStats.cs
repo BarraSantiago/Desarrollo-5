@@ -49,6 +49,11 @@ namespace player
         {
             _currentHealth -= damage;
             healthBar?.SetHealth(_currentHealth);
+
+            if(_currentHealth <= 0)
+            {
+                SceneLoader.Instance.ChangeScene("Store - Santi");
+            }
         }
 
         private void Heal(float healAmount)
