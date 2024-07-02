@@ -230,13 +230,11 @@ namespace Store
 
         private void ChooseItem()
         {
-            // Get all available items
             DisplayItem[] availableItems = Array.FindAll(ItemDisplayer.DisplayItems,
                 displayItem => displayItem is { BeingViewed: false, Bought: false, amount: > 0 });
 
             if (availableItems.Length > 0)
             {
-                // Choose a random item from the available items
                 int randomItemIndex = Random.Range(0, availableItems.Length);
                 ItemDisplayer.DisplayItems[_desiredItemIndex] = availableItems[randomItemIndex];
                 _itemInstance = ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject;
@@ -279,7 +277,13 @@ namespace Store
 
             if (!CheckBuyItem()) yield break;
             
-            
+            animator.SetTrigger("GrabItem");
+            StartCoroutine(LerpDisplayObjectPosition());
+
+            while (animator.GetCurrentAnimatorStateInfo(0).IsName("GrabItem"))
+            {
+                yield return null;
+            }
             ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.SetParent(transform);
             ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = itemPosition.position;
             _itemPrice = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price;
@@ -290,7 +294,24 @@ namespace Store
             CurrentState++;
         }
 
+        private IEnumerator LerpDisplayObjectPosition()
+        {
+            float lerpTime = 0.5f;
+            float startTime = Time.time;
 
+            Vector3 initialPosition = ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position;
+            Vector3 targetPosition = itemPosition.position;
+
+            while (Time.time - startTime < lerpTime)
+            {
+                float t = (Time.time - startTime) / lerpTime;
+                ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = Vector3.Lerp(initialPosition, targetPosition, t);
+                yield return null;
+            }
+
+            ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = targetPosition;
+        }
+        
         private IEnumerator StartWaitingLine()
         {
             agent.SetDestination(ClientTransforms.WaitingLineStart.position);
@@ -403,7 +424,7 @@ namespace Store
 
         private bool NearItem()
         {
-            float combinedRadius = GetComponent<Collider>().bounds.extents.magnitude + ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.GetComponent<Collider>().bounds.extents.magnitude;
+            float combinedRadius = GetComponent<Collider>().bounds.extents.magnitude + ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.GetComponent<BoxCollider>().bounds.extents.magnitude;
 
             return CheckDistance(ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position, combinedRadius + _minimumDistance);
         }
@@ -418,6 +439,15 @@ namespace Store
             float distance = Vector3.Distance(transform.position, pos);
 
             return distance < distanceDif;
+        }
+        
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(transform.position, agent.destination);
+
+            // Draw a small sphere at the destination
+            Gizmos.DrawSphere(agent.destination, 0.5f);
         }
     }
 }

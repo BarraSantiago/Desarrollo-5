@@ -37,5 +37,11 @@ namespace Interactable
         {
             return Vector3.Distance(playerTransform.position, transform.position) < distance;
         }
+        
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, distance);
+        }
     }
 }

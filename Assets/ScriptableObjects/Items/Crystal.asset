@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
-  m_Name: item 02
+  m_Name: Crystal
   m_EditorClassIdentifier: 
-  uiDisplay: {fileID: 21300000, guid: a0d3b68b3f9b184469a06f453735b48d, type: 3}
-  characterDisplay: {fileID: 3138242233395258418, guid: 35ca0a924335e294bbf14a8a00ae76e0, type: 3}
+  uiDisplay: {fileID: 21300000, guid: d8071a2977492684abeb01997136f977, type: 3}
+  characterDisplay: {fileID: 3138242233395258418, guid: a1ba5768fb3c33643834f6c1c8123595, type: 3}
   stackable: 1
   maxStack: 5
   type: 9
-  description: Wood.
+  description: Crystal ore.
   data:
-    name: Wood log
-    id: 1
+    name: Crystal
+    id: 0
     buffs: []
     listPrice:
-      originalPrice: 30
+      originalPrice: 36
     craftable: 0
     recipe: {fileID: 0}
   boneNames: []
-  price: 20
+  price: 33

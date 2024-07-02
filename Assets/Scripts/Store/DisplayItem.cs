@@ -141,6 +141,7 @@ namespace Store
             amountText.text = "";
             BeingViewed = false;
             Bought = false;
+            UpdateShowEmpty();
         }
 
         private void CreateDisplayItem(ItemObject itemObject)

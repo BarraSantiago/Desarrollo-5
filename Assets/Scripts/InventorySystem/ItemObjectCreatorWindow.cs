@@ -149,12 +149,12 @@ namespace InventorySystem
 
             GameObject gameObject = new GameObject(_itemName);
             gameObject.AddComponent<SpriteRenderer>().sprite = _sprite;
-            gameObject.AddComponent<BoxCollider>();
+            var collider = gameObject.AddComponent<BoxCollider>();
+            collider.isTrigger = true;
             GroundItem groundItem = gameObject.AddComponent<GroundItem>();
             groundItem.amount = 1;
             groundItem.item = itemObject;
 
-            // Save the GameObject as a prefab
             PrefabUtility.SaveAsPrefabAsset(gameObject, "Assets/Prefabs/Items/" + _itemName + ".prefab");
             
             itemObject.characterDisplay = PrefabUtility.LoadPrefabContents("Assets/Prefabs/Items/" + _itemName + ".prefab");;
