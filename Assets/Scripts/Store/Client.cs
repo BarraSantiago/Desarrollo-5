@@ -39,7 +39,7 @@ namespace Store
         [SerializeField] private float _minimumDistance = 1.6f;
         [SerializeField] private Transform itemPosition;
         [SerializeField] private AudioSource audioSource;
-
+        [SerializeField] private AnimationEnd animationEnd;
         #endregion
 
         #region Public Variables
@@ -90,7 +90,7 @@ namespace Store
         private float _wanderTimemin = 7f;
         private float _wanderTimeMax = 15f;
         private const string SoldSoundKey = "ItemSold";
-        private State _currentState;
+        [SerializeField] private State _currentState;
 
         private State CurrentState
         {
@@ -113,9 +113,18 @@ namespace Store
 
         private void Start()
         {
+            AnimationEnd.OnAnimationEnd += OnAnimationEnd;
             agent.updateRotation = false;
             agent.updateUpAxis = false;
             animator = GetComponent<Animator>();
+        }
+
+        private void OnAnimationEnd(GameObject obj)
+        {
+            if (obj == gameObject)
+            {
+                animationContinues = false;
+            }
         }
 
         private void Update()
@@ -228,35 +237,40 @@ namespace Store
         }
 
 
+        private static readonly object LockObject = new object();
+
         private void ChooseItem()
         {
-            DisplayItem[] availableItems = Array.FindAll(ItemDisplayer.DisplayItems,
-                displayItem => displayItem is { BeingViewed: false, Bought: false, amount: > 0 });
+            lock (LockObject)
+            {
+                DisplayItem[] availableItems = Array.FindAll(ItemDisplayer.DisplayItems,
+                    displayItem => displayItem is { BeingViewed: false, Bought: false, amount: > 0 });
 
-            if (availableItems.Length > 0)
-            {
-                int randomItemIndex = Random.Range(0, availableItems.Length);
-                ItemDisplayer.DisplayItems[_desiredItemIndex] = availableItems[randomItemIndex];
-                _itemInstance = ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject;
-                ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = true;
-                _desiredItemIndex = Array.IndexOf(ItemDisplayer.DisplayItems, ItemDisplayer.DisplayItems[_desiredItemIndex]);
-                
-                CurrentState = State.GrabbingItem;
-            }
-            else
-            {
-                if (_timesCheckedItems >= _maxCheckItems)
+                if (availableItems.Length > 0)
                 {
-                    CurrentState = State.Leaving;
+                    int randomItemIndex = Random.Range(0, availableItems.Length);
+                    ItemDisplayer.DisplayItems[_desiredItemIndex] = availableItems[randomItemIndex];
+                    _itemInstance = ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject;
+                    ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = true;
+                    _desiredItemIndex = Array.IndexOf(ItemDisplayer.DisplayItems, ItemDisplayer.DisplayItems[_desiredItemIndex]);
+
+                    CurrentState = State.GrabbingItem;
                 }
                 else
                 {
-                    _timesCheckedItems++;
-                    CurrentState = State.ChoosingItem;
+                    if (_timesCheckedItems >= _maxCheckItems)
+                    {
+                        CurrentState = State.Leaving;
+                    }
+                    else
+                    {
+                        _timesCheckedItems++;
+                        CurrentState = State.ChoosingItem;
+                    }
                 }
             }
         }
-
+        
         /// <summary>
         /// The client goes to the item and grabs it
         /// </summary>
@@ -264,7 +278,7 @@ namespace Store
         {
             agent.SetDestination(ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position);
             float startTime = Time.time;
-            float maxWaitTime = 5f;
+            float maxWaitTime = 6f;
 
             while (!NearItem())
             {
@@ -278,12 +292,12 @@ namespace Store
             if (!CheckBuyItem()) yield break;
             
             animator.SetTrigger("GrabItem");
-            StartCoroutine(LerpDisplayObjectPosition());
-
-            while (animator.GetCurrentAnimatorStateInfo(0).IsName("GrabItem"))
+            
+            while (animationContinues)
             {
                 yield return null;
             }
+            
             ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.SetParent(transform);
             ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = itemPosition.position;
             _itemPrice = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price;
@@ -293,6 +307,8 @@ namespace Store
             ItemDisplayer.DisplayItems[_desiredItemIndex].CleanDisplay();
             CurrentState++;
         }
+
+        public bool animationContinues { get; set; } = true;
 
         private IEnumerator LerpDisplayObjectPosition()
         {
@@ -336,10 +352,8 @@ namespace Store
 
             if (ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price >= itemList.CurrentPrice)
             {
-                // Client buys item and leaves the store
                 if (!(percentageDifference > _willingnessToPay)) return true;
 
-                // If the item is too expensive, the client leaves angry
                 CurrentState = State.Angry;
                 return false;
             }
@@ -395,12 +409,11 @@ namespace Store
         }
 
         /// <summary>
-        /// ClientTransforms.Exits the store
+        /// Exits the store
         /// </summary>
         private void LeaveStore()
         {
             // TODO update this
-            //move to outside of store
             agent.SetDestination(ClientTransforms.Exit .transform.position);
             CurrentState++;
         }
@@ -409,7 +422,7 @@ namespace Store
         {
             while (!NearExit())
             {
-                yield return null; // Wait for the next frame
+                yield return null;
             }
 
             CurrentState = State.None;
@@ -446,7 +459,6 @@ namespace Store
             Gizmos.color = Color.green;
             Gizmos.DrawLine(transform.position, agent.destination);
 
-            // Draw a small sphere at the destination
             Gizmos.DrawSphere(agent.destination, 0.5f);
         }
     }
