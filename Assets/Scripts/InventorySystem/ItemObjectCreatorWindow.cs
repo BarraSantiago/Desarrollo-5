@@ -1,4 +1,6 @@
-﻿using Store;
+﻿using System;
+using System.Linq;
+using Store;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,12 +9,17 @@ namespace InventorySystem
     public class ItemObjectCreatorWindow : EditorWindow
     {
         private Sprite _sprite;
+        private ItemType _type;
+        private ItemBuff[] _itemBuffs;
+        private ItemObject[] _availableItems;
         private string _itemName;
         private string _description;
-        private ItemType _type;
         private int _originalPrice;
-        private ItemBuff[] _itemBuffs;
-
+        private bool _isStackable;
+        private int _maxStack;
+        private bool _isCraftable;
+        private ItemRecipe.ItemEntry[] _recipeEntries;
+        
         [MenuItem("Window/ItemObject Creator")]
         public static void ShowWindow()
         {
@@ -21,6 +28,11 @@ namespace InventorySystem
 
         private void OnGUI()
         {
+            _availableItems = AssetDatabase.FindAssets("t:ItemObject", new[] { "Assets/ScriptableObjects/Items" })
+                .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
+                .Select(path => AssetDatabase.LoadAssetAtPath<ItemObject>(path))
+                .ToArray();
+
             GUILayout.Label("Create a new ItemObject", EditorStyles.boldLabel);
 
             _sprite = (Sprite)EditorGUILayout.ObjectField("Sprite", _sprite, typeof(Sprite), false);
@@ -28,10 +40,61 @@ namespace InventorySystem
             _description = EditorGUILayout.TextField("Description", _description);
             _type = (ItemType)EditorGUILayout.EnumPopup("Type", _type);
             _originalPrice = EditorGUILayout.IntField("Original Price", _originalPrice);
+            _isStackable = EditorGUILayout.Toggle("Is Stackable", _isStackable);
+            
+            if (_isStackable)
+            {
+                _maxStack = EditorGUILayout.IntField("Max Stack", _maxStack);
+            }
+           
+            CreateBuffs();
+            CreateRecipe();
 
-            // Add fields for ItemBuff properties
-            int buffCount = EditorGUILayout.IntField("Number of Buffs", _itemBuffs != null ? _itemBuffs.Length : 0);
-            if (buffCount != (_itemBuffs != null ? _itemBuffs.Length : 0))
+            if (GUILayout.Button("Create ItemObject"))
+            {
+                CreateItemObject();
+            }
+        }
+
+        private void CreateRecipe()
+        {
+            _isCraftable = EditorGUILayout.Toggle("Is Craftable", _isCraftable);
+            if (!_isCraftable) return;
+            
+            int entryCount = EditorGUILayout.IntField("Number of Recipe Entries",
+                _recipeEntries?.Length ?? 0);
+            
+            if (entryCount != (_recipeEntries?.Length ?? 0))
+            {
+                _recipeEntries = new ItemRecipe.ItemEntry[Mathf.Min(entryCount, 3)];
+                for (int i = 0; i < _recipeEntries.Length; i++)
+                {
+                    _recipeEntries[i] = new ItemRecipe.ItemEntry();
+                }
+            }
+
+            if (_recipeEntries == null) return;
+            {
+                for (int i = 0; i < _recipeEntries.Length; i++)
+                {
+                    EditorGUILayout.LabelField($"Recipe Entry {i + 1}", EditorStyles.boldLabel);
+
+                    int selectedIndex = Array.FindIndex(_availableItems,
+                        item => item.data.id == _recipeEntries[i].itemID);
+                    selectedIndex = EditorGUILayout.Popup("Item", selectedIndex,
+                        _availableItems.Select(item => item.name).ToArray());
+
+                    _recipeEntries[i].itemID = _availableItems[selectedIndex].data.id;
+
+                    _recipeEntries[i].amount = EditorGUILayout.IntField("Amount", _recipeEntries[i].amount);
+                }
+            }
+        }
+        private void CreateBuffs()
+        {
+            int buffCount = EditorGUILayout.IntField("Number of Buffs", _itemBuffs?.Length ?? 0);
+            
+            if (buffCount != (_itemBuffs?.Length ?? 0))
             {
                 _itemBuffs = new ItemBuff[buffCount];
                 for (int i = 0; i < buffCount; i++)
@@ -39,7 +102,8 @@ namespace InventorySystem
                     _itemBuffs[i] = new ItemBuff(0, 0);
                 }
             }
-            if (_itemBuffs != null)
+
+            if (_itemBuffs == null) return;
             {
                 for (int i = 0; i < _itemBuffs.Length; i++)
                 {
@@ -50,11 +114,6 @@ namespace InventorySystem
                     _itemBuffs[i].stat = (Attributes)EditorGUILayout.EnumPopup("Stat", _itemBuffs[i].stat);
                     _itemBuffs[i].value = EditorGUILayout.IntField("Value", _itemBuffs[i].value);
                 }
-            }
-
-            if (GUILayout.Button("Create ItemObject"))
-            {
-                CreateItemObject();
             }
         }
 
@@ -76,13 +135,18 @@ namespace InventorySystem
             itemObject.data = itemObject.CreateItem();
             itemObject.data.listPrice = new ListPrice(_originalPrice);
 
-            // Add the ItemBuffs to the ItemObject
             itemObject.data.buffs = _itemBuffs;
 
-            // Save the ItemObject as an asset
-            
+            itemObject.data.craftable = _isCraftable;
+            if (_isCraftable)
+            {
+                ItemRecipe itemRecipe = ScriptableObject.CreateInstance<ItemRecipe>();
+                itemRecipe.items = _recipeEntries;
+                AssetDatabase.CreateAsset(itemRecipe, "Assets/ScriptableObjects/Recipes/" + _itemName + "Recipe.asset");
+                AssetDatabase.SaveAssets();
+                itemObject.data.recipe = itemRecipe;
+            }
 
-            // Create a new GameObject with the specified components
             GameObject gameObject = new GameObject(_itemName);
             gameObject.AddComponent<SpriteRenderer>().sprite = _sprite;
             gameObject.AddComponent<BoxCollider>();
@@ -93,17 +157,14 @@ namespace InventorySystem
             // Save the GameObject as a prefab
             PrefabUtility.SaveAsPrefabAsset(gameObject, "Assets/Prefabs/Items/" + _itemName + ".prefab");
             
-            itemObject.characterDisplay = gameObject;
+            itemObject.characterDisplay = PrefabUtility.LoadPrefabContents("Assets/Prefabs/Items/" + _itemName + ".prefab");;
             
             AssetDatabase.CreateAsset(itemObject, "Assets/ScriptableObjects/Items/" + _itemName + ".asset");
             AssetDatabase.SaveAssets();
-            // Destroy the GameObject from the scene
             DestroyImmediate(gameObject);
 
-            // Get a reference to the main ItemDatabaseObject
             ItemDatabaseObject itemDatabase = AssetDatabase.LoadAssetAtPath<ItemDatabaseObject>("Assets/ScriptableObjects/Databases/MainDatabase.asset");
 
-            // Add the new ItemObject to the ItemDatabaseObject
             if (itemDatabase)
             {
                 itemDatabase.AddItem(itemObject);

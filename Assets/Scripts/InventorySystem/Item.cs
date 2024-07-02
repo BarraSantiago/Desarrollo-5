@@ -11,8 +11,12 @@ namespace InventorySystem
         public int id = -1;
         public ItemBuff[] buffs;
         public ListPrice listPrice;
+        public bool craftable;
+        public ItemRecipe recipe;
         private int _price;
-        public int Price{
+
+        public int Price
+        {
             get => _price;
             set
             {
@@ -21,20 +25,20 @@ namespace InventorySystem
                 OnPriceChange?.Invoke();
             }
         }
-        public bool craftable;
-        public ItemRecipe recipe;
+
         public Item()
         {
             name = "";
             id = -1;
             listPrice = new ListPrice(Price);
         }
+
         public Item(ItemObject item)
         {
             name = item.name;
             id = item.data.id;
-            
-            if(item.data.buffs == null) return;
+
+            if (item.data.buffs == null) return;
             buffs = new ItemBuff[item.data.buffs.Length];
             for (int i = 0; i < buffs.Length; i++)
             {
@@ -44,6 +48,5 @@ namespace InventorySystem
                 };
             }
         }
-    
     }
 }

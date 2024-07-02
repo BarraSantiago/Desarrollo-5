@@ -1,4 +1,5 @@
-﻿using InventorySystem;
+﻿using System;
+using InventorySystem;
 using TMPro;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace Store
         [SerializeField] public GameObject inventoryParent;
         [SerializeField] private GameObject showEmpty;
 
+        public static Action OnPlaceItem;
         public Transform itemPosition;
         public int id;
         public int amount;
@@ -40,7 +42,6 @@ namespace Store
                 }
             }
         }
-        private const string ItemPlacedSound = "ItemPlaced";
         private const int MaxAmount = 999999;
         private const int MinAmount = 1;
 
@@ -55,7 +56,10 @@ namespace Store
             foreach (var slot in inventory.GetSlots)
             {
                 slot.onAfterUpdated += UpdateSlot;
+                slot.onAfterUpdated += PlayAnimation;
             }
+            
+            
 
             if (inventory.GetSlots[0].GetItemObject())
             {
@@ -68,6 +72,11 @@ namespace Store
 
             inventory.UpdateInventory();
             inventoryParent.SetActive(false);
+        }
+
+        private void PlayAnimation(InventorySlot obj)
+        {
+            OnPlaceItem?.Invoke();
         }
 
         private void OnEnable()
@@ -119,8 +128,6 @@ namespace Store
             totalPriceText.text = "$" + (Item.price * amount);
             amountText.text = amount.ToString();
             UpdateShowEmpty();
-            AudioManager.instance.Play(ItemPlacedSound);
-
         }
 
         public void CleanDisplay()
@@ -181,6 +188,8 @@ namespace Store
 
         private void UpdateShowEmpty()
         {
+            if (!showEmpty) return;
+
             showEmpty.SetActive(!_item || amount == 0);
         }
     }

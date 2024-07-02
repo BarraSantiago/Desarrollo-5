@@ -1,6 +1,7 @@
 using System.Collections;
 using Interactable;
 using InventorySystem;
+using Store;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -25,6 +26,7 @@ namespace player
         public float dashTime;
         public Animator animator;
 
+        private const string ItemPlacedSound = "ItemPlaced";
         private CharacterController _characterController;
         private PlayerAttack _playerAttack;
         private PlayerInput _playerInput;
@@ -33,15 +35,19 @@ namespace player
         private bool _isDashing;
         private MouseIndicator _mouseIndicator;
         private bool _canMove = true;
+        private static readonly int PlaceItemTrigger = Animator.StringToHash("PlaceItem");
 
         private void Awake()
         {
+            DisplayItem.OnPlaceItem += PlaceItem;
             _characterController = GetComponent<CharacterController>();
 
             _playerInput = new PlayerInput();
             _playerAttack = GetComponent<PlayerAttack>();
             _mouseIndicator = GetComponentInChildren<MouseIndicator>();
         }
+
+        
 
         private void Update()
         {
@@ -179,6 +185,13 @@ namespace player
             }
 
             _isDashing = false;
+        }
+        
+        private void PlaceItem()
+        {
+            if(!animator) return;
+            animator.SetTrigger("PlaceItem");
+            AudioManager.instance.Play(ItemPlacedSound);
         }
 
         public void EnableMovement()
