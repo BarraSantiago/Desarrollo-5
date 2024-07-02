@@ -297,7 +297,13 @@ namespace Store
             {
                 yield return null;
             }
-            
+
+            if (!ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject)
+            {
+                ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = false;
+                CurrentState = State.Leaving;
+                yield break;
+            }
             ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.SetParent(transform);
             ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = itemPosition.position;
             _itemPrice = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price;

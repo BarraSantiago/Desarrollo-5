@@ -11889,8 +11889,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -752.0706, y: -413.75067}
-  m_SizeDelta: {x: 415.86, y: 252.4986}
+  m_AnchoredPosition: {x: -752.0706, y: -390.57428}
+  m_SizeDelta: {x: 415.86, y: 298.8514}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1342101752
 MonoBehaviour:
@@ -17394,9 +17394,9 @@ RectTransform:
   m_Father: {fileID: 1342101751}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -50.4, y: 0.8}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 157.6, y: -122.3}
   m_SizeDelta: {x: 300.0423, y: 245.13}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2083196327
@@ -17425,14 +17425,15 @@ MonoBehaviour:
 
     Drag items: Left click
 
-    Item info:
-    Right click
+    See item
+    info: Right click
 
     Inventory: Tab / I
 
-    Debug options: Lf
+    Debug options: L
 
-    Quit game: ESC'
+    Quit game:
+    ESC'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

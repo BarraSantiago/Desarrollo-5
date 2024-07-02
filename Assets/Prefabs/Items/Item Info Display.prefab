@@ -286,8 +286,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278255382
-  m_fontColor: {r: 0.08675194, g: 1, b: 0, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -421,8 +421,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278255404
-  m_fontColor: {r: 0.17425227, g: 1, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -577,7 +577,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 671040745623344040}
   itemName: {fileID: 4254745249665458547}
-  price: {fileID: 0}
   listPrice: {fileID: 2210758539293006324}
   description: {fileID: 8559378125938803893}
   useButton: {fileID: 0}
@@ -686,10 +685,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30.7
+  m_fontSize: 24.05
   m_fontSizeBase: 30.7
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0

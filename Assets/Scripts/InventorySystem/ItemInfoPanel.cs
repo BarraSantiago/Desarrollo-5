@@ -10,7 +10,6 @@ namespace InventorySystem
     {
         [SerializeField] private Image icon;
         [SerializeField] private TMP_Text itemName;
-        [SerializeField] private TMP_Text price;
         [SerializeField] private TMP_Text listPrice;
         [SerializeField] private TMP_Text description;
         [SerializeField] private Button useButton;
@@ -25,7 +24,6 @@ namespace InventorySystem
             icon.sprite = item.uiDisplay;
             icon.preserveAspect = true;
             itemName.text = item.name;
-            price.text = item.price.ToString();
             listPrice.text = item.data.listPrice.CurrentPrice.ToString();
             description.text = item.description;
 
