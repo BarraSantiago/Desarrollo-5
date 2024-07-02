@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
+using InventorySystem;
 using Store;
 using UnityEditor;
 using UnityEngine;
 
-namespace InventorySystem
+namespace Editor
 {
     public class ItemObjectCreatorWindow : EditorWindow
     {
