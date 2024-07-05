@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using InventorySystem;
 using Store;
@@ -120,11 +121,7 @@ namespace Editor
 
         private void CreateItemObject()
         {
-            if (!_sprite)
-            {
-                Debug.LogError("Sprite is not set");
-                return;
-            }
+            CheckForErrors();
 
             // Create a new ItemObject
             ItemObject itemObject = ScriptableObject.CreateInstance<ItemObject>();
@@ -158,7 +155,7 @@ namespace Editor
 
             PrefabUtility.SaveAsPrefabAsset(gameObject, "Assets/Prefabs/Items/" + _itemName + ".prefab");
             
-            itemObject.characterDisplay = PrefabUtility.LoadPrefabContents("Assets/Prefabs/Items/" + _itemName + ".prefab");;
+            itemObject.characterDisplay = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Items/" + _itemName + ".prefab");;
             
             AssetDatabase.CreateAsset(itemObject, "Assets/ScriptableObjects/Items/" + _itemName + ".asset");
             AssetDatabase.SaveAssets();
@@ -173,6 +170,37 @@ namespace Editor
             else
             {
                 Debug.LogError("ItemDatabaseObject not found");
+            }
+        }
+
+        private void CheckForErrors()
+        {
+            List<string> errors = new List<string>();
+
+            if (!_sprite)
+            {
+                errors.Add("Sprite is not set");
+            }
+            if (string.IsNullOrEmpty(_itemName))
+            {
+                errors.Add("Item Name is not set");
+            }
+            if (string.IsNullOrEmpty(_description))
+            {
+                errors.Add("Description is not set");
+            }
+            if (_originalPrice <= 0)
+            {
+                errors.Add("Original Price must be greater than 0");
+            }
+            if (_isCraftable && (_recipeEntries == null || _recipeEntries.Length == 0))
+            {
+                errors.Add("Recipe Entries are not set");
+            }
+
+            if (errors.Any())
+            {
+                throw new ArgumentException("Errors detected: " + string.Join(", ", errors));
             }
         }
     }
