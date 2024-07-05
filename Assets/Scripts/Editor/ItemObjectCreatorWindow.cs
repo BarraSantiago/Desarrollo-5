@@ -22,6 +22,11 @@ namespace Editor
         private bool _isCraftable;
         private ItemRecipe.ItemEntry[] _recipeEntries;
         
+        const string ItemPrefabsPath = "Assets/Prefabs/Items/";
+        const string RecipiesPath = "Assets/ScriptableObjects/Recipes/";
+        private const string ItemObjectPath = "Assets/ScriptableObjects/Items/";
+        private const string DatabasePath = "Assets/ScriptableObjects/Databases/MainDatabase.asset";
+
         [MenuItem("Window/ItemObject Creator")]
         public static void ShowWindow()
         {
@@ -30,11 +35,23 @@ namespace Editor
 
         private void OnGUI()
         {
-            _availableItems = AssetDatabase.FindAssets("t:ItemObject", new[] { "Assets/ScriptableObjects/Items" })
-                .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
-                .Select(path => AssetDatabase.LoadAssetAtPath<ItemObject>(path))
+            _availableItems = AssetDatabase.FindAssets("t:ItemObject", new[] { ItemObjectPath })
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Select(AssetDatabase.LoadAssetAtPath<ItemObject>)
                 .ToArray();
 
+            GenerateGuiFields();
+            CreateBuffs();
+            CreateRecipe();
+
+            if (GUILayout.Button("Create ItemObject"))
+            {
+                CreateItemObject();
+            }
+        }
+
+        private void GenerateGuiFields()
+        {
             GUILayout.Label("Create a new ItemObject", EditorStyles.boldLabel);
 
             _sprite = (Sprite)EditorGUILayout.ObjectField("Sprite", _sprite, typeof(Sprite), false);
@@ -47,14 +64,6 @@ namespace Editor
             if (_isStackable)
             {
                 _maxStack = EditorGUILayout.IntField("Max Stack", _maxStack);
-            }
-           
-            CreateBuffs();
-            CreateRecipe();
-
-            if (GUILayout.Button("Create ItemObject"))
-            {
-                CreateItemObject();
             }
         }
 
@@ -92,6 +101,7 @@ namespace Editor
                 }
             }
         }
+        
         private void CreateBuffs()
         {
             int buffCount = EditorGUILayout.IntField("Number of Buffs", _itemBuffs?.Length ?? 0);
@@ -123,8 +133,45 @@ namespace Editor
         {
             CheckForErrors();
 
-            // Create a new ItemObject
-            ItemObject itemObject = ScriptableObject.CreateInstance<ItemObject>();
+            ItemObject itemObject = GenerateItemObject();
+
+            var gameObject = GenerateGameObject(itemObject);
+            
+            itemObject.characterDisplay = AssetDatabase.LoadAssetAtPath<GameObject>(ItemPrefabsPath + _itemName + ".prefab");
+            
+            AssetDatabase.CreateAsset(itemObject, ItemObjectPath + _itemName + ".asset");
+            AssetDatabase.SaveAssets();
+            
+            DestroyImmediate(gameObject);
+
+            ItemDatabaseObject itemDatabase = AssetDatabase.LoadAssetAtPath<ItemDatabaseObject>(DatabasePath);
+
+            if (itemDatabase)
+            {
+                itemDatabase.AddItem(itemObject);
+            }
+            else
+            {
+                Debug.LogError("ItemDatabaseObject not found");
+            }
+        }
+
+        private GameObject GenerateGameObject(ItemObject itemObject)
+        {
+            GameObject gameObject = new GameObject(_itemName);
+            gameObject.AddComponent<SpriteRenderer>().sprite = _sprite;
+            var collider = gameObject.AddComponent<BoxCollider>();
+            collider.isTrigger = true;
+            GroundItem groundItem = gameObject.AddComponent<GroundItem>();
+            groundItem.amount = 1;
+            groundItem.item = itemObject;
+            PrefabUtility.SaveAsPrefabAsset(gameObject, ItemPrefabsPath + _itemName + ".prefab");
+            return gameObject;
+        }
+
+        private ItemObject GenerateItemObject()
+        {
+            ItemObject itemObject = CreateInstance<ItemObject>();
             itemObject.uiDisplay = _sprite;
             itemObject.name = _itemName;
             itemObject.description = _description;
@@ -136,41 +183,16 @@ namespace Editor
             itemObject.data.buffs = _itemBuffs;
 
             itemObject.data.craftable = _isCraftable;
-            if (_isCraftable)
-            {
-                ItemRecipe itemRecipe = ScriptableObject.CreateInstance<ItemRecipe>();
-                itemRecipe.items = _recipeEntries;
-                AssetDatabase.CreateAsset(itemRecipe, "Assets/ScriptableObjects/Recipes/" + _itemName + "Recipe.asset");
-                AssetDatabase.SaveAssets();
-                itemObject.data.recipe = itemRecipe;
-            }
-
-            GameObject gameObject = new GameObject(_itemName);
-            gameObject.AddComponent<SpriteRenderer>().sprite = _sprite;
-            var collider = gameObject.AddComponent<BoxCollider>();
-            collider.isTrigger = true;
-            GroundItem groundItem = gameObject.AddComponent<GroundItem>();
-            groundItem.amount = 1;
-            groundItem.item = itemObject;
-
-            PrefabUtility.SaveAsPrefabAsset(gameObject, "Assets/Prefabs/Items/" + _itemName + ".prefab");
             
-            itemObject.characterDisplay = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Items/" + _itemName + ".prefab");;
+            if (!_isCraftable) return itemObject;
             
-            AssetDatabase.CreateAsset(itemObject, "Assets/ScriptableObjects/Items/" + _itemName + ".asset");
+            ItemRecipe itemRecipe = CreateInstance<ItemRecipe>();
+            itemRecipe.items = _recipeEntries;
+            AssetDatabase.CreateAsset(itemRecipe, RecipiesPath + _itemName + "Recipe.asset");
             AssetDatabase.SaveAssets();
-            DestroyImmediate(gameObject);
+            itemObject.data.recipe = itemRecipe;
 
-            ItemDatabaseObject itemDatabase = AssetDatabase.LoadAssetAtPath<ItemDatabaseObject>("Assets/ScriptableObjects/Databases/MainDatabase.asset");
-
-            if (itemDatabase)
-            {
-                itemDatabase.AddItem(itemObject);
-            }
-            else
-            {
-                Debug.LogError("ItemDatabaseObject not found");
-            }
+            return itemObject;
         }
 
         private void CheckForErrors()
@@ -196,6 +218,10 @@ namespace Editor
             if (_isCraftable && (_recipeEntries == null || _recipeEntries.Length == 0))
             {
                 errors.Add("Recipe Entries are not set");
+            }
+            if (string.IsNullOrEmpty(DatabasePath))
+            {
+                errors.Add("Missing Database Path");
             }
 
             if (errors.Any())
