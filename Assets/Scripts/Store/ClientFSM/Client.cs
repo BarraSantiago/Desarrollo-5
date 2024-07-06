@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using InventorySystem;
+using Store.ClientFSM.States;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
-namespace Store
+namespace Store.ClientFSM
 {
     [Serializable]
     public class ClientTransforms
@@ -28,7 +29,6 @@ namespace Store
             WaitingInline,
             Buying,
             Leaving,
-            LeftStore,
             Happy,
             Angry
         }
@@ -36,10 +36,11 @@ namespace Store
         #region Serialized Variables
 
         [SerializeField] public NavMeshAgent agent;
-        [SerializeField] private float _minimumDistance = 1.6f;
+        [SerializeField] private float minimumDistance = 2.6f;
         [SerializeField] private Transform itemPosition;
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private AnimationEnd animationEnd;
+        
         #endregion
 
         #region Public Variables
@@ -56,8 +57,10 @@ namespace Store
         /// <summary>
         /// Bool that indicates if the client is in the shop
         /// </summary>
-        public bool InShop => _currentState < State.LeftStore;
+        public bool InShop => _currentState < State.Leaving;
         public bool firstInLine;
+        public ClientStateManager ClientStateManager;
+        public ClientBaseState _CurrentState;
 
         #endregion
 
@@ -82,15 +85,20 @@ namespace Store
         private int tipValue => (int)(_itemPrice * _itemAmount * 0.1f);
 
         private int _timesCheckedItems = 0;
-        private int _maxCheckItems = 0;
+        private readonly int _maxCheckItems = 2;
+        private readonly float _wanderTimeMin = 7f;
+        private readonly float _wanderTimeMax = 15f;
         private int _desiredItemIndex;
         private int _itemPrice;
         private int _itemAmount;
         private int _itemId;
-        private float _wanderTimemin = 7f;
-        private float _wanderTimeMax = 15f;
         private const string SoldSoundKey = "ItemSold";
-        [SerializeField] private State _currentState;
+        private Animator _animator;
+        private bool _leaveTip;
+        private float _tipChance = 85f;
+        private float _waitTime = 0.3f;
+        
+        private State _currentState;
 
         private State CurrentState
         {
@@ -102,13 +110,6 @@ namespace Store
             }
         }
 
-        private GameObject _itemInstance;
-
-        private Animator animator;
-        private bool _leaveTip;
-        private float _tipChance = 85f;
-        private float _waitTime = 0.3f;
-
         #endregion
 
         private void Start()
@@ -116,7 +117,7 @@ namespace Store
             AnimationEnd.OnAnimationEnd += OnAnimationEnd;
             agent.updateRotation = false;
             agent.updateUpAxis = false;
-            animator = GetComponent<Animator>();
+            _animator = GetComponent<Animator>();
         }
 
         private void OnAnimationEnd(GameObject obj)
@@ -136,7 +137,7 @@ namespace Store
             Quaternion toRotation = Quaternion.LookRotation(agent.velocity, Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, Time.deltaTime * 10f);
 
-            animator.SetFloat("speed", agent.velocity.magnitude);
+            _animator.SetFloat("speed", agent.velocity.magnitude);
         }
 
         public void Initialize(int id)
@@ -183,13 +184,9 @@ namespace Store
                     break;
 
                 case State.Leaving:
-                    LeaveStore();
-                    break;
-
-                case State.LeftStore:
                     StartCoroutine(CheckLeftStore());
                     break;
-
+                
                 case State.Happy:
                     _happiness++;
                     LeaveStore();
@@ -210,7 +207,7 @@ namespace Store
         {
             agent.SetDestination(ClientTransforms.Entrance.position);
 
-            while (!CheckDistance(ClientTransforms.Entrance.position, _minimumDistance))
+            while (!CheckDistance(ClientTransforms.Entrance.position, minimumDistance))
             {
                 yield return null;
             }
@@ -220,7 +217,7 @@ namespace Store
 
         private IEnumerator WanderAndChooseItem()
         {
-            float wanderTime = Random.Range(_wanderTimemin, _wanderTimeMax);
+            float wanderTime = Random.Range(_wanderTimeMin, _wanderTimeMax);
             float startTime = Time.time;
 
             while (Time.time - startTime < wanderTime)
@@ -250,7 +247,6 @@ namespace Store
                 {
                     int randomItemIndex = Random.Range(0, availableItems.Length);
                     ItemDisplayer.DisplayItems[_desiredItemIndex] = availableItems[randomItemIndex];
-                    _itemInstance = ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject;
                     ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = true;
                     _desiredItemIndex = Array.IndexOf(ItemDisplayer.DisplayItems, ItemDisplayer.DisplayItems[_desiredItemIndex]);
 
@@ -291,7 +287,7 @@ namespace Store
 
             if (!CheckBuyItem()) yield break;
             
-            animator.SetTrigger("GrabItem");
+            _animator.SetTrigger("GrabItem");
             
             while (animationContinues)
             {
@@ -426,6 +422,8 @@ namespace Store
 
         private IEnumerator CheckLeftStore()
         {
+            LeaveStore();
+            
             while (!NearExit())
             {
                 yield return null;
@@ -436,21 +434,26 @@ namespace Store
             gameObject.SetActive(false);
         }
 
+        public bool NearEntrance()
+        {
+            return CheckDistance(ClientTransforms.Entrance.position, minimumDistance);
+        }
+        
         private bool NearWaitingLine()
         {
-            return CheckDistance(ClientTransforms.WaitingLineStart.position, _minimumDistance + 2f);
+            return CheckDistance(ClientTransforms.WaitingLineStart.position, minimumDistance + 2f);
         }
 
         private bool NearItem()
         {
             float combinedRadius = GetComponent<Collider>().bounds.extents.magnitude + ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.GetComponent<BoxCollider>().bounds.extents.magnitude;
 
-            return CheckDistance(ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position, combinedRadius + _minimumDistance);
+            return CheckDistance(ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position, combinedRadius + minimumDistance);
         }
 
         private bool NearExit()
         {
-            return CheckDistance(ClientTransforms.Exit.position, _minimumDistance + 1f);
+            return CheckDistance(ClientTransforms.Exit.position, minimumDistance + 1f);
         }
 
         private bool CheckDistance(Vector3 pos, float distanceDif)
@@ -460,7 +463,7 @@ namespace Store
             return distance < distanceDif;
         }
         
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.green;
             Gizmos.DrawLine(transform.position, agent.destination);
