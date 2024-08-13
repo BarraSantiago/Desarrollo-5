@@ -44,7 +44,6 @@ namespace Store
         [SerializeField] private player.Player player;
 
         [Header("Demo")]
-        [SerializeField] private Button goToDungeon;
         [SerializeField] private Button startCicle;
 
         #endregion
@@ -71,8 +70,6 @@ namespace Store
 
         private void Start()
         {
-            goToDungeon.onClick.AddListener(ChangeScene);
-            goToDungeon.onClick.AddListener(EndDayCycle);
             startCicle.onClick.AddListener(StartDayCicle);
 
             ItemDisplayer.DisplayItems = displayItems;
@@ -100,8 +97,6 @@ namespace Store
 
         private void OnDestroy()
         {
-            goToDungeon.onClick.RemoveListener(ChangeScene);
-            goToDungeon.onClick.RemoveListener(EndDayCycle);
             SaveInventories();
         }
 
