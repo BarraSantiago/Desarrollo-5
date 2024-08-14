@@ -9,7 +9,6 @@ namespace player
     {
         public static Action<int> OnMoneyUpdate;
         public InventoryObject inventory;
-        public InventoryObject equipment;
         public float pickUpCooldown = 3f;
         private int _money;
         private const string PickUpSoundKey = "PickUp";

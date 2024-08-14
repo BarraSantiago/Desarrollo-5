@@ -9,7 +9,6 @@ namespace InventorySystem
         public Action OnPriceChange;
         public string name;
         public int id = -1;
-        public ItemBuff[] buffs;
         public ListPrice listPrice;
         public bool craftable;
         public ItemRecipe recipe;
@@ -37,16 +36,6 @@ namespace InventorySystem
         {
             name = item.name;
             id = item.data.id;
-
-            if (item.data.buffs == null) return;
-            buffs = new ItemBuff[item.data.buffs.Length];
-            for (int i = 0; i < buffs.Length; i++)
-            {
-                buffs[i] = new ItemBuff(item.data.buffs[i].Min, item.data.buffs[i].Max)
-                {
-                    stat = item.data.buffs[i].stat
-                };
-            }
         }
     }
 }

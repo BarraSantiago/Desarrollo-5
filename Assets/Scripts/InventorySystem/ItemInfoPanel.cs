@@ -54,10 +54,6 @@ namespace InventorySystem
 
         private void UseItem()
         {
-            foreach (var buff in item.data.buffs)
-            {
-                PlayerStats.OnBuffReceived?.Invoke(buff);
-            }
             // TODO drink potion sound
             slot.UpdateSlot(slot.item, slot.amount - 1);
             if(slot.amount <= 0) Close();

@@ -12,7 +12,6 @@ namespace Editor
     {
         private Sprite _sprite;
         private ItemType _type;
-        private ItemBuff[] _itemBuffs;
         private ItemObject[] _availableItems;
         private string _itemName;
         private string _description;
@@ -49,7 +48,6 @@ namespace Editor
                 _maxStack = EditorGUILayout.IntField("Max Stack", _maxStack);
             }
            
-            CreateBuffs();
             CreateRecipe();
 
             if (GUILayout.Button("Create ItemObject"))
@@ -92,32 +90,6 @@ namespace Editor
                 }
             }
         }
-        private void CreateBuffs()
-        {
-            int buffCount = EditorGUILayout.IntField("Number of Buffs", _itemBuffs?.Length ?? 0);
-            
-            if (buffCount != (_itemBuffs?.Length ?? 0))
-            {
-                _itemBuffs = new ItemBuff[buffCount];
-                for (int i = 0; i < buffCount; i++)
-                {
-                    _itemBuffs[i] = new ItemBuff(0, 0);
-                }
-            }
-
-            if (_itemBuffs == null) return;
-            {
-                for (int i = 0; i < _itemBuffs.Length; i++)
-                {
-                    EditorGUILayout.LabelField($"Buff {i + 1}", EditorStyles.boldLabel);
-                    _itemBuffs[i].Min = EditorGUILayout.IntField("Min", _itemBuffs[i].Min);
-                    _itemBuffs[i].Max = EditorGUILayout.IntField("Max", _itemBuffs[i].Max);
-                    _itemBuffs[i].Duration = EditorGUILayout.FloatField("Duration", _itemBuffs[i].Duration);
-                    _itemBuffs[i].stat = (Attributes)EditorGUILayout.EnumPopup("Stat", _itemBuffs[i].stat);
-                    _itemBuffs[i].value = EditorGUILayout.IntField("Value", _itemBuffs[i].value);
-                }
-            }
-        }
 
         private void CreateItemObject()
         {
@@ -133,7 +105,6 @@ namespace Editor
             itemObject.data = itemObject.CreateItem();
             itemObject.data.listPrice = new ListPrice(_originalPrice);
 
-            itemObject.data.buffs = _itemBuffs;
 
             itemObject.data.craftable = _isCraftable;
             if (_isCraftable)
