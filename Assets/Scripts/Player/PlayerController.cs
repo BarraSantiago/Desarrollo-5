@@ -7,6 +7,7 @@ namespace player
     public class PlayerController : MonoBehaviour
     {
         private GameObject lastHighlightedObject;
+        private Color originalColor;
 
         private void Update()
         {
@@ -47,6 +48,7 @@ namespace player
             
             if (renderer)
             {
+                originalColor = renderer.material.color;
                 renderer.material.color = Color.yellow; // Highlight color
             }
 
@@ -61,7 +63,7 @@ namespace player
             
             if (renderer)
             {
-                renderer.material.color = Color.white; // Original color
+                renderer.material.color = originalColor;
             }
 
             lastHighlightedObject = null;
