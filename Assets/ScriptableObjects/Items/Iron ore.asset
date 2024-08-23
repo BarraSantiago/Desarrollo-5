@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
-  m_Name: WoodLog
+  m_Name: Iron ore
   m_EditorClassIdentifier: 
-  uiDisplay: {fileID: 21300000, guid: ded741fc62f2942428a4db69ee8c2a96, type: 3}
-  characterDisplay: {fileID: 3138242233395258418, guid: 35ca0a924335e294bbf14a8a00ae76e0, type: 3}
+  uiDisplay: {fileID: 21300000, guid: 5e6b498593ab86b4bbf9ffdd1014bd0c, type: 3}
+  characterDisplay: {fileID: 1467897570646490950, guid: 28d0b721ddbb5804fa7f78360de76652, type: 3}
   stackable: 1
-  maxStack: 5
+  maxStack: 3
   type: 9
-  description: Wood.
+  description: Iron ore.
   data:
-    name: Wood log
-    id: 1
+    name: Iron ore
+    id: 7
     listPrice:
-      originalPrice: 30
+      originalPrice: 15
     craftable: 0
     recipe: {fileID: 0}
   boneNames: []
-  price: 20
+  price: 0

@@ -27,7 +27,7 @@ namespace Interactable
                 menu?.SetActive(!menu.activeSelf);
             }
             playerInventoryUi.SetActive(true);
-            playerInventoryUi.transform.position = inventoryNewTransform.position;
+            //playerInventoryUi.transform.position = inventoryNewTransform.position;
             playerInventory.UpdateInventory();
             return true;
         }
@@ -39,7 +39,7 @@ namespace Interactable
                 menu?.SetActive(false);
             }
             playerInventoryUi.SetActive(false);
-            playerInventoryUi.transform.position = inventoryOriginalTransform.position;
+            //playerInventoryUi.transform.position = inventoryOriginalTransform.position;
         }
     }
 }

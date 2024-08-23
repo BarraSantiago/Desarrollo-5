@@ -14,7 +14,6 @@ namespace InventorySystem
     public abstract class UserInterface : MonoBehaviour
     {
         [SerializeField] private GameObject itemDisplayPrefab;
-        [SerializeField] private GameObject consumableDisplayPrefab;
         [SerializeField] private Canvas canvas;
 
         public InventoryObject inventory;
@@ -122,10 +121,7 @@ namespace InventorySystem
                 canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
 
             Vector3 worldMousePosition = canvasRect.TransformPoint(localMousePosition);
-            var itemDisplay = Instantiate(
-                slotsOnInterface[obj].GetItemObject().type == ItemType.Potion
-                    ? consumableDisplayPrefab
-                    : itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
+            var itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
 
             ItemInfoPanel infoPanel = itemDisplay.GetComponent<ItemInfoPanel>();
             infoPanel.slot = slotsOnInterface[obj];

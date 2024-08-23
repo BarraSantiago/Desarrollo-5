@@ -20,11 +20,17 @@ namespace Store
 
         [Header("Client Setup")] 
         [SerializeField] private Button chargeButton;
-        [SerializeField] private GameObject chargeSign;
-        [SerializeField] private float maxDistance = 7;
         [SerializeField] private GameObject clientPrefab;
         [SerializeField] private ClientTransforms clientTransforms;
 
+        [Header("Popularity Setup")] 
+        [SerializeField] private Slider popularitySlider;
+        [SerializeField] private int[] popularityXpLevels;
+        [SerializeField] private int[] maxClientsPerPopularity;
+        [SerializeField] private int[] minClientsPerPopularity;
+        [SerializeField] private Image popularityMedal;
+        [SerializeField] private Sprite[] medals;
+        
         [Header("Items Setup")] 
         [SerializeField] private InventoryObject[] storeInventories;
         [SerializeField] private DisplayItem[] displayItems;
@@ -38,7 +44,6 @@ namespace Store
         [SerializeField] private float distanceBetweenPos;
 
         [Header("Misc Setup")] 
-        [SerializeField] private Transform chargePosition;
         [SerializeField] private UIManager uiManager;
         [SerializeField] private Canvas mainCanvas;
         [SerializeField] private player.Player player;
@@ -63,8 +68,10 @@ namespace Store
         private const float CicleMaxTime = 30f;
         private float _cilceTimer = 0;
         private readonly float _popularity = 0.5f;
-        private readonly int _maxClients = 7;
-        private readonly int _minClients = 3;
+        private int _popularitryXp = 0;
+        private int _popularitryLevel = 0;
+        private int _maxClients = 7;
+        private int _minClients = 3;
 
         #endregion
 
@@ -88,6 +95,9 @@ namespace Store
             {
                 storeInventory.Load();
             }
+            
+            _waitingLine.OnItemPaid += ItemPaid;
+            popularitySlider.maxValue = popularityXpLevels[_popularitryLevel];
         }
 
         private void Update()
@@ -234,10 +244,8 @@ namespace Store
                 //No empty spaces in queue
             }
 
-            if (_waitingLine.QueueCount == 1 &&
-                Vector3.Distance(player.transform.position, waitingLineStart.position) > maxDistance)
+            if (_waitingLine.QueueCount == 1)
             {
-                // Play the sound
                 AudioManager.instance.Play(WaitingSoundKey);
             }
         }
@@ -246,21 +254,10 @@ namespace Store
         {
             if (!_clients.Any(client => client.firstInLine))
             {
-                chargeSign.SetActive(false);
                 chargeButton.gameObject.SetActive(false);
                 return;
             }
-
-            float distance = Vector3.Distance(player.transform.position, chargePosition.position);
-
-            if (distance > maxDistance)
-            {
-                chargeSign.SetActive(true);
-                chargeButton.gameObject.SetActive(false);
-                return;
-            }
-
-            chargeSign.SetActive(false);
+            
             chargeButton.gameObject.SetActive(true);
         }
 
@@ -287,6 +284,24 @@ namespace Store
             {
                 inventory.Save();
             }
+        }
+
+        private void ItemPaid()
+        {
+            _popularitryXp++;
+            popularitySlider.value = _popularitryXp;
+            if (_popularitryXp < popularityXpLevels[_popularitryLevel]) return;
+            LevelUpPopularity();
+        }
+
+        private void LevelUpPopularity()
+        {
+            _popularitryLevel++;
+            _popularitryXp = 0;
+            popularitySlider.value = _popularitryLevel;
+            popularityMedal.sprite = medals[_popularitryLevel];
+            _maxClients = maxClientsPerPopularity[_popularitryLevel];
+            _minClients = minClientsPerPopularity[_popularitryLevel];
         }
     }
 }

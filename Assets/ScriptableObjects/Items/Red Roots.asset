@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
   m_Name: Red Roots
   m_EditorClassIdentifier: 
-  uiDisplay: {fileID: 21300000, guid: fe09ac2848bd95f4c998b2a3717eaa34, type: 3}
+  uiDisplay: {fileID: 21300000, guid: 08a4c087a7b49f142ab57832f8ce9820, type: 3}
   characterDisplay: {fileID: 1637394368824895257, guid: cc3b9bbf254b6554ebee3bd53a077d50, type: 3}
   stackable: 0
   maxStack: 0
@@ -21,7 +21,6 @@ MonoBehaviour:
   data:
     name: Red Roots
     id: 5
-    buffs: []
     listPrice:
       originalPrice: 23
     craftable: 0

@@ -1,5 +1,4 @@
-﻿using System;
-using InventorySystem;
+﻿using InventorySystem;
 using TMPro;
 using UnityEngine;
 
@@ -12,7 +11,6 @@ namespace Store
         [SerializeField] public GameObject inventoryParent;
         [SerializeField] private GameObject showEmpty;
 
-        public static Action OnPlaceItem;
         public Transform itemPosition;
         public int id;
         public int amount;
@@ -31,14 +29,14 @@ namespace Store
             {
                 if (_item)
                 {
-                    _item.data.OnPriceChange -= ChangePrice;
+                    _item.data.OnPriceChange -= UpdatePrice;
                 }
 
                 _item = value;
 
                 if (_item)
                 {
-                    _item.data.OnPriceChange += ChangePrice;
+                    _item.data.OnPriceChange += UpdatePrice;
                 }
             }
         }
@@ -56,7 +54,6 @@ namespace Store
             foreach (var slot in inventory.GetSlots)
             {
                 slot.onAfterUpdated += UpdateSlot;
-                slot.onAfterUpdated += PlayAnimation;
             }
             
             
@@ -74,11 +71,6 @@ namespace Store
             inventoryParent.SetActive(false);
         }
 
-        private void PlayAnimation(InventorySlot obj)
-        {
-            OnPlaceItem?.Invoke();
-        }
-
         private void OnEnable()
         {
             inventory.UpdateInventory();
@@ -94,6 +86,7 @@ namespace Store
             }
 
             inventory.UpdateInventory();
+            
             if (inventory.GetSlots[0].GetItemObject())
             {
                 Initialize(inventory.GetSlots[0].GetItemObject());
@@ -123,9 +116,7 @@ namespace Store
             amount = slot.amount;
             Item = slot.GetItemObject();
             CreateDisplayItem(Item);
-            showPrice.text = "$" + Item.price;
-            inputField.text = "$" + Item.price;
-            totalPriceText.text = "$" + (Item.price * amount);
+            UpdatePrice();
             amountText.text = amount.ToString();
             UpdateShowEmpty();
         }
@@ -176,13 +167,12 @@ namespace Store
             };
 
             Item.price = result;
-            inputField.text = "$" + Item.price;
-            showPrice.text = "$" + Item.price;
-            totalPriceText.text = "$" + (Item.price * amount);
+            UpdatePrice();
         }
 
-        private void ChangePrice()
+        private void UpdatePrice()
         {
+            inputField.text = "$" + Item.price;
             showPrice.text = "$" + Item.price;
             totalPriceText.text = "$" + (Item.price * amount);
         }

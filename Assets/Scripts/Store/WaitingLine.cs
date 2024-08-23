@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Store
@@ -16,6 +17,7 @@ namespace Store
         {
             get { return _queuePositions.Count(x => x.occupied); }
         }
+        public Action OnItemPaid;
         private int _positionsAmount;
         private float _positionsDistance;
         private Transform _startingPosition;
@@ -48,6 +50,7 @@ namespace Store
         public void ChargeClient()
         {
             _queuePositions[0].client.PayItem();
+            OnItemPaid?.Invoke();
             AdvanceQueue();
         }
 
