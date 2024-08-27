@@ -9,7 +9,7 @@ namespace player
     {
         public static Action<int> OnMoneyUpdate;
         public InventoryObject inventory;
-        public float pickUpCooldown = 3f;
+        public float pickUpCooldown = 2f;
         private int _money;
         private const string PickUpSoundKey = "PickUp";
 
@@ -66,7 +66,16 @@ namespace player
 
         private void DropItem(GameObject obj, int amount)
         {
-            GameObject droppedItem = Instantiate(obj, transform.position, Quaternion.identity);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            
+            if (!Physics.Raycast(ray, out RaycastHit hit)) return;
+            
+            Vector3 dropPosition = hit.point + Vector3.up * 2f;
+            GameObject droppedItem = Instantiate(obj, dropPosition, Quaternion.identity);
+            
+            Rigidbody rb = droppedItem.AddComponent<Rigidbody>();
+            rb.mass = 1f;
+            droppedItem.AddComponent<BoxCollider>();
             GroundItem groundItem = droppedItem.GetComponent<GroundItem>();
             groundItem.droppedByPlayer = true;
             groundItem.droppedTime = Time.time;
