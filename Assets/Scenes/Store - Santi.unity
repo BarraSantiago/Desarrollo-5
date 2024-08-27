@@ -3898,6 +3898,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -7500,6 +7501,24 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1137361145 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7991233487932646251, guid: eb976b1ff74fc0840b9351dd50256386, type: 3}
+  m_PrefabInstance: {fileID: 1956434107}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1137361149
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137361145}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.8896583, y: 0.052788276, z: 1.4720786}
+  m_Center: {x: 0, y: 0.0000000023283064, z: 0}
 --- !u!1 &1149019675
 GameObject:
   m_ObjectHideFlags: 0
@@ -8076,6 +8095,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
