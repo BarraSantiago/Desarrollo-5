@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Interactable;
 using InventorySystem;
+using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,11 +18,19 @@ namespace player
 
         private void Update()
         {
+            UIHelper.UpdatePointerOverUIState();
+
             HighlightInteractable();
         }
 
         private void HighlightInteractable()
         {
+            if (UIHelper.IsPointerOverUIElement())
+            {
+                ResetHighlight();
+                return;
+            }
+            
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out RaycastHit hit))
@@ -110,6 +119,10 @@ namespace player
 
         private void RaycastFromMouse()
         {
+            if (UIHelper.IsPointerOverUIElement())
+            {
+                return;
+            }
             
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits = Physics.RaycastAll(ray);

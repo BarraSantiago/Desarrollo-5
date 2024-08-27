@@ -139,6 +139,11 @@ namespace Store
             StartCoroutine(SendClients());
         }
 
+        public void LevelUpStore()
+        {
+            ItemPaid();
+        }
+        
         /// <summary>
         /// Should be called when cicle ends
         /// </summary>
