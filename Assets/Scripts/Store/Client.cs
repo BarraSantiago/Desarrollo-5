@@ -39,7 +39,6 @@ namespace Store
         [SerializeField] private float _minimumDistance = 1.6f;
         [SerializeField] private Transform itemPosition;
         [SerializeField] private AudioSource audioSource;
-        [SerializeField] private AnimationEnd animationEnd;
         #endregion
 
         #region Public Variables
@@ -113,7 +112,6 @@ namespace Store
 
         private void Start()
         {
-            AnimationEnd.OnAnimationEnd += OnAnimationEnd;
             agent.updateRotation = false;
             agent.updateUpAxis = false;
             animator = GetComponent<Animator>();

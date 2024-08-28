@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using InventorySystem;
+using player;
 using UI;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -24,12 +24,7 @@ namespace Store
         [SerializeField] private ClientTransforms clientTransforms;
 
         [Header("Popularity Setup")] 
-        [SerializeField] private Slider popularitySlider;
-        [SerializeField] private int[] popularityXpLevels;
-        [SerializeField] private int[] maxClientsPerPopularity;
-        [SerializeField] private int[] minClientsPerPopularity;
-        [SerializeField] private Image popularityMedal;
-        [SerializeField] private Sprite[] medals;
+        [SerializeField] private PopularityManager popularityManager;
         
         [Header("Items Setup")] 
         [SerializeField] private InventoryObject[] storeInventories;
@@ -44,6 +39,7 @@ namespace Store
         [SerializeField] private float distanceBetweenPos;
 
         [Header("Misc Setup")] 
+        [SerializeField] private TimeCycle timeCycle;
         [SerializeField] private UIManager uiManager;
         [SerializeField] private Canvas mainCanvas;
         [SerializeField] private player.Player player;
@@ -65,14 +61,9 @@ namespace Store
         private int _buyersInShop; // amount of clients currently in the shop
         private float _timeBetweenClients;
         private readonly float _clientTimer = 2.87f;
-        private const float CicleMaxTime = 30f;
+        private const float CicleMaxTime = 60f;
         private float _cilceTimer = 0;
-        private readonly float _popularity = 0.5f;
-        private int _popularitryXp = 0;
-        private int _popularitryLevel = 0;
-        private int _maxClients = 7;
-        private int _minClients = 3;
-
+        
         #endregion
 
         private void Start()
@@ -95,9 +86,9 @@ namespace Store
             {
                 storeInventory.Load();
             }
-            
-            _waitingLine.OnItemPaid += ItemPaid;
-            popularitySlider.maxValue = popularityXpLevels[_popularitryLevel];
+            Player.OnMoneyUpdate += UpdateMoneyText;
+            popularityManager.Initialize();
+            _waitingLine.OnItemPaid += popularityManager.ItemPaid;
         }
 
         private void Update()
@@ -120,8 +111,7 @@ namespace Store
         {
             startCicle.interactable = false;
 
-            float clientsVariation = Random.Range(_popularity * 0.8f, _popularity * 1.2f);
-            _dailyClients = (int)math.lerp(_minClients, _maxClients, clientsVariation);
+           _dailyClients = popularityManager.DailyClients;
 
             _waitingLine.Initialize(waitingLineStart, _dailyClients, distanceBetweenPos, checkOut);
 
@@ -136,12 +126,9 @@ namespace Store
                 item.data.listPrice.UpdatePrice();
             }
 
+            timeCycle.CycleDuration = CicleMaxTime;
+            timeCycle.StartCycle = true;
             StartCoroutine(SendClients());
-        }
-
-        public void LevelUpStore()
-        {
-            ItemPaid();
         }
         
         /// <summary>
@@ -166,6 +153,8 @@ namespace Store
 
             _clientsLeft = 0;
             //startCicle.interactable = true; // TODO fix this
+            
+            popularityManager.Deinitialize();
         }
 
         private void ChangeScene()
@@ -213,6 +202,11 @@ namespace Store
         private void UpdateMoneyText()
         {
             uiManager.UpdateMoneyText(player.money);
+        }
+        
+        private void UpdateMoneyText(int money)
+        {
+            uiManager.UpdateMoneyText(money);
         }
 
         private void ItemBought(int id)
@@ -291,22 +285,6 @@ namespace Store
             }
         }
 
-        private void ItemPaid()
-        {
-            _popularitryXp++;
-            popularitySlider.value = _popularitryXp;
-            if (_popularitryXp < popularityXpLevels[_popularitryLevel]) return;
-            LevelUpPopularity();
-        }
-
-        private void LevelUpPopularity()
-        {
-            _popularitryLevel++;
-            _popularitryXp = 0;
-            popularitySlider.value = _popularitryLevel;
-            popularityMedal.sprite = medals[_popularitryLevel];
-            _maxClients = maxClientsPerPopularity[_popularitryLevel];
-            _minClients = minClientsPerPopularity[_popularitryLevel];
-        }
+        
     }
 }

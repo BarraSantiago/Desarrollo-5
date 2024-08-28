@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: Medium Potion Recipe
   m_EditorClassIdentifier: 
   items:
-  - itemID: 5
-    amount: 2
-  - itemID: 6
-    amount: 2
   - itemID: 0
     amount: 1
+  - itemID: 5
+    amount: 2

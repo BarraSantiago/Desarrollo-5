@@ -1564,8 +1564,8 @@ Transform:
   m_GameObject: {fileID: 8857336999959325817}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -60.279823, y: 0.75003815, z: 3.9182205}
-  m_LocalScale: {x: 1.4, y: 1.4, z: 1.4}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4463093012926420567}
   - {fileID: 8317816941345406021}
@@ -1612,6 +1612,7 @@ MonoBehaviour:
   audioSource: {fileID: 7690457932067439730}
   id: 0
   firstInLine: 0
+  _currentState: 0
 --- !u!195 &2828376473695579319
 NavMeshAgent:
   m_ObjectHideFlags: 0

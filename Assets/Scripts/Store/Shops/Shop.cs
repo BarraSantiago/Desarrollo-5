@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using InventorySystem;
 using player;
 using TMPro;
@@ -10,16 +11,18 @@ namespace Store.Shops
     public class Shop : MonoBehaviour
     {
         #region Serialized Fields
-        
-        [Header("Shop setup")] 
-        [SerializeField] private ItemDatabaseObject completeDatabase;
+
+        [Header("Shop setup")] [SerializeField]
+        private ItemDatabaseObject completeDatabase;
+
         [SerializeField] private ItemDatabaseObject[] databases;
         [SerializeField] private Button upgradeButton;
         [SerializeField] private Player player;
         [SerializeField] private TMP_Text upgradeText;
 
-        [Header("Item setup")] 
-        [SerializeField] private GameObject shopItemPrefab;
+        [Header("Item setup")] [SerializeField]
+        private GameObject shopItemPrefab;
+
         [SerializeField] private Image selectedItemImage;
         [SerializeField] private Transform shopItemsParent;
         [SerializeField] private Button buyButton;
@@ -30,7 +33,7 @@ namespace Store.Shops
         #endregion
 
         #region Properties
-        
+
         private List<ShopItem> _shopItems = new List<ShopItem>();
         private int _shopLevel;
         private int _shopMaxLevel;
@@ -40,7 +43,7 @@ namespace Store.Shops
         private ItemObject _selectedItem;
 
         #endregion
-        
+
         private void Start()
         {
             ShopItem.OnSelectItem += SelectItem;
@@ -72,9 +75,9 @@ namespace Store.Shops
         {
             _selectedItem = completeDatabase.ItemObjects[itemId];
             selectedItemImage.sprite = _selectedItem.uiDisplay;
-            
+
             int recipeItemsLength = _selectedItem.data.recipe?.items?.Length ?? 0;
-            
+
             for (int i = 0; i < shopRecipes.Length; i++)
             {
                 shopRecipes[i].gameObject.SetActive(i < recipeItemsLength);
@@ -106,16 +109,19 @@ namespace Store.Shops
                 return;
             }
 
-            if (_selectedItem.data.craftable && !CheckRecipe())
+            switch (_selectedItem.data.craftable)
             {
-                return;
-            }
-            else if (_selectedItem.data.craftable)
-            {
-                foreach (var itemEntry in _selectedItem.data.recipe.items)
+                case true when !CheckRecipe():
+                    return;
+                case true:
                 {
-                    ItemObject currentEntry = completeDatabase.ItemObjects[itemEntry.itemID];
-                    player.inventory.RemoveItem(currentEntry.data, itemEntry.amount);
+                    foreach (var itemEntry in _selectedItem.data.recipe.items)
+                    {
+                        ItemObject currentEntry = completeDatabase.ItemObjects[itemEntry.itemID];
+                        player.inventory.RemoveItem(currentEntry.data, itemEntry.amount);
+                    }
+
+                    break;
                 }
             }
 
@@ -127,16 +133,10 @@ namespace Store.Shops
 
         private bool CheckRecipe()
         {
-            foreach (var itemEntry in _selectedItem.data.recipe.items)
-            {
-                ItemObject currentEntry = completeDatabase.ItemObjects[itemEntry.itemID];
-                if (player.inventory.GetItemCount(currentEntry.data) < itemEntry.amount)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return !(from itemEntry in _selectedItem.data.recipe.items
+                let currentEntry = completeDatabase.ItemObjects[itemEntry.itemID]
+                where player.inventory.GetItemCount(currentEntry.data) < itemEntry.amount
+                select itemEntry).Any();
         }
 
         public void UpdateAvailability(int money)
@@ -145,9 +145,9 @@ namespace Store.Shops
             costText.color = money < _shopUpgradeCost ? Color.red : Color.green;
 
             CheckLevel();
-            
+
             if (!_selectedItem || !_selectedItem.data.craftable) return;
-            
+
             for (int i = 0; i < _selectedItem.data.recipe.items.Length; i++)
             {
                 ItemObject currentEntry = completeDatabase.ItemObjects[_selectedItem.data.recipe.items[i].itemID];
