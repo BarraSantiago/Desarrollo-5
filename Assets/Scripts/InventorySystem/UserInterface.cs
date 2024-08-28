@@ -176,7 +176,12 @@ namespace InventorySystem
             Destroy(MouseData.TempItemBeingDragged);
             if (!MouseData.InterfaceMouseIsOver)
             {
-                if(!slotsOnInterface.ContainsKey(obj) || slotsOnInterface[obj].amount <= 0) return;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                
+                if (!Physics.Raycast(ray, out RaycastHit hit)) return;
+                
+                if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Walkable")) return;
+                
                 OnDropItem?.Invoke(slotsOnInterface[obj].GetItemObject().characterDisplay,
                     slotsOnInterface[obj].amount);
                 slotsOnInterface[obj].RemoveItem();
