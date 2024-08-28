@@ -8,21 +8,25 @@ namespace Store
         [SerializeField] private Transform directionalLight;
         [SerializeField] private Image timeImage;
         [SerializeField] private GameObject[] lights;
-        [SerializeField] private float cycleDuration;
         [SerializeField] private float timeOfDay;
         [SerializeField] private float timeSpeed;
         
+        public float CycleDuration { get; set; }
+        public bool StartCycle { get; set; }
+        
         private void Update()
         {
+            if(!StartCycle) return;
+            if(directionalLight.localRotation.eulerAngles.x > 180) return;
             timeOfDay += Time.deltaTime * timeSpeed;
-            timeOfDay %= cycleDuration;
-            directionalLight.localRotation = Quaternion.Euler(new Vector3((timeOfDay / cycleDuration) * 360f, 0, 0));
-            timeImage.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, (timeOfDay / cycleDuration) * 360f));
+            timeOfDay %= CycleDuration;
+            directionalLight.localRotation = Quaternion.Euler(new Vector3((timeOfDay / CycleDuration) * 360f, 0, 0));
+            timeImage.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, (timeOfDay / CycleDuration) * 360f));
             
-            if (timeOfDay > cycleDuration / 2)
+            if (timeOfDay > CycleDuration / 2)
             {
                 NightTime();
-            } 
+            }
             else
             {
                 DayTime();
