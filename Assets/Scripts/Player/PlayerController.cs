@@ -11,8 +11,11 @@ namespace player
     {
         [SerializeField] private GameObject inventoryUI;
         [SerializeField] private GameObject debugUI;
+        [SerializeField] private GameObject endDayStats;
+        [SerializeField] private GameObject endDayInput;
         [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private Color highlightColor = Color.yellow;
+        public bool dayEnded;
         private GameObject lastHighlightedObject;
         private Color originalColor;
 
@@ -30,7 +33,7 @@ namespace player
                 ResetHighlight();
                 return;
             }
-            
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out RaycastHit hit))
@@ -41,7 +44,7 @@ namespace player
                 {
                     return;
                 }
-                
+
                 IInteractable interactable = hit.collider.GetComponent<IInteractable>();
 
                 if (interactable != null)
@@ -59,12 +62,12 @@ namespace player
             }
         }
 
-      
+
         public void OnInteract(InputValue context)
         {
             RaycastFromMouse();
         }
-        
+
         public void OnInventoryOpen(InputValue context)
         {
             inventoryUI.SetActive(!inventoryUI.activeSelf);
@@ -78,12 +81,12 @@ namespace player
         {
             Application.Quit();
         }
-        
+
         public void OnDebug(InputValue ctx)
         {
             debugUI?.SetActive(!debugUI.activeSelf);
         }
-        
+
         private void HighlightObject(GameObject obj)
         {
             if (lastHighlightedObject && lastHighlightedObject != obj)
@@ -92,10 +95,10 @@ namespace player
             }
 
             Renderer renderer = obj.GetComponent<Renderer>();
-            
+
             if (renderer)
             {
-                if(renderer.material.color != highlightColor) originalColor = renderer.material.color;
+                if (renderer.material.color != highlightColor) originalColor = renderer.material.color;
                 renderer.material.color = highlightColor;
             }
 
@@ -105,9 +108,9 @@ namespace player
         private void ResetHighlight()
         {
             if (!lastHighlightedObject) return;
-            
+
             Renderer renderer = lastHighlightedObject.GetComponent<Renderer>();
-            
+
             if (renderer)
             {
                 renderer.material.color = originalColor;
@@ -123,7 +126,7 @@ namespace player
             {
                 return;
             }
-            
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits = Physics.RaycastAll(ray);
 
@@ -139,6 +142,13 @@ namespace player
                 interactable.Interact();
                 break; // Interact with the first interactable object hit
             }
+        }
+
+        private void OnEnter(InputValue context)
+        {
+            if (!dayEnded) return;
+            endDayStats.SetActive(true);
+            endDayInput.SetActive(false);
         }
     }
 }

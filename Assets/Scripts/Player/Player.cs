@@ -61,6 +61,7 @@ namespace player
         public void OnApplicationQuit()
         {
             inventory.Save();
+            
         }
 
 

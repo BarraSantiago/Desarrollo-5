@@ -17,13 +17,13 @@ namespace Store
         private void Update()
         {
             if(!StartCycle) return;
-            if(directionalLight.localRotation.eulerAngles.x > 180) return;
+            if(timeOfDay >= CycleDuration) return;
             timeOfDay += Time.deltaTime * timeSpeed;
             timeOfDay %= CycleDuration;
             directionalLight.localRotation = Quaternion.Euler(new Vector3((timeOfDay / CycleDuration) * 360f, 0, 0));
             timeImage.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, (timeOfDay / CycleDuration) * 360f));
             
-            if (timeOfDay > CycleDuration / 2)
+            if (timeOfDay > CycleDuration / 1.8)
             {
                 NightTime();
             }
@@ -47,6 +47,14 @@ namespace Store
             {
                 light.SetActive(true);
             }
+        }
+
+        public void Deinitialize()
+        {
+            StartCycle = false;
+            timeOfDay = 0;
+            directionalLight.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+            timeImage.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
         }
     }
 }

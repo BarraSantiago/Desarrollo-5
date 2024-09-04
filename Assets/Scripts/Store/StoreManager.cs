@@ -6,7 +6,6 @@ using InventorySystem;
 using player;
 using UI;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -45,7 +44,11 @@ namespace Store
         [SerializeField] private player.Player player;
 
         [Header("Demo")]
-        [SerializeField] private Button startCicle;
+        [SerializeField] private Button startCycle;
+        [SerializeField] private EndDayStats endDayStats;
+        [SerializeField] private Button endCycle;
+        [SerializeField] private PlayerController playerController;
+        [SerializeField] private GameObject endDayInput;
 
         #endregion
 
@@ -57,18 +60,18 @@ namespace Store
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
-        private int _clientsLeft = 0;
+        public int _clientsLeft = 0;
         private int _buyersInShop; // amount of clients currently in the shop
         private float _timeBetweenClients;
         private readonly float _clientTimer = 2.87f;
-        private const float CicleMaxTime = 60f;
-        private float _cilceTimer = 0;
+        private const float CycleMaxTime = 60f;
         
         #endregion
 
         private void Start()
         {
-            startCicle.onClick.AddListener(StartDayCicle);
+            startCycle.onClick.AddListener(StartDayCycle);
+            endCycle.onClick.AddListener(EndDayCycle);
 
             ItemDisplayer.DisplayItems = displayItems;
             Client.ItemDatabase = itemDatabase;
@@ -82,11 +85,14 @@ namespace Store
 
             itemDisplayer.Initialize(storeInventories);
             UIManager.MainCanvas = mainCanvas;
+            
             foreach (var storeInventory in storeInventories)
             {
                 storeInventory.Load();
             }
+            
             Player.OnMoneyUpdate += UpdateMoneyText;
+            
             popularityManager.Initialize();
             _waitingLine.OnItemPaid += popularityManager.ItemPaid;
         }
@@ -107,9 +113,9 @@ namespace Store
         }
 
 
-        private void StartDayCicle()
+        private void StartDayCycle()
         {
-            startCicle.interactable = false;
+            startCycle.interactable = false;
 
            _dailyClients = popularityManager.DailyClients;
 
@@ -118,21 +124,22 @@ namespace Store
             Client.OnItemBought += ItemBought;
             Client.OnMoneyAdded += SpawnText;
             Client.OnStartLine += AddToQueue;
-            Client.OnLeftStore += CheckEndCicle;
-            Client.OnLeftStore += PlayBackgrounNoise;
+            Client.OnLeftStore += CheckEndCycle;
+            Client.OnLeftStore += PlayBackgroundNoise;
 
             foreach (var item in itemDatabase.ItemObjects)
             {
                 item.data.listPrice.UpdatePrice();
             }
 
-            timeCycle.CycleDuration = CicleMaxTime;
+            timeCycle.CycleDuration = CycleMaxTime;
             timeCycle.StartCycle = true;
+            popularityManager.Initialize();
             StartCoroutine(SendClients());
         }
         
         /// <summary>
-        /// Should be called when cicle ends
+        /// Should be called when cycle ends
         /// </summary>
         private void EndDayCycle()
         {
@@ -141,8 +148,11 @@ namespace Store
             Client.OnItemBought -= ItemBought;
             Client.OnMoneyAdded -= SpawnText;
             Client.OnStartLine -= AddToQueue;
-            Client.OnLeftStore -= CheckEndCicle;
-            Client.OnLeftStore -= PlayBackgrounNoise;
+            Client.OnLeftStore -= CheckEndCycle;
+            Client.OnLeftStore -= PlayBackgroundNoise;
+            
+            endDayInput.SetActive(false);
+            playerController.dayEnded = false;
 
             for (int i = _clients.Count - 1; i >= 0; i--)
             {
@@ -152,14 +162,10 @@ namespace Store
             }
 
             _clientsLeft = 0;
-            //startCicle.interactable = true; // TODO fix this
+            startCycle.interactable = true; // TODO fix this
+            timeCycle.Deinitialize();
             
             popularityManager.Deinitialize();
-        }
-
-        private void ChangeScene()
-        {
-            SceneManager.LoadScene("MovementScene");
         }
 
         private void UpdateCurrentPrices()
@@ -170,13 +176,14 @@ namespace Store
             }
         }
 
-        private void CheckEndCicle()
+        private void CheckEndCycle()
         {
             _clientsLeft++;
-            if (_clientsLeft >= _dailyClients)
-            {
-                EndDayCycle();
-            }
+            
+            if (_clientsLeft < _dailyClients) return;
+            endDayStats.UpdateStats(1,2,3,4,5);
+            endDayInput.SetActive(true);
+            playerController.dayEnded = true;
         }
 
         public void AddItem()
@@ -188,7 +195,6 @@ namespace Store
         public void AddGold()
         {
             const int goldAdded = 500;
-            player.money += goldAdded;
             SpawnText(goldAdded);
         }
 
@@ -231,7 +237,7 @@ namespace Store
 
                 _clients[i].Initialize(i);
                 
-                PlayBackgrounNoise();
+                PlayBackgroundNoise();
                 yield return new WaitForSeconds(_clientTimer);
             }
         }
@@ -260,7 +266,7 @@ namespace Store
             chargeButton.gameObject.SetActive(true);
         }
 
-        private void PlayBackgrounNoise()
+        private void PlayBackgroundNoise()
         {
             int clientsInStore = _clients.FindAll(client => client.InShop).Count;
             
@@ -284,7 +290,5 @@ namespace Store
                 inventory.Save();
             }
         }
-
-        
     }
 }
