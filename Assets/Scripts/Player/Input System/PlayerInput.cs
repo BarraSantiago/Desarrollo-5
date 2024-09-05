@@ -203,6 +203,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Enter"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""05fd625b-1663-498f-b7af-0205ba57da86"",
+                    ""path"": ""<Keyboard>/numpadEnter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Enter"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },

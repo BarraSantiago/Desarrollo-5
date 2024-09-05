@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using InventorySystem;
 using UnityEngine;
 using UnityEngine.AI;
@@ -17,6 +19,7 @@ namespace Store
         public Transform WanderBoundsMin;
         public Transform WanderBoundsMax;
     }
+
     public class Client : MonoBehaviour
     {
         private enum State
@@ -39,10 +42,11 @@ namespace Store
         [SerializeField] private float _minimumDistance = 1.6f;
         [SerializeField] private Transform itemPosition;
         [SerializeField] private AudioSource audioSource;
+
         #endregion
 
         #region Public Variables
-    
+
         public int id;
         public static ClientTransforms ClientTransforms;
         public static ItemDatabaseObject ItemDatabase;
@@ -56,6 +60,7 @@ namespace Store
         /// Bool that indicates if the client is in the shop
         /// </summary>
         public bool InShop => _currentState < State.LeftStore;
+
         public bool firstInLine;
 
         #endregion
@@ -89,7 +94,7 @@ namespace Store
         private float _wanderTimemin = 7f;
         private float _wanderTimeMax = 15f;
         private const string SoldSoundKey = "ItemSold";
-        [SerializeField] private State _currentState;
+        private State _currentState;
 
         private State CurrentState
         {
@@ -101,7 +106,6 @@ namespace Store
             }
         }
 
-        private GameObject _itemInstance;
 
         private Animator animator;
         private bool _leaveTip;
@@ -115,14 +119,6 @@ namespace Store
             agent.updateRotation = false;
             agent.updateUpAxis = false;
             animator = GetComponent<Animator>();
-        }
-
-        private void OnAnimationEnd(GameObject obj)
-        {
-            if (obj == gameObject)
-            {
-                animationContinues = false;
-            }
         }
 
         private void Update()
@@ -146,7 +142,8 @@ namespace Store
 
         public void Deinitialize()
         {
-            if (ItemDisplayer.DisplayItems[_desiredItemIndex]) ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = false;
+            if (ItemDisplayer.DisplayItems[_desiredItemIndex])
+                ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = false;
             ItemDisplayer.DisplayItems[_desiredItemIndex] = null;
         }
 
@@ -224,8 +221,11 @@ namespace Store
             while (Time.time - startTime < wanderTime)
             {
                 Vector3 randomPosition =
-                    new Vector3(Random.Range(ClientTransforms.WanderBoundsMin.position.x, ClientTransforms.WanderBoundsMax.position.x), 0,
-                        Random.Range(ClientTransforms.WanderBoundsMin.position.z, ClientTransforms.WanderBoundsMax.position.z));
+                    new Vector3(
+                        Random.Range(ClientTransforms.WanderBoundsMin.position.x,
+                            ClientTransforms.WanderBoundsMax.position.x), 0,
+                        Random.Range(ClientTransforms.WanderBoundsMin.position.z,
+                            ClientTransforms.WanderBoundsMax.position.z));
                 agent.SetDestination(randomPosition);
 
                 yield return new WaitForSeconds(3f);
@@ -239,80 +239,79 @@ namespace Store
 
         private void ChooseItem()
         {
-            lock (LockObject)
+            var availableItems = ItemDisplayer.DisplayItems.Where(displayItem =>
+                displayItem is not null && !displayItem.BeingViewed && !displayItem.Bought &&
+                displayItem.amount > 0).ToList();
+            if (availableItems.Count > 0)
             {
-                DisplayItem[] availableItems = Array.FindAll(ItemDisplayer.DisplayItems,
-                    displayItem => displayItem is { BeingViewed: false, Bought: false, amount: > 0 });
+                int randomItemIndex = Random.Range(0, availableItems.Count);
+                var chosenItem = availableItems[randomItemIndex];
+                chosenItem.BeingViewed = true;
+                _desiredItemIndex = Array.IndexOf(ItemDisplayer.DisplayItems, chosenItem);
 
-                if (availableItems.Length > 0)
+                CurrentState = State.GrabbingItem;
+            }
+            else
+            {
+                if (_timesCheckedItems >= _maxCheckItems)
                 {
-                    int randomItemIndex = Random.Range(0, availableItems.Length);
-                    ItemDisplayer.DisplayItems[_desiredItemIndex] = availableItems[randomItemIndex];
-                    _itemInstance = ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject;
-                    ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = true;
-                    _desiredItemIndex = Array.IndexOf(ItemDisplayer.DisplayItems, ItemDisplayer.DisplayItems[_desiredItemIndex]);
-
-                    CurrentState = State.GrabbingItem;
+                    CurrentState = State.Leaving;
                 }
                 else
                 {
-                    if (_timesCheckedItems >= _maxCheckItems)
-                    {
-                        CurrentState = State.Leaving;
-                    }
-                    else
-                    {
-                        _timesCheckedItems++;
-                        CurrentState = State.ChoosingItem;
-                    }
+                    _timesCheckedItems++;
+                    CurrentState = State.ChoosingItem;
                 }
             }
         }
-        
+
         /// <summary>
         /// The client goes to the item and grabs it
         /// </summary>
         private IEnumerator GrabItem()
         {
-            agent.SetDestination(ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position);
+            var targetItem = ItemDisplayer.DisplayItems[_desiredItemIndex];
+            var targetCollider = targetItem.displayObject.GetComponent<Collider>();
+
+            agent.SetDestination(targetCollider.bounds.center);
             float startTime = Time.time;
             float maxWaitTime = 6f;
 
-            while (!NearItem())
+            while (!NearItem(targetCollider))
             {
                 if (Time.time - startTime > maxWaitTime)
                 {
                     break;
                 }
+
                 yield return null;
             }
 
             if (!CheckBuyItem()) yield break;
-            
-            animator.SetTrigger("GrabItem");
-            
-            while (animationContinues)
-            {
-                yield return null;
-            }
 
-            if (!ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject)
+            animator.SetTrigger("GrabItem");
+
+            agent.isStopped = true;
+            StartCoroutine(LerpDisplayObjectPosition());
+            yield return new WaitForSeconds(2f);
+
+
+            if (!targetItem.displayObject)
             {
-                ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = false;
+                targetItem.BeingViewed = false;
                 CurrentState = State.Leaving;
                 yield break;
             }
-            ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.SetParent(transform);
-            ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = itemPosition.position;
-            _itemPrice = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price;
-            _itemAmount = ItemDisplayer.DisplayItems[_desiredItemIndex].amount;
-            _itemId = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.data.id;
-            ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject = null;
-            ItemDisplayer.DisplayItems[_desiredItemIndex].CleanDisplay();
+
+            targetItem.displayObject.transform.SetParent(transform);
+            targetItem.displayObject.transform.position = itemPosition.position;
+            _itemPrice = targetItem.Item.price;
+            _itemAmount = targetItem.amount;
+            _itemId = targetItem.Item.data.id;
+            targetItem.displayObject = null;
+            targetItem.CleanDisplay();
             CurrentState++;
         }
-
-        public bool animationContinues { get; set; } = true;
 
         private IEnumerator LerpDisplayObjectPosition()
         {
@@ -325,13 +324,14 @@ namespace Store
             while (Time.time - startTime < lerpTime)
             {
                 float t = (Time.time - startTime) / lerpTime;
-                ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = Vector3.Lerp(initialPosition, targetPosition, t);
+                ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position =
+                    Vector3.Lerp(initialPosition, targetPosition, t);
                 yield return null;
             }
 
             ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = targetPosition;
         }
-        
+
         private IEnumerator StartWaitingLine()
         {
             agent.SetDestination(ClientTransforms.WaitingLineStart.position);
@@ -344,13 +344,14 @@ namespace Store
             CurrentState = State.Buying;
         }
 
-   
 
         private bool CheckBuyItem()
         {
             if (!ItemDisplayer.DisplayItems[_desiredItemIndex]) return false;
 
-            ListPrice itemList = ItemDatabase.ItemObjects[ItemDisplayer.DisplayItems[_desiredItemIndex].Item.data.id].data.listPrice;
+
+            ListPrice itemList = ItemDatabase.ItemObjects[ItemDisplayer.DisplayItems[_desiredItemIndex].Item.data.id]
+                .data.listPrice;
             float difference = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
@@ -361,18 +362,18 @@ namespace Store
                 CurrentState = State.Angry;
                 return false;
             }
-            
+
             _leaveTip = true;
             return true;
         }
-        
+
         public void PayItem()
         {
             _paid = true;
             BuyItem();
             AudioManager.instance.Play(SoldSoundKey);
             CurrentState = State.Leaving;
-            
+
             //OnLeaveLine?.Invoke();
         }
 
@@ -387,13 +388,11 @@ namespace Store
             OnItemBought?.Invoke(_itemId);
             StartCoroutine(LeaveTipAfterPayment(_waitTime));
         }
-        
+
         private IEnumerator LeaveTipAfterPayment(float waitTime)
         {
-            // Wait for the specified time
             yield return new WaitForSeconds(waitTime);
 
-            // Call the LeaveTip method
             LeaveTip(_tipChance);
         }
 
@@ -418,7 +417,7 @@ namespace Store
         private void LeaveStore()
         {
             // TODO update this
-            agent.SetDestination(ClientTransforms.Exit .transform.position);
+            agent.SetDestination(ClientTransforms.Exit.transform.position);
             CurrentState++;
         }
 
@@ -439,11 +438,11 @@ namespace Store
             return CheckDistance(ClientTransforms.WaitingLineStart.position, _minimumDistance + 2f);
         }
 
-        private bool NearItem()
+        private bool NearItem(Collider targetCollider)
         {
-            float combinedRadius = GetComponent<Collider>().bounds.extents.magnitude + ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.GetComponent<BoxCollider>().bounds.extents.magnitude;
-
-            return CheckDistance(ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position, combinedRadius + _minimumDistance);
+            float combinedRadius = GetComponent<Collider>().bounds.extents.magnitude +
+                                   targetCollider.bounds.extents.magnitude;
+            return CheckDistance(targetCollider.bounds.center, combinedRadius + _minimumDistance);
         }
 
         private bool NearExit()
@@ -457,7 +456,7 @@ namespace Store
 
             return distance < distanceDif;
         }
-        
+
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.green;
