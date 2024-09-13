@@ -289,9 +289,10 @@ namespace Store
 
             if (!CheckBuyItem()) yield break;
 
+            agent.ResetPath();
+            
             animator.SetTrigger("GrabItem");
 
-            agent.isStopped = true;
             StartCoroutine(LerpDisplayObjectPosition());
             yield return new WaitForSeconds(2f);
 
