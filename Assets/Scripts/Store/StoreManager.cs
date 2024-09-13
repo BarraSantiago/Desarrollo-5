@@ -24,14 +24,15 @@ namespace Store
 
         [Header("Popularity Setup")] 
         [SerializeField] private PopularityManager popularityManager;
-        
-        [Header("Items Setup")] 
+
+        [Header("Items Setup")]
         [SerializeField] private InventoryObject[] storeInventories;
+
         [SerializeField] private DisplayItem[] displayItems;
         [SerializeField] public ItemDatabaseObject itemDatabase;
         [SerializeField] private ItemDisplayer itemDisplayer;
 
-        [Header("Waiting Line Setup")] 
+        [Header("Waiting Line Setup")]
         [SerializeField] private Transform checkOut;
         [SerializeField] private Transform waitingLineStart;
         [SerializeField] private int posAmount;
@@ -43,7 +44,7 @@ namespace Store
         [SerializeField] private Canvas mainCanvas;
         [SerializeField] private player.Player player;
 
-        [Header("Demo")]
+        [Header("Demo")] 
         [SerializeField] private Button startCycle;
         [SerializeField] private EndDayStats endDayStats;
         [SerializeField] private Button endCycle;
@@ -65,7 +66,12 @@ namespace Store
         private float _timeBetweenClients;
         private readonly float _clientTimer = 2.87f;
         private const float CycleMaxTime = 60f;
-        
+        private int _experienceWon;
+        private int _moneyWon;
+        private int _itemsSold;
+        private int _satisfiedClients;
+        private int _angryClients;
+
         #endregion
 
         private void Start()
@@ -76,6 +82,9 @@ namespace Store
             ItemDisplayer.DisplayItems = displayItems;
             Client.ItemDatabase = itemDatabase;
             Client.ClientTransforms = clientTransforms;
+            Client.OnHappy += () => _experienceWon += 1;
+            Client.OnAngry += () => _angryClients += 1;
+            Client.OnMoneyAdded += money => _moneyWon += money;
 
             UpdateMoneyText();
             UpdateCurrentPrices();
@@ -85,14 +94,14 @@ namespace Store
 
             itemDisplayer.Initialize(storeInventories);
             UIManager.MainCanvas = mainCanvas;
-            
+
             foreach (var storeInventory in storeInventories)
             {
                 storeInventory.Load();
             }
-            
+
             Player.OnMoneyUpdate += UpdateMoneyText;
-            
+
             popularityManager.Initialize();
             _waitingLine.OnItemPaid += popularityManager.ItemPaid;
         }
@@ -116,9 +125,14 @@ namespace Store
         private void StartDayCycle()
         {
             startCycle.interactable = false;
+            _dailyClients = popularityManager.DailyClients;
 
-           _dailyClients = popularityManager.DailyClients;
-
+            _experienceWon = 0;
+            _moneyWon = 0;
+            _itemsSold = 0;
+            _satisfiedClients = 0;
+            _angryClients = 0;
+            
             _waitingLine.Initialize(waitingLineStart, _dailyClients, distanceBetweenPos, checkOut);
 
             Client.OnItemBought += ItemBought;
@@ -137,7 +151,7 @@ namespace Store
             popularityManager.Initialize();
             StartCoroutine(SendClients());
         }
-        
+
         /// <summary>
         /// Should be called when cycle ends
         /// </summary>
@@ -150,7 +164,7 @@ namespace Store
             Client.OnStartLine -= AddToQueue;
             Client.OnLeftStore -= CheckEndCycle;
             Client.OnLeftStore -= PlayBackgroundNoise;
-            
+
             endDayInput.SetActive(false);
             playerController.dayEnded = false;
 
@@ -164,7 +178,7 @@ namespace Store
             _clientsLeft = 0;
             startCycle.interactable = true; // TODO fix this
             timeCycle.Deinitialize();
-            
+
             popularityManager.Deinitialize();
         }
 
@@ -179,9 +193,9 @@ namespace Store
         private void CheckEndCycle()
         {
             _clientsLeft++;
-            
+
             if (_clientsLeft < _dailyClients) return;
-            endDayStats.UpdateStats(1,2,3,4,5);
+            endDayStats.UpdateStats(_satisfiedClients, _angryClients, _experienceWon, _moneyWon, _itemsSold);
             endDayInput.SetActive(true);
             playerController.dayEnded = true;
         }
@@ -209,16 +223,17 @@ namespace Store
         {
             uiManager.UpdateMoneyText(player.money);
         }
-        
+
         private void UpdateMoneyText(int money)
         {
             uiManager.UpdateMoneyText(money);
         }
 
-        private void ItemBought(int id)
+        private void ItemBought(int id, int amount)
         {
             itemDatabase.ItemObjects[id].data.listPrice.wasSold = true;
             itemDatabase.ItemObjects[id].data.listPrice.amountSoldLastDay++;
+            _itemsSold += amount;
         }
 
         /// <summary>
@@ -236,7 +251,7 @@ namespace Store
                 _clients.Add(newClient.GetComponent<Client>());
 
                 _clients[i].Initialize(i);
-                
+
                 PlayBackgroundNoise();
                 yield return new WaitForSeconds(_clientTimer);
             }
@@ -262,20 +277,20 @@ namespace Store
                 chargeButton.gameObject.SetActive(false);
                 return;
             }
-            
+
             chargeButton.gameObject.SetActive(true);
         }
 
         private void PlayBackgroundNoise()
         {
             int clientsInStore = _clients.FindAll(client => client.InShop).Count;
-            
+
             if (clientsInStore <= 3)
             {
                 AudioManager.instance.Stop(MurmurSoundKey);
                 return;
             }
-            
+
             AudioManager.instance.GetAudioSource(MurmurSoundKey).volume = 0.3f * clientsInStore;
             if (!AudioManager.instance.GetAudioSource(MurmurSoundKey).isPlaying)
             {

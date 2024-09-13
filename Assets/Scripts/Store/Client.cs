@@ -51,10 +51,12 @@ namespace Store
         public static ClientTransforms ClientTransforms;
         public static ItemDatabaseObject ItemDatabase;
         public static Action<Client> OnStartLine;
-        public static Action<int> OnItemBought;
+        public static Action<int, int> OnItemBought;
         public static Action<int> OnMoneyAdded; //TODO change name
         public static Action<int, int> ItemGrabbed;
         public static Action OnLeftStore;
+        public static Action OnAngry;
+        public static Action OnHappy;
 
         /// <summary>
         /// Bool that indicates if the client is in the shop
@@ -187,11 +189,13 @@ namespace Store
 
                 case State.Happy:
                     _happiness++;
+                    OnHappy?.Invoke();
                     LeaveStore();
                     break;
 
                 case State.Angry:
                     _happiness--;
+                    OnAngry?.Invoke();
                     LeaveStore();
                     break;
 
@@ -373,9 +377,7 @@ namespace Store
             _paid = true;
             BuyItem();
             AudioManager.instance.Play(SoldSoundKey);
-            CurrentState = State.Leaving;
-
-            //OnLeaveLine?.Invoke();
+            CurrentState = _leaveTip ? State.Happy : State.Leaving;
         }
 
 
@@ -386,7 +388,7 @@ namespace Store
         {
             int finalPrice = _itemPrice * _itemAmount;
             OnMoneyAdded?.Invoke(finalPrice);
-            OnItemBought?.Invoke(_itemId);
+            OnItemBought?.Invoke(_itemId, _itemAmount);
             StartCoroutine(LeaveTipAfterPayment(_waitTime));
         }
 
