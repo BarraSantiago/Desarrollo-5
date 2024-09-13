@@ -139,7 +139,7 @@ namespace Store
             Client.OnMoneyAdded += SpawnText;
             Client.OnStartLine += AddToQueue;
             Client.OnLeftStore += CheckEndCycle;
-            Client.OnLeftStore += PlayBackgroundNoise;
+            //Client.OnLeftStore += PlayBackgroundNoise;
 
             foreach (var item in itemDatabase.ItemObjects)
             {
@@ -163,7 +163,7 @@ namespace Store
             Client.OnMoneyAdded -= SpawnText;
             Client.OnStartLine -= AddToQueue;
             Client.OnLeftStore -= CheckEndCycle;
-            Client.OnLeftStore -= PlayBackgroundNoise;
+            //Client.OnLeftStore -= PlayBackgroundNoise;
 
             endDayInput.SetActive(false);
             playerController.dayEnded = false;
@@ -252,7 +252,7 @@ namespace Store
 
                 _clients[i].Initialize(i);
 
-                PlayBackgroundNoise();
+                //PlayBackgroundNoise();
                 yield return new WaitForSeconds(_clientTimer);
             }
         }

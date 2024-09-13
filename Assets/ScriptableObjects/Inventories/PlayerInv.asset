@@ -149,15 +149,6 @@ MonoBehaviour:
         craftable: 0
         recipe: {fileID: 0}
       amount: 0
-    - AllowedItems: 
-      item:
-        name: 
-        id: -1
-        listPrice:
-          originalPrice: 0
-        craftable: 0
-        recipe: {fileID: 0}
-      amount: 0
   savePath: /player.inventory.save
   database: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
   type: 0

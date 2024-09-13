@@ -214,7 +214,7 @@ namespace Store
                 yield return null;
             }
 
-            CurrentState++;
+            CurrentState = State.ChoosingItem;
         }
 
         private IEnumerator WanderAndChooseItem()
@@ -315,7 +315,7 @@ namespace Store
             _itemId = targetItem.Item.data.id;
             targetItem.displayObject = null;
             targetItem.CleanDisplay();
-            CurrentState++;
+            CurrentState = State.WaitingInline;
         }
 
         private IEnumerator LerpDisplayObjectPosition()
@@ -421,7 +421,7 @@ namespace Store
         {
             // TODO update this
             agent.SetDestination(ClientTransforms.Exit.transform.position);
-            CurrentState++;
+            CurrentState = State.LeftStore;
         }
 
         private IEnumerator CheckLeftStore()
