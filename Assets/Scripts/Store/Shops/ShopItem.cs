@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using InventorySystem;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,15 +11,17 @@ namespace Store.Shops
     {
         public static Action<int> OnSelectItem;
         public int itemID;
-        public int price;
         public Image itemImage;
+        public TMP_Text price;
+        public TMP_Text itemName;
         public Button buyButton;
 
-        public void SetItem(ItemObject itemData)
+        public void SetItem(ItemObject itemData, float itemCostMultiplier)
         {
             itemID = itemData.data.id;
             itemImage.sprite = itemData.uiDisplay;
-            price = itemData.data.listPrice.originalPrice * 2;
+            itemName.text = itemData.data.name;
+            price.text = ((int)(itemData.data.listPrice.originalPrice * itemCostMultiplier)).ToString(CultureInfo.InvariantCulture);
             buyButton.onClick.AddListener(ShowItem);
         }
 

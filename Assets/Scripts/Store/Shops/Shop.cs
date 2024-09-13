@@ -12,23 +12,24 @@ namespace Store.Shops
     {
         #region Serialized Fields
 
-        [Header("Shop setup")] [SerializeField]
-        private ItemDatabaseObject completeDatabase;
-
+        [Header("Shop setup")] 
+        [SerializeField] private ItemDatabaseObject completeDatabase;
         [SerializeField] private ItemDatabaseObject[] databases;
         [SerializeField] private Button upgradeButton;
         [SerializeField] private Player player;
         [SerializeField] private TMP_Text upgradeText;
 
-        [Header("Item setup")] [SerializeField]
-        private GameObject shopItemPrefab;
-
+        [Header("Item setup")] 
+        [SerializeField] private GameObject shopItemPrefab;
         [SerializeField] private Image selectedItemImage;
         [SerializeField] private Transform shopItemsParent;
         [SerializeField] private Button buyButton;
+        [SerializeField] private Button increaseAmountButton;
+        [SerializeField] private Button decreaseAmountButton;
+        [SerializeField] private TMP_Text amountText;
         [SerializeField] private ShopRecipe[] shopRecipes;
         [SerializeField] private TMP_Text costText;
-        [SerializeField] private float itemCostMultiplier = 2.5f;
+        [SerializeField] private float itemCostMultiplier = 0.8f;
 
         #endregion
 
@@ -40,6 +41,7 @@ namespace Store.Shops
         private int _shopUpgradeCost;
         private int _shopUpgradeCostMultiplier;
         private int _currentCost;
+        private int _currentAmount = 1;
         private ItemObject _selectedItem;
 
         #endregion
@@ -52,10 +54,13 @@ namespace Store.Shops
             _shopUpgradeCost = 150;
             _shopUpgradeCostMultiplier = 5;
             _shopUpgradeCost *= _shopUpgradeCostMultiplier * _shopLevel;
+            amountText.text = _currentAmount.ToString();
             upgradeText.text = _shopUpgradeCost.ToString();
 
             upgradeButton.onClick.AddListener(UpgradeShop);
             buyButton.onClick.AddListener(BuyItem);
+            increaseAmountButton.onClick.AddListener(IncreaseAmount);
+            decreaseAmountButton.onClick.AddListener(DecreaseAmount);
             ListItems();
 
             UpdateAvailability(player.money);
@@ -78,13 +83,13 @@ namespace Store.Shops
 
             int recipeItemsLength = _selectedItem.data.recipe?.items?.Length ?? 0;
 
-            for (int i = 0; i < shopRecipes.Length; i++)
-            {
-                shopRecipes[i].gameObject.SetActive(i < recipeItemsLength);
-            }
-
             if (_selectedItem.data.craftable)
             {
+                for (int i = 0; i < shopRecipes.Length; i++)
+                {
+                    shopRecipes[i].gameObject.SetActive(i < recipeItemsLength);
+                }
+
                 for (int i = 0; i < _selectedItem.data.recipe.items.Length; i++)
                 {
                     ItemObject currentEntry = completeDatabase.ItemObjects[_selectedItem.data.recipe.items[i].itemID];
@@ -96,7 +101,7 @@ namespace Store.Shops
             }
             else
             {
-                _currentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier);
+                _currentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
             }
 
             costText.text = _currentCost.ToString();
@@ -124,10 +129,9 @@ namespace Store.Shops
                     break;
                 }
             }
-
-
+            
             player.money -= _currentCost;
-            player.inventory.AddItem(_selectedItem.data, 1);
+            player.inventory.AddItem(_selectedItem.data, _currentAmount);
             UpdateAvailability(player.money);
         }
 
@@ -139,7 +143,7 @@ namespace Store.Shops
                 select itemEntry).Any();
         }
 
-        public void UpdateAvailability(int money)
+        private void UpdateAvailability(int money)
         {
             upgradeText.color = money < _shopUpgradeCost ? Color.red : Color.green;
             costText.color = money < _shopUpgradeCost ? Color.red : Color.green;
@@ -192,10 +196,27 @@ namespace Store.Shops
                 {
                     var shopItem = Instantiate(shopItemPrefab, shopItemsParent);
                     ShopItem newItem = shopItem.GetComponent<ShopItem>();
-                    newItem.SetItem(itemObject);
+                    newItem.SetItem(itemObject, itemCostMultiplier);
                     _shopItems.Add(newItem);
                 }
             }
+        }
+        
+        private void DecreaseAmount()
+        {
+            if (_currentAmount <= 1) return;
+            _currentAmount--;
+            amountText.text = _currentAmount.ToString();
+            _currentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
+            costText.text = _currentCost.ToString();
+        }
+
+        private void IncreaseAmount()
+        {
+            _currentAmount++;
+            amountText.text = _currentAmount.ToString();
+            _currentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
+            costText.text = _currentCost.ToString();
         }
     }
 }
