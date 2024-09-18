@@ -13960,7 +13960,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chargeButton: {fileID: 1453524305}
-  clientPrefab: {fileID: 8857336999959325817, guid: 586206fdea0c8ad4fa1a57f4c55bfb8f, type: 3}
+  clientPrefab: {fileID: 3902183864996437716, guid: ff2bfc861036c4c49a64b598f93da06a, type: 3}
   clientTransforms:
     SpawnPoint: {fileID: 2018906402}
     Exit: {fileID: 264479065}
