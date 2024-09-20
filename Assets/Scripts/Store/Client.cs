@@ -132,7 +132,7 @@ namespace Store
             Quaternion toRotation = Quaternion.LookRotation(agent.velocity, Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, Time.deltaTime * 10f);
 
-            animator.SetFloat("speed", agent.velocity.magnitude);
+            animator.SetFloat("Speed", agent.velocity.magnitude);
         }
 
         public void Initialize(int id)
