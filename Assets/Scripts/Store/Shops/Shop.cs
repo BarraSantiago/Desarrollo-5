@@ -80,7 +80,9 @@ namespace Store.Shops
         {
             _selectedItem = completeDatabase.ItemObjects[itemId];
             selectedItemImage.sprite = _selectedItem.uiDisplay;
-
+            
+            costText.color = player.money < _currentCost ? Color.red : Color.green;
+            
             int recipeItemsLength = _selectedItem.data.recipe?.items?.Length ?? 0;
 
             if (_selectedItem.data.craftable)
@@ -145,8 +147,8 @@ namespace Store.Shops
 
         private void UpdateAvailability(int money)
         {
-            upgradeText.color = money < _shopUpgradeCost ? Color.red : Color.green;
-            costText.color = money < _shopUpgradeCost ? Color.red : Color.green;
+            upgradeText.color = player.money < _shopUpgradeCost ? Color.red : Color.green;
+            costText.color = player.money < _currentCost ? Color.red : Color.green;
 
             CheckLevel();
 
