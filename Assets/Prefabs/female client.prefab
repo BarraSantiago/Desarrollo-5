@@ -1621,6 +1621,7 @@ MonoBehaviour:
   _minimumDistance: 3
   itemPosition: {fileID: 4118122687602319968}
   audioSource: {fileID: 2386496378565259736}
+  reactionSprite: {fileID: 0}
   id: 0
   firstInLine: 0
 --- !u!195 &2887556797801189403
@@ -1665,7 +1666,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 4.557183
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0

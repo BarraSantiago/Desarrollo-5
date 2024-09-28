@@ -1,4 +1,5 @@
-﻿using Interactable;
+﻿using System;
+using Interactable;
 using player;
 using UnityEngine;
 
@@ -11,6 +12,14 @@ namespace InventorySystem
         public bool droppedByPlayer = false;
         public float droppedTime;
         public bool State { get; }
+        private static Camera _mainCamera;
+        private void Awake()
+        {
+            _mainCamera ??= Camera.main;
+            
+            transform.LookAt(_mainCamera.transform);
+        }
+
         public bool Interact()
         {
             Player player = FindObjectOfType<Player>();
@@ -23,7 +32,6 @@ namespace InventorySystem
 
         public void Close()
         {
-            throw new System.NotImplementedException();
         }
     }
 }

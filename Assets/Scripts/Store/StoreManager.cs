@@ -6,6 +6,7 @@ using InventorySystem;
 using player;
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -21,6 +22,7 @@ namespace Store
         [SerializeField] private Button chargeButton;
         [SerializeField] private GameObject clientPrefab;
         [SerializeField] private ClientTransforms clientTransforms;
+        [SerializeField] private Texture[] reactionTextures;
 
         [Header("Popularity Setup")] 
         [SerializeField] private PopularityManager popularityManager;
@@ -42,7 +44,7 @@ namespace Store
         [SerializeField] private TimeCycle timeCycle;
         [SerializeField] private UIManager uiManager;
         [SerializeField] private Canvas mainCanvas;
-        [SerializeField] private player.Player player;
+        [SerializeField] private Player player;
 
         [Header("Demo")] 
         [SerializeField] private Button startCycle;
@@ -82,6 +84,7 @@ namespace Store
             ItemDisplayer.DisplayItems = displayItems;
             Client.ItemDatabase = itemDatabase;
             Client.ClientTransforms = clientTransforms;
+            Client.ReactionTextures = reactionTextures;
             Client.OnHappy += () => _experienceWon += 1;
             Client.OnAngry += () => _angryClients += 1;
             Client.OnMoneyAdded += money => _moneyWon += money;

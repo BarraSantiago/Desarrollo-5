@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using InventorySystem;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Store
@@ -42,6 +43,7 @@ namespace Store
         [SerializeField] private float _minimumDistance = 1.6f;
         [SerializeField] private Transform itemPosition;
         [SerializeField] private AudioSource audioSource;
+        [SerializeField] private GameObject reactionSprite;
 
         #endregion
 
@@ -57,6 +59,7 @@ namespace Store
         public static Action OnLeftStore;
         public static Action OnAngry;
         public static Action OnHappy;
+        public static Texture[] ReactionTextures;
 
         /// <summary>
         /// Bool that indicates if the client is in the shop
@@ -83,10 +86,8 @@ namespace Store
         /// If we want to modify the chance to leave a tip
         /// </summary>
         private int _tipChanceModifier = 0;
-
         private bool _paid;
         private int tipValue => (int)(_itemPrice * _itemAmount * 0.1f);
-
         private int _timesCheckedItems = 0;
         private int _maxCheckItems = 0;
         private int _desiredItemIndex;
@@ -95,6 +96,7 @@ namespace Store
         private int _itemId;
         private float _wanderTimemin = 7f;
         private float _wanderTimeMax = 15f;
+        private float _reactionTime = 2f;
         private const string SoldSoundKey = "ItemSold";
         private State _currentState;
 
@@ -237,15 +239,13 @@ namespace Store
 
             ChooseItem();
         }
-
-
-        private static readonly object LockObject = new object();
-
+        
         private void ChooseItem()
         {
             var availableItems = ItemDisplayer.DisplayItems.Where(displayItem =>
                 displayItem is not null && !displayItem.BeingViewed && !displayItem.Bought &&
                 displayItem.amount > 0).ToList();
+            
             if (availableItems.Count > 0)
             {
                 int randomItemIndex = Random.Range(0, availableItems.Count);
@@ -257,6 +257,7 @@ namespace Store
             }
             else
             {
+                // Item not found
                 if (_timesCheckedItems >= _maxCheckItems)
                 {
                     CurrentState = State.Leaving;
@@ -291,6 +292,7 @@ namespace Store
                 yield return null;
             }
 
+            
             if (!CheckBuyItem()) yield break;
 
             agent.ResetPath();
@@ -298,7 +300,7 @@ namespace Store
             animator.SetTrigger("GrabItem");
 
             StartCoroutine(LerpDisplayObjectPosition());
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(_reactionTime);
 
 
             if (!targetItem.displayObject)
@@ -320,7 +322,7 @@ namespace Store
 
         private IEnumerator LerpDisplayObjectPosition()
         {
-            float lerpTime = 0.5f;
+            float lerpTime = 0.3f;
             float startTime = Time.time;
 
             Vector3 initialPosition = ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position;
@@ -335,6 +337,7 @@ namespace Store
             }
 
             ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = targetPosition;
+            ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.SetParent(itemPosition);
         }
 
         private IEnumerator StartWaitingLine()
@@ -360,14 +363,19 @@ namespace Store
             float difference = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
+            InstantiateTexture(percentageDifference);
+            
             if (ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price >= itemList.CurrentPrice)
             {
-                if (!(percentageDifference > _willingnessToPay)) return true;
+                // Reaction somewhat happy
+                if (percentageDifference < _willingnessToPay) return true;
 
+                // Reaction angry
                 CurrentState = State.Angry;
                 return false;
             }
 
+            // Reaction very happy
             _leaveTip = true;
             return true;
         }
@@ -460,7 +468,42 @@ namespace Store
             return distance < distanceDif;
         }
 
-        private void OnDrawGizmos()
+        private void InstantiateTexture(float percentageDifference)
+        {
+            Texture selectedSprite = GetSpriteForPercentageDifference(percentageDifference);
+            
+            if (!selectedSprite) return;
+            
+            RawImage spriteRenderer = reactionSprite.GetComponent<RawImage>();
+            spriteRenderer.texture = selectedSprite;
+            reactionSprite.SetActive(true);
+            reactionSprite.transform.LookAt(Camera.main.transform);
+            
+            StartCoroutine(DeactivateSpriteAfterDelay(_reactionTime));
+
+        }
+        
+        private Texture GetSpriteForPercentageDifference(float percentageDifference)
+        {
+            const int happyThreshold = -20;
+            const int neutralThreshold = 0;
+            const int angryThreshold = 20;
+            return percentageDifference switch
+            {
+                < happyThreshold => ReactionTextures[0],
+                < neutralThreshold => ReactionTextures[1],
+                < angryThreshold => ReactionTextures[2],
+                _ => ReactionTextures[3]
+            };
+        }
+        
+        private IEnumerator DeactivateSpriteAfterDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            reactionSprite.SetActive(false);
+        }
+        
+        private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.green;
             Gizmos.DrawLine(transform.position, agent.destination);

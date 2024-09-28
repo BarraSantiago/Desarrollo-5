@@ -111,7 +111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cba4392c3629dd240891b62eb759a666, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 0}
+  item: {fileID: 11400000, guid: f7578e98a8b510841bd105ac3fca3600, type: 2}
   amount: 1
   droppedByPlayer: 0
   droppedTime: 0
