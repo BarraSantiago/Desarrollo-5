@@ -54,13 +54,13 @@ namespace Store.Shops
             _shopUpgradeCost = 150;
             _shopUpgradeCostMultiplier = 5;
             _shopUpgradeCost *= _shopUpgradeCostMultiplier * _shopLevel;
-            amountText.text = _currentAmount.ToString();
-            upgradeText.text = _shopUpgradeCost.ToString();
+            if(amountText) amountText.text = _currentAmount.ToString();
+            if(upgradeText) upgradeText.text = _shopUpgradeCost.ToString();
 
-            upgradeButton.onClick.AddListener(UpgradeShop);
+            upgradeButton?.onClick.AddListener(UpgradeShop);
             buyButton.onClick.AddListener(BuyItem);
-            increaseAmountButton.onClick.AddListener(IncreaseAmount);
-            decreaseAmountButton.onClick.AddListener(DecreaseAmount);
+            increaseAmountButton?.onClick.AddListener(IncreaseAmount);
+            decreaseAmountButton?.onClick.AddListener(DecreaseAmount);
             ListItems();
 
             UpdateAvailability(player.money);
@@ -81,7 +81,6 @@ namespace Store.Shops
             _selectedItem = completeDatabase.ItemObjects[itemId];
             selectedItemImage.sprite = _selectedItem.uiDisplay;
             
-            costText.color = player.money < _currentCost ? Color.red : Color.green;
             
             int recipeItemsLength = _selectedItem.data.recipe?.items?.Length ?? 0;
 
@@ -94,9 +93,8 @@ namespace Store.Shops
 
                 for (int i = 0; i < _selectedItem.data.recipe.items.Length; i++)
                 {
-                    ItemObject currentEntry = completeDatabase.ItemObjects[_selectedItem.data.recipe.items[i].itemID];
-                    shopRecipes[i].SetRecipe(currentEntry, _selectedItem.data.recipe.items[i].amount,
-                        player.inventory.GetItemCount(currentEntry.data));
+                    shopRecipes[i].SetRecipe(_selectedItem, _selectedItem.data.recipe.items[i].amount,
+                        player.inventory.GetItemCount(_selectedItem.data));
                 }
 
                 _currentCost = _selectedItem.data.listPrice.originalPrice / 2;
@@ -106,6 +104,7 @@ namespace Store.Shops
                 _currentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
             }
 
+            costText.color = player.money < _currentCost ? Color.red : Color.green;
             costText.text = _currentCost.ToString();
         }
 
@@ -147,8 +146,8 @@ namespace Store.Shops
 
         private void UpdateAvailability(int money)
         {
-            upgradeText.color = player.money < _shopUpgradeCost ? Color.red : Color.green;
-            costText.color = player.money < _currentCost ? Color.red : Color.green;
+           costText.color = player.money < _currentCost ? Color.red : Color.green;
+           if(upgradeText) upgradeText.color = player.money < _shopUpgradeCost ? Color.red : Color.green;
 
             CheckLevel();
 
@@ -165,9 +164,10 @@ namespace Store.Shops
         private void CheckLevel()
         {
             if (_shopLevel < _shopMaxLevel) return;
-            upgradeButton.interactable = false;
-            upgradeText.text = "Max Level";
-            upgradeText.color = Color.gray;
+            
+            if(upgradeText) upgradeButton.interactable = false;
+            if(upgradeText) upgradeText.text = "Max Level";
+            if(upgradeText) upgradeText.color = Color.gray;
         }
 
         private void UpgradeShop()
