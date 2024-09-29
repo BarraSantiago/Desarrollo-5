@@ -9,7 +9,7 @@ namespace Store.Shops
 {
     public class ShopItem : MonoBehaviour
     {
-        public static Action<int> OnSelectItem;
+        public Action<int> OnSelectItem;
         public int itemID;
         public Image itemImage;
         public TMP_Text price;

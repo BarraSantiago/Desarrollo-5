@@ -1,20 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using InventorySystem;
 using player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils;
 
 namespace Store.Shops
 {
-    public class Shop : MonoBehaviour
+    public class Shop : MonoBehaviour, IInitializable
     {
         #region Serialized Fields
 
         [Header("Shop setup")] 
         [SerializeField] private ItemDatabaseObject completeDatabase;
-        [SerializeField] private ItemDatabaseObject[] databases;
+        [SerializeField] private ItemIdDatabaseObject[] databases;
         [SerializeField] private Button upgradeButton;
         [SerializeField] private Player player;
         [SerializeField] private TMP_Text upgradeText;
@@ -27,6 +29,7 @@ namespace Store.Shops
         [SerializeField] private Button increaseAmountButton;
         [SerializeField] private Button decreaseAmountButton;
         [SerializeField] private TMP_Text amountText;
+        [SerializeField] private TMP_Text craftChanceText;
         [SerializeField] private ShopRecipe[] shopRecipes;
         [SerializeField] private TMP_Text costText;
         [SerializeField] private float itemCostMultiplier = 0.8f;
@@ -46,9 +49,9 @@ namespace Store.Shops
 
         #endregion
 
+
         private void Start()
         {
-            ShopItem.OnSelectItem += SelectItem;
             _shopLevel = 1;
             _shopMaxLevel = databases.Length;
             _shopUpgradeCost = 150;
@@ -64,8 +67,6 @@ namespace Store.Shops
             ListItems();
 
             UpdateAvailability(player.money);
-            Player.OnMoneyUpdate += UpdateAvailability;
-            ShopItem.OnSelectItem += SelectItem;
 
             selectedItemImage.preserveAspect = true;
             SelectItem(databases[0].ItemObjects[0].data.id);
@@ -84,19 +85,20 @@ namespace Store.Shops
             
             int recipeItemsLength = _selectedItem.data.recipe?.items?.Length ?? 0;
 
-            if (_selectedItem.data.craftable)
+            if (_selectedItem.data.craftable && _selectedItem.data.recipe)
             {
                 for (int i = 0; i < shopRecipes.Length; i++)
                 {
                     shopRecipes[i].gameObject.SetActive(i < recipeItemsLength);
                 }
 
-                for (int i = 0; i < _selectedItem.data.recipe.items.Length; i++)
+                for (int i = 0; i < _selectedItem.data.recipe.items!.Length; i++)
                 {
-                    shopRecipes[i].SetRecipe(_selectedItem, _selectedItem.data.recipe.items[i].amount,
+                    ItemObject itemRecipe = completeDatabase.ItemObjects[_selectedItem.data.recipe.items[i].itemID];
+                    shopRecipes[i].SetRecipe(itemRecipe, _selectedItem.data.recipe.items[i].amount,
                         player.inventory.GetItemCount(_selectedItem.data));
                 }
-
+                craftChanceText.text = _selectedItem.data.recipe.craftChance.ToString(CultureInfo.CurrentCulture) + "%";
                 _currentCost = _selectedItem.data.listPrice.originalPrice / 2;
             }
             else
@@ -104,7 +106,7 @@ namespace Store.Shops
                 _currentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
             }
 
-            costText.color = player.money < _currentCost ? Color.red : Color.green;
+            UpdateTextColor();
             costText.text = _currentCost.ToString();
         }
 
@@ -146,10 +148,9 @@ namespace Store.Shops
 
         private void UpdateAvailability(int money)
         {
-           costText.color = player.money < _currentCost ? Color.red : Color.green;
-           if(upgradeText) upgradeText.color = player.money < _shopUpgradeCost ? Color.red : Color.green;
+           UpdateTextColor();
 
-            CheckLevel();
+           CheckLevel();
 
             if (!_selectedItem || !_selectedItem.data.craftable) return;
 
@@ -159,6 +160,12 @@ namespace Store.Shops
                 shopRecipes[i].UpdateAbailability(_selectedItem.data.recipe.items[i].amount,
                     player.inventory.GetItemCount(currentEntry.data));
             }
+        }
+
+        private void UpdateTextColor()
+        {
+            costText.color = player.money < _currentCost ? Color.red : Color.green;
+            if(upgradeText) upgradeText.color = player.money < _shopUpgradeCost ? Color.red : Color.green;
         }
 
         private void CheckLevel()
@@ -210,6 +217,7 @@ namespace Store.Shops
             _currentAmount--;
             amountText.text = _currentAmount.ToString();
             _currentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
+            UpdateTextColor();
             costText.text = _currentCost.ToString();
         }
 
@@ -218,7 +226,27 @@ namespace Store.Shops
             _currentAmount++;
             amountText.text = _currentAmount.ToString();
             _currentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
+            UpdateTextColor();
             costText.text = _currentCost.ToString();
         }
+
+        public void Initialize()
+        {
+            foreach (var shopItem in _shopItems)
+            {
+                shopItem.OnSelectItem += SelectItem;
+            }
+            Player.OnMoneyUpdate += UpdateAvailability;
+            
+        }
+
+        public void Deinitialize()
+        {
+            foreach (var shopItem in _shopItems)
+            {
+                shopItem.OnSelectItem -= SelectItem;
+            }
+            Player.OnMoneyUpdate -= UpdateAvailability;
+         }
     }
 }

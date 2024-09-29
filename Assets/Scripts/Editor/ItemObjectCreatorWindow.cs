@@ -20,6 +20,7 @@ namespace Editor
         private int _maxStack;
         private bool _isCraftable;
         private ItemRecipe.ItemEntry[] _recipeEntries;
+        private float craftChance;
         
         [MenuItem("Window/ItemObject Creator")]
         public static void ShowWindow()
@@ -60,7 +61,8 @@ namespace Editor
         {
             _isCraftable = EditorGUILayout.Toggle("Is Craftable", _isCraftable);
             if (!_isCraftable) return;
-            
+            craftChance = EditorGUILayout.FloatField("Craft Chance", 100.0f);
+
             int entryCount = EditorGUILayout.IntField("Number of Recipe Entries",
                 _recipeEntries?.Length ?? 0);
             
@@ -96,7 +98,7 @@ namespace Editor
             CheckForErrors();
 
             // Create a new ItemObject
-            ItemObject itemObject = ScriptableObject.CreateInstance<ItemObject>();
+            ItemObject itemObject = CreateInstance<ItemObject>();
             itemObject.uiDisplay = _sprite;
             itemObject.name = _itemName;
             itemObject.description = _description;
@@ -111,8 +113,9 @@ namespace Editor
             itemObject.data.craftable = _isCraftable;
             if (_isCraftable)
             {
-                ItemRecipe itemRecipe = ScriptableObject.CreateInstance<ItemRecipe>();
+                ItemRecipe itemRecipe = CreateInstance<ItemRecipe>();
                 itemRecipe.items = _recipeEntries;
+                itemRecipe.craftChance = craftChance;
                 AssetDatabase.CreateAsset(itemRecipe, "Assets/ScriptableObjects/Recipes/" + _itemName + "Recipe.asset");
                 AssetDatabase.SaveAssets();
                 itemObject.data.recipe = itemRecipe;

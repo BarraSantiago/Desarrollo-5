@@ -8,6 +8,7 @@ using UI;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Utils;
 using Random = UnityEngine.Random;
 
 namespace Store
@@ -60,6 +61,7 @@ namespace Store
         private readonly List<Client> _clients = new List<Client>();
         private const string WaitingSoundKey = "ClientWaiting";
         private const string MurmurSoundKey = "Murmur";
+        private Initializer _initializer;
         private WaitingLine _waitingLine;
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
@@ -105,7 +107,8 @@ namespace Store
 
             Player.OnMoneyUpdate += UpdateMoneyText;
 
-            popularityManager.Initialize();
+            _initializer = gameObject.AddComponent<Initializer>();
+            _initializer.InitializeAll();
             _waitingLine.OnItemPaid += popularityManager.ItemPaid;
         }
 
@@ -121,6 +124,7 @@ namespace Store
 
         public void OnApplicationQuit()
         {
+            _initializer.DeinitializeAll();
             SaveInventories();
         }
 
