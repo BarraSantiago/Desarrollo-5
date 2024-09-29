@@ -34,7 +34,6 @@ namespace InventorySystem
             }
 
             AddPointerExitEvent();
-            if(item.type == ItemType.Potion) useButton.onClick.AddListener(UseItem);
         }
 
         private void AddPointerExitEvent()

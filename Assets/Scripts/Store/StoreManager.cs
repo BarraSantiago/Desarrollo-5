@@ -21,7 +21,7 @@ namespace Store
 
         [Header("Client Setup")] 
         [SerializeField] private Button chargeButton;
-        [SerializeField] private GameObject clientPrefab;
+        [SerializeField] private GameObject[] clientPrefabs;
         [SerializeField] private ClientTransforms clientTransforms;
         [SerializeField] private Texture[] reactionTextures;
 
@@ -252,7 +252,7 @@ namespace Store
             // TODO improve this with object pooling
             for (int i = 0; i < _dailyClients; i++)
             {
-                GameObject newClient = Instantiate(clientPrefab);
+                GameObject newClient = Instantiate(clientPrefabs[Random.Range(0, clientPrefabs.Length)]);
                 newClient.transform.position = clientTransforms.SpawnPoint.position;
 
                 _clients.Add(newClient.GetComponent<Client>());

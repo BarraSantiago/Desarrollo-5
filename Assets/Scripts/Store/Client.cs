@@ -485,15 +485,22 @@ namespace Store
         
         private Texture GetSpriteForPercentageDifference(float percentageDifference)
         {
-            const int happyThreshold = -20;
+            const int veryHappyThreshold = -45;
+            const int happyThreshold = -30;
+            const int somewhatHappyThreshold = -15;
             const int neutralThreshold = 0;
-            const int angryThreshold = 20;
+            const int angryThreshold = 15;
+            const int veryAngryThreshold = 30;
+
             return percentageDifference switch
             {
-                < happyThreshold => ReactionTextures[0],
-                < neutralThreshold => ReactionTextures[1],
-                < angryThreshold => ReactionTextures[2],
-                _ => ReactionTextures[3]
+                <= veryHappyThreshold => ReactionTextures[5],
+                <= happyThreshold => ReactionTextures[4],
+                < somewhatHappyThreshold => ReactionTextures[3],
+                >= veryAngryThreshold => ReactionTextures[0],
+                >= angryThreshold => ReactionTextures[1],
+                >= neutralThreshold => ReactionTextures[2],
+                _ => null
             };
         }
         
