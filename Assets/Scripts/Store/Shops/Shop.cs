@@ -165,7 +165,7 @@ namespace Store.Shops
         {
             if (_shopLevel < _shopMaxLevel) return;
             
-            if(upgradeText) upgradeButton.interactable = false;
+            if(upgradeButton) upgradeButton.interactable = false;
             if(upgradeText) upgradeText.text = "Max Level";
             if(upgradeText) upgradeText.color = Color.gray;
         }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a9bb69263e5195428145dba3feaefd3, type: 3}
-  m_Name: MainDatabase 1
+  m_Name: MainDatabase
   m_EditorClassIdentifier: 
   ItemObjects:
   - {fileID: 11400000, guid: 201c8139c31f1f5428c64adfda1883a2, type: 2}
@@ -20,3 +20,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d1e06ad871aba9c46ab2a32eac08f751, type: 2}
   - {fileID: 11400000, guid: 461717dc0b59b994fbb23cc1cf41e0c5, type: 2}
   - {fileID: 11400000, guid: 555c1ac7f29ce6f42802dae5cec35305, type: 2}
+  - {fileID: 11400000, guid: af5e7d9fb48c4b64286e18f1729fbb39, type: 2}
