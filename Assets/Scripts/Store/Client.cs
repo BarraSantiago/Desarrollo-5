@@ -364,7 +364,6 @@ namespace Store
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
             InstantiateTexture(percentageDifference);
-            
             if (ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price >= itemList.CurrentPrice)
             {
                 // Reaction somewhat happy
@@ -492,16 +491,29 @@ namespace Store
             const int angryThreshold = 15;
             const int veryAngryThreshold = 30;
 
-            return percentageDifference switch
+            switch (percentageDifference)
             {
-                <= veryHappyThreshold => ReactionTextures[5],
-                <= happyThreshold => ReactionTextures[4],
-                < somewhatHappyThreshold => ReactionTextures[3],
-                >= veryAngryThreshold => ReactionTextures[0],
-                >= angryThreshold => ReactionTextures[1],
-                >= neutralThreshold => ReactionTextures[2],
-                _ => null
-            };
+                case <= veryHappyThreshold:
+                    AudioManager.instance.Play("ClientHum");
+                    return ReactionTextures[5];
+                case <= happyThreshold:
+                    AudioManager.instance.Play("ClientHum");
+                    return ReactionTextures[4];
+                case < somewhatHappyThreshold:
+                    AudioManager.instance.Play("ClientHum");
+                    return ReactionTextures[3];
+                case >= veryAngryThreshold:
+                    AudioManager.instance.Play("ClientGrunt");
+                    return ReactionTextures[0];
+                case >= angryThreshold:
+                    AudioManager.instance.Play("ClientGrunt");
+                    return ReactionTextures[1];
+                case >= neutralThreshold:
+                    AudioManager.instance.Play("ClientGrunt");
+                    return ReactionTextures[2];
+                default:
+                    return null;
+            }
         }
         
         private IEnumerator DeactivateSpriteAfterDelay(float delay)
