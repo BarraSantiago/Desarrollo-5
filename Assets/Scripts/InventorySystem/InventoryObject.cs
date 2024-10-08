@@ -220,6 +220,14 @@ namespace InventorySystem
             Container.Clear();
         }
 
+        public void RemoveAllItems()
+        {
+            foreach (var slot in GetSlots)
+            {
+                slot.RemoveItem();
+            }
+        }
+
         public int GetItemCount(Item item)
         {
             var slots = FindAllItemsOnInventory(item);

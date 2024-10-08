@@ -4,7 +4,6 @@ using System.Linq;
 using InventorySystem;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -148,7 +147,6 @@ namespace Store
         {
             if (ItemDisplayer.DisplayItems[_desiredItemIndex])
                 ItemDisplayer.DisplayItems[_desiredItemIndex].BeingViewed = false;
-            ItemDisplayer.DisplayItems[_desiredItemIndex] = null;
         }
 
         private void ClientBehaviour()
@@ -317,6 +315,7 @@ namespace Store
             _itemId = targetItem.Item.data.id;
             targetItem.displayObject = null;
             targetItem.CleanDisplay();
+            targetItem.inventory.RemoveItem(ItemDatabase.ItemObjects[_itemId].data, _itemAmount);
             CurrentState = State.WaitingInline;
         }
 

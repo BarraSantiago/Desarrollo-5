@@ -13,7 +13,6 @@ namespace Store
 
         public void Initialize(InventoryObject[] storeInventories)
         {
-            StoreManager.OnEndCycle += Deinitialize;
             Client.ItemGrabbed += RemoveItem;
 
             for (int i = 0; i < DisplayItems.Length; i++)
@@ -28,7 +27,6 @@ namespace Store
 
         private void Deinitialize()
         {
-            StoreManager.OnEndCycle -= Deinitialize;
         }
 
         private void OnDestroy()

@@ -151,7 +151,7 @@ namespace InventorySystem
             if (slot.item.id >= 0)
             {
                 MouseData.TempItemBeingDragged = CreateTempItem(obj);
-                MouseData.TempItemBeingDragged.transform.parent = UIManager.MainCanvas.transform;
+                MouseData.TempItemBeingDragged.transform.SetParent(UIManager.MainCanvas.transform);
             }
         }
 
