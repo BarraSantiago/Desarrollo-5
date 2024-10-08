@@ -165,10 +165,12 @@ namespace InventorySystem
                     ItemId = slot.item.id,
                     Amount = slot.amount
                 }).ToArray()
+                
             };
-
+            
             IFormatter formatter = new BinaryFormatter();
             Stream stream = null;
+            
             try
             {
                 stream = new FileStream(string.Concat(Application.persistentDataPath, savePath), FileMode.Create, FileAccess.Write);
@@ -200,7 +202,7 @@ namespace InventorySystem
                 SerializableInventory newContainer = (SerializableInventory)formatter.Deserialize(stream);
                 foreach (var slot in newContainer.Slots)
                 {
-                    GetSlots[slot.SlotIndex].UpdateSlot(database.ItemObjects[slot.SlotIndex].data, slot.Amount);
+                    GetSlots[slot.SlotIndex].UpdateSlot(database.ItemObjects[slot.ItemId].data, slot.Amount);
                 }
             }
             catch (SerializationException e)

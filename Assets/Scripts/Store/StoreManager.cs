@@ -117,11 +117,6 @@ namespace Store
             ChargeClient();
         }
 
-        private void OnDestroy()
-        {
-            SaveInventories();
-        }
-
         public void OnApplicationQuit()
         {
             _initializer.DeinitializeAll();
