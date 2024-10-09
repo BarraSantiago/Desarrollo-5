@@ -14,7 +14,7 @@ namespace player
         [SerializeField] private GameObject endDayStats;
         [SerializeField] private GameObject endDayInput;
         [SerializeField] private InventoryObject playerInventory;
-        [SerializeField] private Color highlightColor = Color.yellow;
+        [SerializeField] private Color highlightColor = Color.white;
         public bool dayEnded;
         private GameObject lastHighlightedObject;
         private Color originalColor;

@@ -13276,7 +13276,7 @@ MonoBehaviour:
   endDayStats: {fileID: 1948361437}
   endDayInput: {fileID: 1460501603}
   playerInventory: {fileID: 11400000, guid: 871251e7f17d13e4b97533a348629bc0, type: 2}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: {r: 0.07450981, g: 0, b: 0, a: 1}
   dayEnded: 0
 --- !u!114 &1641869755
 MonoBehaviour:
