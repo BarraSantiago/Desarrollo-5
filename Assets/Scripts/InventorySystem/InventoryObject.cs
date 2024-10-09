@@ -202,6 +202,7 @@ namespace InventorySystem
                 SerializableInventory newContainer = (SerializableInventory)formatter.Deserialize(stream);
                 foreach (var slot in newContainer.Slots)
                 {
+                    if(slot is null || slot.ItemId == -1) continue;
                     GetSlots[slot.SlotIndex].UpdateSlot(database.ItemObjects[slot.ItemId].data, slot.Amount);
                 }
             }
