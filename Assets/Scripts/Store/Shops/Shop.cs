@@ -67,7 +67,7 @@ namespace Store.Shops
             {
                 _craftChanceMultiplier = value;
                 UpdateTextColor();
-                craftChanceText.text = _craftChance * _craftChanceMultiplier + "%";
+                craftChanceText.text = (_craftChance * _craftChanceMultiplier).ToString("0.##") + "%";
             }
         }
 
@@ -198,7 +198,7 @@ namespace Store.Shops
                 {
                     < MinAmount => MinAmount.ToString(),
                     > MaxAmount => MaxAmount.ToString(),
-                    _ => "$" + inputField.text
+                    _ => inputField.text
                 };
                 
                 CurrentCost = _selectedItem.data.listPrice.originalPrice / 3 + newPrice;
@@ -219,7 +219,7 @@ namespace Store.Shops
         private void SetMaxCraftChance()
         {
             CraftChanceMultiplier = 100 / _selectedItem.data.recipe.craftChance;
-            inputField.text = CraftChanceMultiplier.ToString(CultureInfo.CurrentCulture);
+            inputField.text = (_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier).ToString("0.##");
             CurrentCost = _selectedItem.data.listPrice.originalPrice / 3 + (int)(_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier);
         }
 
@@ -308,11 +308,6 @@ namespace Store.Shops
             amountText.text = _currentAmount.ToString();
             CurrentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
         }
-
-        private void OnSelectInput()
-        {
-            inputField.text = inputField.text.Replace("$", "");
-        }
         
         public void Initialize()
         {
@@ -333,7 +328,6 @@ namespace Store.Shops
             
             inputField.onEndEdit.AddListener(delegate { ChangeCraftChanceMod(); });
             inputField.onDeselect.AddListener(delegate { ChangeCraftChanceMod(); });
-            inputField.onSelect.AddListener(delegate { OnSelectInput(); });
         }
 
         public void Deinitialize()
@@ -354,7 +348,6 @@ namespace Store.Shops
             if (!isCraftingShop) return;
             inputField.onEndEdit.RemoveListener(delegate { ChangeCraftChanceMod(); });
             inputField.onDeselect.RemoveListener(delegate { ChangeCraftChanceMod(); });
-            inputField.onSelect.RemoveListener(delegate { OnSelectInput(); });
         }
     }
 }
