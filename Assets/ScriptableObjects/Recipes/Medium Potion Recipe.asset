@@ -17,4 +17,4 @@ MonoBehaviour:
     amount: 1
   - itemID: 5
     amount: 2
-  craftChance: 55
+  craftChance: 35

@@ -9182,9 +9182,11 @@ MonoBehaviour:
   upgradeButton: {fileID: 0}
   player: {fileID: 1641869752}
   upgradeText: {fileID: 338096692}
+  isCraftingShop: 0
   shopItemPrefab: {fileID: 346873307589420, guid: f5a299b15d8dd8347b1381f3db0a6c97, type: 3}
   selectedItemImage: {fileID: 1068600148}
   shopItemsParent: {fileID: 767901542}
+  inputField: {fileID: 8226464349429175161}
   buyButton: {fileID: 321990746}
   increaseAmountButton: {fileID: 0}
   decreaseAmountButton: {fileID: 0}
@@ -9948,9 +9950,11 @@ MonoBehaviour:
   upgradeButton: {fileID: 979654962}
   player: {fileID: 1641869752}
   upgradeText: {fileID: 338096692}
+  isCraftingShop: 0
   shopItemPrefab: {fileID: 346873307589420, guid: f5a299b15d8dd8347b1381f3db0a6c97, type: 3}
   selectedItemImage: {fileID: 8226464349429175162}
   shopItemsParent: {fileID: 8226464349429175160}
+  inputField: {fileID: 0}
   buyButton: {fileID: 1243735698}
   increaseAmountButton: {fileID: 204003365}
   decreaseAmountButton: {fileID: 925017458}
@@ -20181,6 +20185,38 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -180.83185
       objectReference: {fileID: 0}
+    - target: {fileID: 2663604226664792598, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2663604226664792598, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2663604226664792598, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2663604226664792598, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3355129905492174332, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3355129905492174332, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3355129905492174332, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3355129905492174332, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5643637804011383273, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
       propertyPath: m_Spacing
       value: 0.2
@@ -20297,6 +20333,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shop Menus
       objectReference: {fileID: 0}
+    - target: {fileID: 8879587728095123250, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8879587728095123250, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8879587728095123250, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8879587728095123250, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
 --- !u!224 &8226464349429175160 stripped
@@ -20304,6 +20356,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1959663902618534474, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
   m_PrefabInstance: {fileID: 8226464349429175159}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8226464349429175161 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 340310246693783896, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+  m_PrefabInstance: {fileID: 8226464349429175159}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &8226464349429175162 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2272151165995065168, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
