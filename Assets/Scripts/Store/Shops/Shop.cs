@@ -76,7 +76,7 @@ namespace Store.Shops
         private float _craftChanceMultiplier = 1;
         private const int MaxAmount = 999999;
         private const int MinAmount = 1;
-        
+
         #endregion
 
 
@@ -89,8 +89,8 @@ namespace Store.Shops
             _shopUpgradeCost *= _shopUpgradeCostMultiplier * _shopLevel;
             if (amountText) amountText.text = _currentAmount.ToString();
             if (upgradeText) upgradeText.text = _shopUpgradeCost.ToString();
-            
-            
+
+
             ListItems();
 
             UpdateAvailability(player.money);
@@ -98,7 +98,7 @@ namespace Store.Shops
             selectedItemImage.preserveAspect = true;
             SelectItem(databases[0].ItemObjects[0].data.id);
         }
-        
+
         private void OnEnable()
         {
             UpdateAvailability(player.money);
@@ -114,7 +114,6 @@ namespace Store.Shops
 
             if (_selectedItem.data.craftable && _selectedItem.data.recipe)
             {
-
                 for (int i = 0; i < shopRecipes.Length; i++)
                 {
                     shopRecipes[i].gameObject.SetActive(i < recipeItemsLength);
@@ -128,11 +127,11 @@ namespace Store.Shops
                 }
 
                 _craftChance = completeDatabase.ItemObjects[_selectedItem.data.id].data.recipe.craftChance;
-                craftChanceText.text = (_craftChance * _craftChanceMultiplier).ToString(CultureInfo.CurrentCulture) + "%";
+                craftChanceText.text =
+                    (_craftChance * _craftChanceMultiplier).ToString(CultureInfo.CurrentCulture) + "%";
                 CurrentCost = _selectedItem.data.listPrice.originalPrice / 3;
                 inputField.text = 0.ToString();
                 CraftChanceMultiplier = 1;
-                
             }
             else
             {
@@ -156,7 +155,7 @@ namespace Store.Shops
                 player.money -= CurrentCost;
                 player.inventory.AddItem(_selectedItem.data, _currentAmount);
             }
-            
+
             UpdateAvailability(player.money);
         }
 
@@ -168,7 +167,7 @@ namespace Store.Shops
                 ItemObject currentEntry = completeDatabase.ItemObjects[itemEntry.itemID];
                 player.inventory.RemoveItem(currentEntry.data, itemEntry.amount);
             }
-            
+
             if (Random.Range(0, 100) < _craftChance * CraftChanceMultiplier)
             {
                 player.inventory.AddItem(_selectedItem.data, _currentAmount);
@@ -178,7 +177,7 @@ namespace Store.Shops
             {
                 AudioManager.instance.Play("CraftingFail");
             }
-            
+
             return true;
         }
 
@@ -189,7 +188,7 @@ namespace Store.Shops
                 where player.inventory.GetItemCount(currentEntry.data) < itemEntry.amount
                 select itemEntry).Any();
         }
-        
+
         private void ChangeCraftChanceMod()
         {
             if (int.TryParse(inputField.text, out int newPrice))
@@ -200,7 +199,7 @@ namespace Store.Shops
                     > MaxAmount => MaxAmount.ToString(),
                     _ => inputField.text
                 };
-                
+
                 CurrentCost = _selectedItem.data.listPrice.originalPrice / 3 + newPrice;
                 CraftChanceMultiplier = ((float)newPrice / _selectedItem.data.listPrice.originalPrice) + 1;
 
@@ -220,7 +219,8 @@ namespace Store.Shops
         {
             CraftChanceMultiplier = 100 / _selectedItem.data.recipe.craftChance;
             inputField.text = (_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier).ToString("0.##");
-            CurrentCost = _selectedItem.data.listPrice.originalPrice / 3 + (int)(_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier);
+            CurrentCost = _selectedItem.data.listPrice.originalPrice / 3 +
+                          (int)(_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier);
         }
 
 
@@ -308,7 +308,7 @@ namespace Store.Shops
             amountText.text = _currentAmount.ToString();
             CurrentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
         }
-        
+
         public void Initialize()
         {
             foreach (var shopItem in _shopItems)
@@ -325,7 +325,7 @@ namespace Store.Shops
             decreaseAmountButton?.onClick.AddListener(DecreaseAmount);
 
             if (!isCraftingShop) return;
-            
+
             inputField.onEndEdit.AddListener(delegate { ChangeCraftChanceMod(); });
             inputField.onDeselect.AddListener(delegate { ChangeCraftChanceMod(); });
         }
@@ -344,7 +344,7 @@ namespace Store.Shops
             buyButton.onClick.RemoveListener(BuyItem);
             increaseAmountButton?.onClick.RemoveListener(IncreaseAmount);
             decreaseAmountButton?.onClick.RemoveListener(DecreaseAmount);
-            
+
             if (!isCraftingShop) return;
             inputField.onEndEdit.RemoveListener(delegate { ChangeCraftChanceMod(); });
             inputField.onDeselect.RemoveListener(delegate { ChangeCraftChanceMod(); });
