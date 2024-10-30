@@ -1822,7 +1822,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Buy Item
+  m_text: Craft Item
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 419112269cc5c67448d8f7570a9a6875, type: 2}
   m_sharedMaterial: {fileID: 8582872187526979888, guid: 419112269cc5c67448d8f7570a9a6875, type: 2}
@@ -2480,7 +2480,7 @@ GameObject:
   - component: {fileID: 5783837120321757805}
   - component: {fileID: 8186344627755504663}
   m_Layer: 5
-  m_Name: Buy Item Button
+  m_Name: Craft Item Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
