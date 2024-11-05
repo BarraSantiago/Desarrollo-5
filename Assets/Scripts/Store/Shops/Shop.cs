@@ -75,7 +75,7 @@ namespace Store.Shops
         private int _currentCost;
         private float _craftChanceMultiplier = 1;
         private const int MaxAmount = 999999;
-        private const int MinAmount = 1;
+        private const int MinAmount = 0;
 
         #endregion
 
