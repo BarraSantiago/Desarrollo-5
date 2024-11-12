@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UI;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -16,6 +17,7 @@ namespace InventorySystem
         [SerializeField] private GameObject itemDisplayPrefab;
         [SerializeField] private Canvas canvas;
 
+        protected ItemDatabaseObject itemDatabase;
         public InventoryObject inventory;
         public Dictionary<GameObject, InventorySlot> slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
         public static Action<GameObject, int> OnDropItem;
@@ -24,6 +26,9 @@ namespace InventorySystem
 
         public void Awake()
         {
+            itemDatabase = AssetDatabase.LoadAssetAtPath<ItemDatabaseObject>
+                ("Assets/ScriptableObjects/Databases/MainDatabase.asset");
+
             CreateSlots();
             foreach (var slot in inventory.GetSlots)
             {

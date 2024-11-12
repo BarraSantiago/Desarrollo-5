@@ -583,6 +583,7 @@ MonoBehaviour:
   numberOfColumn: 1
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 41803497}
+  itemInfo: {fileID: 0}
 --- !u!114 &41803499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5259,6 +5260,7 @@ MonoBehaviour:
   numberOfColumn: 1
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 553518989}
+  itemInfo: {fileID: 0}
 --- !u!114 &553518991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10551,6 +10553,7 @@ MonoBehaviour:
   numberOfColumn: 1
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 1181180133}
+  itemInfo: {fileID: 0}
 --- !u!114 &1181180135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11675,6 +11678,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6728761193159637348, guid: 7678681d93318754ba26d4fbcd7be85d, type: 3}
   m_PrefabInstance: {fileID: 6728761193986240913}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1364003066 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3323150727301041368, guid: 7678681d93318754ba26d4fbcd7be85d, type: 3}
+  m_PrefabInstance: {fileID: 6728761193986240913}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 105139525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d45c534a774c4d96ffe455390b7f5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1378916330
 GameObject:
   m_ObjectHideFlags: 0
@@ -11988,6 +12002,7 @@ MonoBehaviour:
   numberOfColumn: 1
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 1397082474}
+  itemInfo: {fileID: 0}
 --- !u!114 &1397082476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17418,6 +17433,7 @@ MonoBehaviour:
   numberOfColumn: 1
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 1886167838}
+  itemInfo: {fileID: 0}
 --- !u!114 &1886167840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19967,6 +19983,7 @@ MonoBehaviour:
   numberOfColumn: 1
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 2133816990}
+  itemInfo: {fileID: 0}
 --- !u!114 &2133816992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22760,6 +22777,10 @@ PrefabInstance:
       propertyPath: canvas
       value: 
       objectReference: {fileID: 1289141503}
+    - target: {fileID: 6728761193159637351, guid: 7678681d93318754ba26d4fbcd7be85d, type: 3}
+      propertyPath: itemInfo
+      value: 
+      objectReference: {fileID: 1364003066}
     - target: {fileID: 6728761193159637351, guid: 7678681d93318754ba26d4fbcd7be85d, type: 3}
       propertyPath: slotsParent
       value: 

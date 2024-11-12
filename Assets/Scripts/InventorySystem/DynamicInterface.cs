@@ -14,7 +14,8 @@ namespace InventorySystem
         [FormerlySerializedAs("NUMBER_OF_COLUMN")] public int numberOfColumn;
         [FormerlySerializedAs("Y_SPACE_BETWEEN_ITEMS")] public int ySpaceBetweenItems;
         [SerializeField] private Transform slotsParent;
-
+        [SerializeField] private ItemInfo itemInfo;
+        
         protected override void CreateSlots()
         {
             slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
@@ -32,13 +33,27 @@ namespace InventorySystem
 
                 AddEvent(obj, EventTriggerType.PointerEnter, delegate { OnEnter(obj); });
                 AddEvent(obj, EventTriggerType.PointerExit, delegate { OnExit(obj); });
-                AddEvent(obj, EventTriggerType.PointerClick, delegate(BaseEventData data) { OnRightClick(obj, data); });
+                AddEvent(obj, EventTriggerType.PointerClick, delegate(BaseEventData data)
+                {
+                    OnRightClick(obj, data);
+                    OnLeftClick(obj, data);
+                });
                 AddEvent(obj, EventTriggerType.BeginDrag, delegate { OnDragStart(obj); });
                 AddEvent(obj, EventTriggerType.EndDrag, delegate { OnDragEnd(obj); });
                 AddEvent(obj, EventTriggerType.Drag, delegate { OnDrag(obj); });
                 inventory.GetSlots[i].slotDisplay = obj;
                 slotsOnInterface.Add(obj, inventory.GetSlots[i]);
             }
+        }
+        private void OnLeftClick(GameObject obj, BaseEventData data)
+        {
+            if(!itemInfo) return;
+            if (data is not PointerEventData { button: PointerEventData.InputButton.Left }) return;
+            
+            var slot = slotsOnInterface[obj];
+            var itemId = slot.item.id;
+            var item = itemDatabase.ItemObjects[itemId];
+            itemInfo.UpdateItemInfo(item.uiDisplay, item.name, item.description);
         }
 
         private Vector3 GetPosition(int i)
