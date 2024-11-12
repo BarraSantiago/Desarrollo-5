@@ -23,6 +23,7 @@ namespace Store.Shops
             itemName.text = itemData.data.name;
             price.text = ((int)(itemData.data.listPrice.originalPrice * itemCostMultiplier)).ToString(CultureInfo.InvariantCulture);
             buyButton.onClick.AddListener(ShowItem);
+            itemImage.preserveAspect = true;
         }
 
         private void ShowItem()

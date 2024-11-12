@@ -12,13 +12,13 @@ namespace UI
         public static Canvas MainCanvas;
         public void SpawnFlyingText(int num)
         {
-            GameObject text = Instantiate(flyingtext, flyingTextLocation);
+            GameObject flyingText = Instantiate(flyingtext, flyingTextLocation);
             
-            text.GetComponent<TMP_Text>().text = "+" + num.ToString();
+            flyingText.GetComponent<TMP_Text>().text = "+" + num.ToString();
         }
         public void UpdateMoneyText(int money)
         {
-            showMoney.text = "$ " + money.ToString();
+            showMoney.text = money.ToString();
         }
     }
 }
