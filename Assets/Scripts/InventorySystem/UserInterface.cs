@@ -16,8 +16,8 @@ namespace InventorySystem
     {
         [SerializeField] private GameObject itemDisplayPrefab;
         [SerializeField] private Canvas canvas;
+        [SerializeField] protected ItemDatabaseObject itemDatabase;
 
-        protected ItemDatabaseObject itemDatabase;
         public InventoryObject inventory;
         public Dictionary<GameObject, InventorySlot> slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
         public static Action<GameObject, int> OnDropItem;
@@ -26,9 +26,6 @@ namespace InventorySystem
 
         public void Awake()
         {
-            itemDatabase = AssetDatabase.LoadAssetAtPath<ItemDatabaseObject>
-                ("Assets/ScriptableObjects/Databases/MainDatabase.asset");
-
             CreateSlots();
             foreach (var slot in inventory.GetSlots)
             {

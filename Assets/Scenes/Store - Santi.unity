@@ -575,6 +575,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDisplayPrefab: {fileID: 7569105816814665249, guid: 18d70c28e35b47e4fbd26fb85bc1667d, type: 3}
   canvas: {fileID: 1289141503}
+  itemDatabase: {fileID: 0}
   inventory: {fileID: 11400000, guid: ac4eea057a5178442a676742e9e948a2, type: 2}
   inventoryPrefab: {fileID: 2139199679936113701, guid: 19c83208d78d6d64aa5ce65babdfb24a, type: 3}
   xStart: 1
@@ -5252,6 +5253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDisplayPrefab: {fileID: 7569105816814665249, guid: 18d70c28e35b47e4fbd26fb85bc1667d, type: 3}
   canvas: {fileID: 1289141503}
+  itemDatabase: {fileID: 0}
   inventory: {fileID: 11400000, guid: c015ec50c58ed384291ecb78f0a333fd, type: 2}
   inventoryPrefab: {fileID: 2139199679936113701, guid: 19c83208d78d6d64aa5ce65babdfb24a, type: 3}
   xStart: 1
@@ -10545,6 +10547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDisplayPrefab: {fileID: 7569105816814665249, guid: 18d70c28e35b47e4fbd26fb85bc1667d, type: 3}
   canvas: {fileID: 1289141503}
+  itemDatabase: {fileID: 0}
   inventory: {fileID: 11400000, guid: b0cc085a510dd4142bfdb60a5f9d4a24, type: 2}
   inventoryPrefab: {fileID: 2139199679936113701, guid: 19c83208d78d6d64aa5ce65babdfb24a, type: 3}
   xStart: 1
@@ -11994,6 +11997,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDisplayPrefab: {fileID: 7569105816814665249, guid: 18d70c28e35b47e4fbd26fb85bc1667d, type: 3}
   canvas: {fileID: 1289141503}
+  itemDatabase: {fileID: 0}
   inventory: {fileID: 11400000, guid: 00d02fdec0107414e90e2b91d899f4b0, type: 2}
   inventoryPrefab: {fileID: 2139199679936113701, guid: 19c83208d78d6d64aa5ce65babdfb24a, type: 3}
   xStart: 1
@@ -17502,6 +17506,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDisplayPrefab: {fileID: 7569105816814665249, guid: 18d70c28e35b47e4fbd26fb85bc1667d, type: 3}
   canvas: {fileID: 1289141503}
+  itemDatabase: {fileID: 0}
   inventory: {fileID: 11400000, guid: 0e73814e6b5ed184089797c4f21f64a1, type: 2}
   inventoryPrefab: {fileID: 2139199679936113701, guid: 19c83208d78d6d64aa5ce65babdfb24a, type: 3}
   xStart: 1
@@ -20052,6 +20057,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDisplayPrefab: {fileID: 7569105816814665249, guid: 18d70c28e35b47e4fbd26fb85bc1667d, type: 3}
   canvas: {fileID: 1289141503}
+  itemDatabase: {fileID: 0}
   inventory: {fileID: 11400000, guid: 45af4ffa1ff901545868501a0a4aa044, type: 2}
   inventoryPrefab: {fileID: 2139199679936113701, guid: 19c83208d78d6d64aa5ce65babdfb24a, type: 3}
   xStart: 1
@@ -22866,6 +22872,10 @@ PrefabInstance:
       propertyPath: slotsParent
       value: 
       objectReference: {fileID: 1651764942}
+    - target: {fileID: 6728761193159637351, guid: 7678681d93318754ba26d4fbcd7be85d, type: 3}
+      propertyPath: itemDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
     - target: {fileID: 6728761193159637353, guid: 7678681d93318754ba26d4fbcd7be85d, type: 3}
       propertyPath: m_Sprite
       value: 
