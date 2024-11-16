@@ -7,6 +7,12 @@ using UnityEngine.InputSystem;
 
 namespace player
 {
+    public enum CursorStates
+    {
+        Default,
+        Hover,
+        Interact
+    }
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private GameObject inventoryUI;
@@ -15,6 +21,8 @@ namespace player
         [SerializeField] private GameObject endDayInput;
         [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private Color highlightColor = Color.white;
+        [SerializeField] private Texture2D[] cursors;
+        
         public bool dayEnded;
         private GameObject lastHighlightedObject;
         private Color originalColor;
@@ -31,6 +39,7 @@ namespace player
             if (UIHelper.IsPointerOverUIElement())
             {
                 ResetHighlight();
+                SetCursor((int)CursorStates.Default);
                 return;
             }
 
@@ -42,6 +51,7 @@ namespace player
 
                 if (hits.Any(hit => hit.collider.gameObject.layer == LayerMask.NameToLayer("UI")))
                 {
+                    SetCursor((int)CursorStates.Default);
                     return;
                 }
 
@@ -50,21 +60,27 @@ namespace player
                 if (interactable != null)
                 {
                     HighlightObject(hit.collider.gameObject);
+                    SetCursor((int)CursorStates.Hover);
+
                 }
                 else
                 {
                     ResetHighlight();
+                    SetCursor((int)CursorStates.Default);
+
                 }
             }
             else
             {
                 ResetHighlight();
+                SetCursor((int)CursorStates.Default);
             }
         }
 
 
         public void OnInteract(InputValue context)
         {
+            SetCursor((int)CursorStates.Interact);
             RaycastFromMouse();
         }
 
@@ -149,6 +165,12 @@ namespace player
             if (!dayEnded) return;
             endDayStats.SetActive(true);
             endDayInput.SetActive(false);
+        }
+        
+        private void SetCursor(int cursorIndex)
+        {
+            if (cursorIndex < 0 || cursorIndex >= cursors.Length) return;
+            Cursor.SetCursor(cursors[cursorIndex], Vector2.zero, CursorMode.Auto);
         }
     }
 }
