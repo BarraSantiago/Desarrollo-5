@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using InventorySystem;
 using UnityEngine;
 
@@ -11,7 +12,14 @@ namespace Interactable
         [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private Transform inventoryOriginalTransform;
         [SerializeField] private Transform inventoryNewTransform;
-        
+        [SerializeField] private bool isSellingPoint;
+        private GameObject InventoryGO;
+        private void Awake()
+        {
+            InventoryGO = menus[0].transform.GetChild(0).gameObject;
+
+        }
+
         public bool State
         {
             get
@@ -24,11 +32,13 @@ namespace Interactable
         {
             foreach (var menu in menus)
             {
-                menu?.SetActive(!menu.activeSelf);
+                menu?.SetActive(true);
             }
-            playerInventoryUi.SetActive(true);
+            if(isSellingPoint) InventoryGO.transform.SetParent(playerInventoryUi.transform);
+                playerInventoryUi.SetActive(true);
             //playerInventoryUi.transform.position = inventoryNewTransform.position;
             playerInventory.UpdateInventory();
+            
             return true;
         }
 
@@ -38,6 +48,7 @@ namespace Interactable
             {
                 menu?.SetActive(false);
             }
+            if(isSellingPoint) InventoryGO.transform.SetParent(menus[0].transform);
             playerInventoryUi.SetActive(false);
             //playerInventoryUi.transform.position = inventoryOriginalTransform.position;
         }
