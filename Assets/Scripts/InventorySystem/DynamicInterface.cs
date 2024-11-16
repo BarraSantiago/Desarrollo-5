@@ -52,6 +52,8 @@ namespace InventorySystem
             
             var slot = slotsOnInterface[obj];
             var itemId = slot.item.id;
+            if(!itemDatabase.ItemObjects[itemId]) return;
+            
             var item = itemDatabase.ItemObjects[itemId];
             itemInfo.UpdateItemInfo(item.uiDisplay, item.name, item.description);
         }
