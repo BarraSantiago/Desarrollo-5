@@ -10,12 +10,19 @@ namespace InventorySystem
         public GameObject inventoryPrefab;
         [FormerlySerializedAs("X_START")] public int xStart;
         [FormerlySerializedAs("Y_START")] public int yStart;
-        [FormerlySerializedAs("X_SPACE_BETWEEN_ITEM")] public int xSpaceBetweenItem;
-        [FormerlySerializedAs("NUMBER_OF_COLUMN")] public int numberOfColumn;
-        [FormerlySerializedAs("Y_SPACE_BETWEEN_ITEMS")] public int ySpaceBetweenItems;
+
+        [FormerlySerializedAs("X_SPACE_BETWEEN_ITEM")]
+        public int xSpaceBetweenItem;
+
+        [FormerlySerializedAs("NUMBER_OF_COLUMN")]
+        public int numberOfColumn;
+
+        [FormerlySerializedAs("Y_SPACE_BETWEEN_ITEMS")]
+        public int ySpaceBetweenItems;
+
         [SerializeField] private Transform slotsParent;
         [SerializeField] private ItemInfo itemInfo;
-        
+
         protected override void CreateSlots()
         {
             slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
@@ -45,17 +52,28 @@ namespace InventorySystem
                 slotsOnInterface.Add(obj, inventory.GetSlots[i]);
             }
         }
+
         private void OnLeftClick(GameObject obj, BaseEventData data)
         {
-            if(!itemInfo) return;
+            if (!itemInfo) return;
             if (data is not PointerEventData { button: PointerEventData.InputButton.Left }) return;
-            
+
             var slot = slotsOnInterface[obj];
             var itemId = slot.item.id;
-            if(!itemDatabase.ItemObjects[itemId]) return;
-            
-            var item = itemDatabase.ItemObjects[itemId];
-            itemInfo.UpdateItemInfo(item.uiDisplay, item.name, item.description);
+
+            ItemObject matchedItem = null;
+            foreach (var item in itemDatabase.ItemObjects)
+            {
+                if (item.data.id == itemId)
+                {
+                    matchedItem = item;
+                    break;
+                }
+            }
+
+            if (matchedItem == null) return;
+
+            itemInfo.UpdateItemInfo(matchedItem.uiDisplay, matchedItem.name, matchedItem.description);
         }
 
         private Vector3 GetPosition(int i)
