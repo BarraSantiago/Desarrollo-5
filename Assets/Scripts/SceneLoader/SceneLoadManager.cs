@@ -13,7 +13,8 @@ namespace SceneLoader
     {
         [SerializeField] private string sceneName;
         [SerializeField] private Slider loadingSlider;
-        private void Awake()
+
+        private void Start()
         {
             LoadScene(sceneName);
         }
@@ -25,16 +26,20 @@ namespace SceneLoader
 
         private IEnumerator LoadAsync(string levelName)
         {
+            // Wait for 1 second before starting the scene loading
+            yield return new WaitForSeconds(1);
+
+            float targetProgress = 0;
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(levelName);
 
             while (!asyncLoad.isDone)
             {
-                float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
-                Debug.Log($"Loading progress: {progress * 100}%");
-                loadingSlider.value = progress;
+                targetProgress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+                loadingSlider.value = Mathf.Lerp(loadingSlider.value, targetProgress, Time.deltaTime * 5);
+                Debug.Log($"Loading progress: {loadingSlider.value * 100}%");
                 yield return null;
             }
-
+            
             Scene loadedScene = SceneManager.GetSceneByName(levelName);
             ActivateAllDynamicInterfaces(loadedScene);
         }
@@ -51,11 +56,11 @@ namespace SceneLoader
                 .ToArray();
 
             List<Transform> transforms = new List<Transform>();
-            
+
             foreach (var dynamicInterface in dynamicInterfaces)
             {
                 Transform parent = dynamicInterface.transform.parent;
-                
+
                 while (parent)
                 {
                     if (!parent.gameObject.activeSelf) transforms.Add(parent);
@@ -68,12 +73,13 @@ namespace SceneLoader
                 transforms.Add(dynamicInterface.transform);
             }
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForEndOfFrame();
 
             foreach (var objectTransform in transforms)
             {
                 objectTransform.gameObject.SetActive(false);
             }
+            yield return new WaitForSeconds(1);
         }
     }
 }
