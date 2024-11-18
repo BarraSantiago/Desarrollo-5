@@ -7,7 +7,6 @@ using InventorySystem;
 using player;
 using UI;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utils;
 using Random = UnityEngine.Random;
@@ -59,6 +58,7 @@ namespace Store
 
         #region Private Variables
 
+        public static Action<int, int> OnMoneyUpdated;
         private readonly List<Client> _clients = new List<Client>();
         private const string WaitingSoundKey = "ClientWaiting";
         private const string MurmurSoundKey = "Murmur";
@@ -67,15 +67,16 @@ namespace Store
         private Dictionary<int, Item> _items;
         private int _dailyClients = 2; // TODO update this, should variate depending on popularity
         public int _clientsLeft = 0;
-        private int _buyersInShop; // amount of clients currently in the shop
+        private int _buyersInShop;
         private float _timeBetweenClients;
-        private readonly float _clientTimer = 2.87f;
+        private readonly float _clientTimer = 7.87f;
         private const float CycleMaxTime = 60f;
         private int _experienceWon;
         private int _moneyWon;
         private int _itemsSold;
         private int _satisfiedClients;
         private int _angryClients;
+        private int _maxMoney;
 
         #endregion
 
@@ -135,7 +136,7 @@ namespace Store
             _itemsSold = 0;
             _satisfiedClients = 0;
             _angryClients = 0;
-            
+
             _waitingLine.Initialize(waitingLineStart, _dailyClients, distanceBetweenPos, checkOut);
 
             Client.OnItemBought += ItemBought;
@@ -217,7 +218,9 @@ namespace Store
 
         private void SpawnText(int money)
         {
+            _maxMoney = player.money > _maxMoney ? player.money : _maxMoney;
             player.money += money;
+            OnMoneyUpdated?.Invoke(player.money, _maxMoney);
             uiManager.SpawnFlyingText(money);
             uiManager.UpdateMoneyText(player.money);
         }
@@ -246,6 +249,7 @@ namespace Store
         private IEnumerator SendClients()
         {
             // TODO improve this with object pooling
+            yield return new WaitForSeconds(_clientTimer);
             for (int i = 0; i < _dailyClients; i++)
             {
                 GameObject newClient = Instantiate(clientPrefabs[Random.Range(0, clientPrefabs.Length)]);
@@ -256,7 +260,9 @@ namespace Store
                 _clients[i].Initialize(i);
 
                 //PlayBackgroundNoise();
-                yield return new WaitForSeconds(_clientTimer);
+                float randomWaitTime = Random.Range(10f, 15f);
+
+                yield return new WaitForSeconds(randomWaitTime);
             }
         }
 
