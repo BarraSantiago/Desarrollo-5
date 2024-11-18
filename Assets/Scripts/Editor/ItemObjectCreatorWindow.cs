@@ -61,7 +61,7 @@ namespace Editor
         {
             _isCraftable = EditorGUILayout.Toggle("Is Craftable", _isCraftable);
             if (!_isCraftable) return;
-            craftChance = EditorGUILayout.FloatField("Craft Chance", 100.0f);
+            craftChance = EditorGUILayout.FloatField("Craft Chance", craftChance);
 
             int entryCount = EditorGUILayout.IntField("Number of Recipe Entries",
                 _recipeEntries?.Length ?? 0);

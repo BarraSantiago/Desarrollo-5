@@ -3,13 +3,9 @@
     public enum ItemType
     {
         Food,
-        Helmet,
-        Chest,
-        Pants,
-        Boots,
-        Sword,
-        Shield,
-        Gloves,
+        Weapon,
+        Armor,
+        CraftingIngredient,
         Potion,
         Default
     }

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
+  m_Name: Metallic plate
+  m_EditorClassIdentifier: 
+  uiDisplay: {fileID: 21300000, guid: 3b8a765e350653241bb0111193feb4e4, type: 3}
+  characterDisplay: {fileID: 7418422340193880356, guid: dfcfea1eaae72c44f9d715cab88264e7, type: 3}
+  stackable: 1
+  maxStack: 5
+  type: 3
+  description: A sheet of hammered brass. Often used in armor crafting.
+  data:
+    name: Metallic plate
+    id: -1
+    listPrice:
+      originalPrice: 35
+    craftable: 0
+    recipe: {fileID: 0}
+  boneNames: []
+  price: 0

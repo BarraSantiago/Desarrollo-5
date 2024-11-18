@@ -10,18 +10,18 @@ namespace Tutorial
 
         private void Start()
         {
-            if(menu.HasBeenAccessed)
+            if (menu.HasBeenAccessed)
             {
                 Destroy(gameObject);
             }
 
             menu.OnInteract += Delete;
         }
-        
+
         private void Delete()
         {
             menu.OnInteract -= Delete;
-            Destroy(gameObject);
+            if (gameObject) Destroy(gameObject);
         }
     }
 }

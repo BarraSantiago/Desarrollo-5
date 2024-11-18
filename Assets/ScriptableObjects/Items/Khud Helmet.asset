@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
+  m_Name: Khud Helmet
+  m_EditorClassIdentifier: 
+  uiDisplay: {fileID: 21300000, guid: d95fb60e23fa6994db33ad66c8ba2541, type: 3}
+  characterDisplay: {fileID: 6962342672542805042, guid: bd04b1b40ee0e424f90f6f7a9d6bd7a3, type: 3}
+  stackable: 1
+  maxStack: 5
+  type: 2
+  description: A rounded steel helm with a protective nasal guard. Its surface is
+    etched with flowing Arabic calligraphy, and a strip of chainmail hangs from the
+    back to guard the neck.
+  data:
+    name: Khud Helmet
+    id: -1
+    listPrice:
+      originalPrice: 65
+    craftable: 1
+    recipe: {fileID: 11400000, guid: a8f1476b541ef774284bced1b20d5a17, type: 2}
+  boneNames: []
+  price: 0

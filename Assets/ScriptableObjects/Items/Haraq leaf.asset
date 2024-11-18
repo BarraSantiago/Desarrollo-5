@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
-  m_Name: Iron ore
+  m_Name: Haraq leaf
   m_EditorClassIdentifier: 
-  uiDisplay: {fileID: 21300000, guid: 5e6b498593ab86b4bbf9ffdd1014bd0c, type: 3}
-  characterDisplay: {fileID: 1467897570646490950, guid: 28d0b721ddbb5804fa7f78360de76652, type: 3}
+  uiDisplay: {fileID: 21300000, guid: 216a8350aa602544aae187fcec919d47, type: 3}
+  characterDisplay: {fileID: 2907919344913024125, guid: 9ce1e6ed08c5720468647558b4ad885f, type: 3}
   stackable: 1
-  maxStack: 3
-  type: 9
-  description: Iron ore.
+  maxStack: 5
+  type: 3
+  description: A broad, silvery leaf from the mythical Haraq tree. It remains cool
+    to the touch even in blazing heat.
   data:
-    name: Iron ore
-    id: 7
+    name: Haraq leaf
+    id: -1
     listPrice:
       originalPrice: 15
     craftable: 0
