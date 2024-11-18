@@ -86,6 +86,7 @@ namespace Clients
         /// If we want to modify the chance to leave a tip
         /// </summary>
         private int _tipChanceModifier = 0;
+
         private bool _paid;
         private int tipValue => (int)(_itemPrice * _itemAmount * 0.1f);
         private int _timesCheckedItems = 0;
@@ -238,13 +239,13 @@ namespace Clients
 
             ChooseItem();
         }
-        
+
         private void ChooseItem()
         {
             var availableItems = ItemDisplayer.DisplayItems.Where(displayItem =>
                 displayItem is not null && !displayItem.BeingViewed && !displayItem.Bought &&
                 displayItem.amount > 0).ToList();
-            
+
             if (availableItems.Count > 0)
             {
                 int randomItemIndex = Random.Range(0, availableItems.Count);
@@ -291,11 +292,11 @@ namespace Clients
                 yield return null;
             }
 
-            
+
             if (!CheckBuyItem()) yield break;
 
             agent.ResetPath();
-            
+
             animator.SetTrigger("GrabItem");
 
             StartCoroutine(LerpDisplayObjectPosition());
@@ -470,18 +471,17 @@ namespace Clients
         private void InstantiateTexture(float percentageDifference)
         {
             Texture selectedSprite = GetSpriteForPercentageDifference(percentageDifference);
-            
+
             if (!selectedSprite) return;
-            
+
             RawImage spriteRenderer = reactionSprite.GetComponent<RawImage>();
             spriteRenderer.texture = selectedSprite;
             reactionSprite.SetActive(true);
             reactionSprite.transform.LookAt(Camera.main.transform);
-            
-            StartCoroutine(DeactivateSpriteAfterDelay(_reactionTime));
 
+            StartCoroutine(DeactivateSpriteAfterDelay(_reactionTime));
         }
-        
+
         private Texture GetSpriteForPercentageDifference(float percentageDifference)
         {
             const int veryHappyThreshold = -45;
@@ -508,6 +508,9 @@ namespace Clients
                 case >= angryThreshold:
                     AudioManager.instance.Play("ClientGrunt");
                     return ReactionTextures[1];
+                case < neutralThreshold:
+                    AudioManager.instance.Play("ClientHum");
+                    return ReactionTextures[2];
                 case >= neutralThreshold:
                     AudioManager.instance.Play("ClientGrunt");
                     return ReactionTextures[2];
@@ -515,13 +518,13 @@ namespace Clients
                     return null;
             }
         }
-        
+
         private IEnumerator DeactivateSpriteAfterDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
             reactionSprite.SetActive(false);
         }
-        
+
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.green;
