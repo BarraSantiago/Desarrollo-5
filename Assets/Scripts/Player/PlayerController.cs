@@ -88,7 +88,11 @@ namespace player
         {
             inventoryUI.SetActive(!inventoryUI.activeSelf);
 
-            if (!inventoryUI.activeSelf) return;
+            if (!inventoryUI.activeSelf)
+            {
+                Destroy(MouseData.TempItemBeingDragged);
+                return;
+            }
 
             playerInventory.UpdateInventory();
         }

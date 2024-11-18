@@ -10,19 +10,12 @@ namespace InventorySystem
         public GameObject inventoryPrefab;
         [FormerlySerializedAs("X_START")] public int xStart;
         [FormerlySerializedAs("Y_START")] public int yStart;
-
-        [FormerlySerializedAs("X_SPACE_BETWEEN_ITEM")]
-        public int xSpaceBetweenItem;
-
-        [FormerlySerializedAs("NUMBER_OF_COLUMN")]
-        public int numberOfColumn;
-
-        [FormerlySerializedAs("Y_SPACE_BETWEEN_ITEMS")]
-        public int ySpaceBetweenItems;
-
+        [FormerlySerializedAs("X_SPACE_BETWEEN_ITEM")] public int xSpaceBetweenItem;
+        [FormerlySerializedAs("NUMBER_OF_COLUMN")] public int numberOfColumn;
+        [FormerlySerializedAs("Y_SPACE_BETWEEN_ITEMS")] public int ySpaceBetweenItems;
         [SerializeField] private Transform slotsParent;
         [SerializeField] private ItemInfo itemInfo;
-
+        [SerializeField] private ItemDatabaseObject itemDatabase;
         protected override void CreateSlots()
         {
             slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
@@ -42,8 +35,19 @@ namespace InventorySystem
                 AddEvent(obj, EventTriggerType.PointerExit, delegate { OnExit(obj); });
                 AddEvent(obj, EventTriggerType.PointerClick, delegate(BaseEventData data)
                 {
-                    OnRightClick(obj, data);
-                    OnLeftClick(obj, data);
+                    //OnRightClick(obj, data);
+                    var slot = slotsOnInterface[obj];
+                    var itemId = slot.item.id;
+                    ItemObject matchedItem = null;
+                    
+                    foreach (var item in itemDatabase.ItemObjects)
+                    {
+                        if (item.data.id != itemId) continue;
+                        matchedItem = item;
+                        break;
+                    }
+                    
+                    itemInfo.UpdateItemInfo(matchedItem.uiDisplay, matchedItem.name, matchedItem.description);
                 });
                 AddEvent(obj, EventTriggerType.BeginDrag, delegate { OnDragStart(obj); });
                 AddEvent(obj, EventTriggerType.EndDrag, delegate { OnDragEnd(obj); });
@@ -51,29 +55,6 @@ namespace InventorySystem
                 inventory.GetSlots[i].slotDisplay = obj;
                 slotsOnInterface.Add(obj, inventory.GetSlots[i]);
             }
-        }
-
-        private void OnLeftClick(GameObject obj, BaseEventData data)
-        {
-            if (!itemInfo) return;
-            if (data is not PointerEventData { button: PointerEventData.InputButton.Left }) return;
-
-            var slot = slotsOnInterface[obj];
-            var itemId = slot.item.id;
-
-            ItemObject matchedItem = null;
-            foreach (var item in itemDatabase.ItemObjects)
-            {
-                if (item.data.id == itemId)
-                {
-                    matchedItem = item;
-                    break;
-                }
-            }
-
-            if (matchedItem == null) return;
-
-            itemInfo.UpdateItemInfo(matchedItem.uiDisplay, matchedItem.name, matchedItem.description);
         }
 
         private Vector3 GetPosition(int i)
