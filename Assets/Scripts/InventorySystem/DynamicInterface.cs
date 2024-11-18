@@ -16,6 +16,7 @@ namespace InventorySystem
         [SerializeField] private Transform slotsParent;
         [SerializeField] private ItemInfo itemInfo;
         [SerializeField] private ItemDatabaseObject itemDatabase;
+
         protected override void CreateSlots()
         {
             slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
@@ -39,14 +40,15 @@ namespace InventorySystem
                     var slot = slotsOnInterface[obj];
                     var itemId = slot.item.id;
                     ItemObject matchedItem = null;
-                    
+
                     foreach (var item in itemDatabase.ItemObjects)
                     {
                         if (item.data.id != itemId) continue;
                         matchedItem = item;
                         break;
                     }
-                    
+
+                    if (!matchedItem) return;
                     itemInfo.UpdateItemInfo(matchedItem.uiDisplay, matchedItem.name, matchedItem.description);
                 });
                 AddEvent(obj, EventTriggerType.BeginDrag, delegate { OnDragStart(obj); });

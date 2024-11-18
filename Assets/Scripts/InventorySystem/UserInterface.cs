@@ -85,8 +85,7 @@ namespace InventorySystem
             EventTrigger trigger = obj.GetComponent<EventTrigger>();
             if (!trigger)
             {
-                Debug.LogWarning("No EventTrigger component found!");
-                return;
+                trigger = obj.AddComponent<EventTrigger>();
             }
 
             var eventTrigger = new EventTrigger.Entry { eventID = type };
@@ -104,7 +103,7 @@ namespace InventorySystem
             if (data is not PointerEventData { button: PointerEventData.InputButton.Right }) return;
 
             if (slotsOnInterface[obj].item.id < 0) return;
-            
+
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
 
 
@@ -172,16 +171,16 @@ namespace InventorySystem
 
         protected void OnDragEnd(GameObject obj)
         {
-            if(!obj) return;
+            if (!obj) return;
             Destroy(MouseData.TempItemBeingDragged);
             if (!MouseData.InterfaceMouseIsOver)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                
+
                 if (!Physics.Raycast(ray, out RaycastHit hit)) return;
-                
+
                 if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Walkable")) return;
-                
+
                 OnDropItem?.Invoke(slotsOnInterface[obj].GetItemObject().characterDisplay,
                     slotsOnInterface[obj].amount);
                 slotsOnInterface[obj].RemoveItem();
