@@ -218,7 +218,7 @@ namespace Store.Shops
         private void SetMaxCraftChance()
         {
             CraftChanceMultiplier = 100 / _selectedItem.data.recipe.craftChance;
-            inputField.text = (_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier).ToString("0.##");
+            inputField.text = (_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier).ToString("0");
             CurrentCost = _selectedItem.data.listPrice.originalPrice / 3 +
                           (int)(_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier);
         }

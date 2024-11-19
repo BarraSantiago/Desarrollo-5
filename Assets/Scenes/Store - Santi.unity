@@ -584,7 +584,7 @@ MonoBehaviour:
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 41803497}
   itemInfo: {fileID: 0}
-  itemDatabase: {fileID: 0}
+  itemDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
 --- !u!114 &41803499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5485,7 +5485,7 @@ MonoBehaviour:
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 553518989}
   itemInfo: {fileID: 0}
-  itemDatabase: {fileID: 0}
+  itemDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
 --- !u!114 &553518991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11256,7 +11256,7 @@ MonoBehaviour:
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 1181180133}
   itemInfo: {fileID: 0}
-  itemDatabase: {fileID: 0}
+  itemDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
 --- !u!114 &1181180135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12825,7 +12825,7 @@ MonoBehaviour:
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 1397082474}
   itemInfo: {fileID: 0}
-  itemDatabase: {fileID: 0}
+  itemDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
 --- !u!114 &1397082476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17979,7 +17979,7 @@ MonoBehaviour:
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 1886167838}
   itemInfo: {fileID: 0}
-  itemDatabase: {fileID: 0}
+  itemDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
 --- !u!114 &1886167840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20528,7 +20528,7 @@ MonoBehaviour:
   ySpaceBetweenItems: 1
   slotsParent: {fileID: 2133816990}
   itemInfo: {fileID: 0}
-  itemDatabase: {fileID: 0}
+  itemDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
 --- !u!114 &2133816992
 MonoBehaviour:
   m_ObjectHideFlags: 0

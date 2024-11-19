@@ -36,8 +36,9 @@ namespace InventorySystem
                 AddEvent(obj, EventTriggerType.PointerExit, delegate { OnExit(obj); });
                 AddEvent(obj, EventTriggerType.PointerClick, delegate(BaseEventData data)
                 {
-                    //OnRightClick(obj, data);
                     var slot = slotsOnInterface[obj];
+                    if (slot.item == null) return; // Null check for slot.item
+
                     var itemId = slot.item.id;
                     ItemObject matchedItem = null;
 
