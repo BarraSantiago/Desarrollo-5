@@ -93,7 +93,7 @@ namespace Store.Shops
 
             ListItems();
 
-            UpdateAvailability(player.money);
+            UpdateAvailability(player.Money);
 
             selectedItemImage.preserveAspect = true;
             SelectItem(databases[0].ItemObjects[0].data.id);
@@ -101,7 +101,7 @@ namespace Store.Shops
 
         private void OnEnable()
         {
-            UpdateAvailability(player.money);
+            UpdateAvailability(player.Money);
         }
 
         private void SelectItem(int itemId)
@@ -141,7 +141,7 @@ namespace Store.Shops
 
         private void BuyItem()
         {
-            if (player.money < CurrentCost)
+            if (player.Money < CurrentCost)
             {
                 return;
             }
@@ -152,11 +152,11 @@ namespace Store.Shops
             }
             else
             {
-                player.money -= CurrentCost;
+                player.Money -= CurrentCost;
                 player.inventory.AddItem(_selectedItem.data, _currentAmount);
             }
 
-            UpdateAvailability(player.money);
+            UpdateAvailability(player.Money);
         }
 
         private bool CraftItem()
@@ -247,8 +247,8 @@ namespace Store.Shops
 
         private void UpdateTextColor()
         {
-            costText.color = player.money < CurrentCost ? Color.red : Color.green;
-            if (upgradeText) upgradeText.color = player.money < _shopUpgradeCost ? Color.red : Color.green;
+            costText.color = player.Money < CurrentCost ? Color.red : Color.green;
+            if (upgradeText) upgradeText.color = player.Money < _shopUpgradeCost ? Color.red : Color.green;
         }
 
         private void CheckLevel()
@@ -268,12 +268,12 @@ namespace Store.Shops
                 return;
             }
 
-            if (player.money < _shopUpgradeCost)
+            if (player.Money < _shopUpgradeCost)
             {
                 return;
             }
 
-            player.money -= _shopUpgradeCost;
+            player.Money -= _shopUpgradeCost;
             _shopUpgradeCost *= _shopUpgradeCostMultiplier;
             upgradeText.text = _shopUpgradeCost.ToString();
             _shopLevel++;

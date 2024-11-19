@@ -73,6 +73,7 @@ namespace Store
         private const float CycleMaxTime = 60f;
         private int _experienceWon;
         private int _moneyWon;
+        private int _moneyLost;
         private int _itemsSold;
         private int _satisfiedClients;
         private int _angryClients;
@@ -90,8 +91,10 @@ namespace Store
             Client.ClientTransforms = clientTransforms;
             Client.ReactionTextures = reactionTextures;
             Client.OnHappy += () => _experienceWon += 1;
+            Client.OnHappy += () => _satisfiedClients += 1;
             Client.OnAngry += () => _angryClients += 1;
             Client.OnMoneyAdded += money => _moneyWon += money;
+            player.OnMoneyReduced += money => _moneyLost += money;
 
             UpdateMoneyText();
             UpdateCurrentPrices();
@@ -136,6 +139,7 @@ namespace Store
             _itemsSold = 0;
             _satisfiedClients = 0;
             _angryClients = 0;
+            _moneyLost = 0;
 
             _waitingLine.Initialize(waitingLineStart, _dailyClients, distanceBetweenPos, checkOut);
 
@@ -199,7 +203,7 @@ namespace Store
             _clientsLeft++;
 
             if (_clientsLeft < _dailyClients) return;
-            endDayStats.UpdateStats(_satisfiedClients, _angryClients, _experienceWon, _moneyWon, _itemsSold);
+            endDayStats.UpdateStats(_satisfiedClients, _angryClients, _experienceWon, _moneyWon, _itemsSold, _moneyLost);
             endDayInput.SetActive(true);
             playerController.dayEnded = true;
         }
@@ -218,16 +222,16 @@ namespace Store
 
         private void SpawnText(int money)
         {
-            _maxMoney = player.money > _maxMoney ? player.money : _maxMoney;
-            player.money += money;
-            OnMoneyUpdated?.Invoke(player.money, _maxMoney);
+            _maxMoney = player.Money > _maxMoney ? player.Money : _maxMoney;
+            player.Money += money;
+            OnMoneyUpdated?.Invoke(player.Money, _maxMoney);
             uiManager.SpawnFlyingText(money);
-            uiManager.UpdateMoneyText(player.money);
+            uiManager.UpdateMoneyText(player.Money);
         }
 
         private void UpdateMoneyText()
         {
-            uiManager.UpdateMoneyText(player.money);
+            uiManager.UpdateMoneyText(player.Money);
         }
 
         private void UpdateMoneyText(int money)

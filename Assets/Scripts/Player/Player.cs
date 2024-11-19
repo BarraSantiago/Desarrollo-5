@@ -8,16 +8,18 @@ namespace player
     public class Player : MonoBehaviour
     {
         public static Action<int> OnMoneyUpdate;
+        public Action<int> OnMoneyReduced;
         public InventoryObject inventory;
         public float pickUpCooldown = 2f;
         private int _money = 200;
         private const string PickUpSoundKey = "PickUp";
-
-        public int money
+        
+        public int Money
         {
             get => _money;
             set
             {
+                if(value < _money)  OnMoneyReduced?.Invoke(_money - value);
                 if (_money == value) return;
                 _money = value;
                 OnMoneyUpdate?.Invoke(_money);
