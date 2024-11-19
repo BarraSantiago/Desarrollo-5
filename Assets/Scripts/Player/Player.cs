@@ -13,15 +13,17 @@ namespace player
         public float pickUpCooldown = 2f;
         private int _money = 200;
         private const string PickUpSoundKey = "PickUp";
-        
+        private const string MoneyKey = "PlayerMoney";
+
         public int Money
         {
             get => _money;
             set
             {
-                if(value < _money)  OnMoneyReduced?.Invoke(_money - value);
+                if (value < _money) OnMoneyReduced?.Invoke(_money - value);
                 if (_money == value) return;
                 _money = value;
+                SaveMoney();
                 OnMoneyUpdate?.Invoke(_money);
             }
         }
@@ -30,6 +32,7 @@ namespace player
         private void Start()
         {
             //inventory.Load();
+            LoadMoney();
         }
 
         private void OnEnable()
@@ -37,45 +40,28 @@ namespace player
             SceneManager.sceneLoaded += OnSceneLoaded;
             UserInterface.OnDropItem += DropItem;
         }
-        
+
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
             UserInterface.OnDropItem -= DropItem;
         }
 
-        public void OnTriggerEnter(Collider other)
-        {
-            var item = other.GetComponent<GroundItem>();
-
-            if (!item) return;
-
-            if (item.droppedByPlayer && Time.time - item.droppedTime < pickUpCooldown) return;
-
-            if (!inventory.AddItem(new Item(item.item), item.amount)) return;
-            
-            AudioManager.instance.Play(PickUpSoundKey);
-            Destroy(other.gameObject);
-            inventory.UpdateInventory();
-        }
-
-
         public void OnApplicationQuit()
         {
             inventory.Save();
-            
         }
 
 
         private void DropItem(GameObject obj, int amount)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            
+
             if (!Physics.Raycast(ray, out RaycastHit hit)) return;
-            
+
             Vector3 dropPosition = hit.point + Vector3.up * 2f;
             GameObject droppedItem = Instantiate(obj, dropPosition, Quaternion.identity);
-            
+
             Rigidbody rb = droppedItem.AddComponent<Rigidbody>();
             rb.mass = 1f;
             droppedItem.AddComponent<BoxCollider>();
@@ -88,6 +74,20 @@ namespace player
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             inventory.UpdateInventory();
+        }
+
+        private void SaveMoney()
+        {
+            PlayerPrefs.SetInt(MoneyKey, _money);
+            PlayerPrefs.Save();
+        }
+
+        private void LoadMoney()
+        {
+            if (!PlayerPrefs.HasKey(MoneyKey)) return;
+            
+            _money = PlayerPrefs.GetInt(MoneyKey);
+            OnMoneyUpdate?.Invoke(_money);
         }
     }
 }
