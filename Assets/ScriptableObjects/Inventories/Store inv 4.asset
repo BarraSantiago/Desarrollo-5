@@ -12,19 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d1319ef5004103419cddea41bc02cfe, type: 3}
   m_Name: Store inv 4
   m_EditorClassIdentifier: 
-  savePath: /store.inventory4.save
-  database: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
-  type: 2
   Container:
     Slots:
     - AllowedItems: 
       item:
         name: 
         id: -1
-        buffs: []
         listPrice:
-          originalPrice: 0
-        price: 0
+          originalPrice: 36
         craftable: 0
         recipe: {fileID: 0}
       amount: 0
+  savePath: /store.inventory4.save
+  database: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
+  type: 2

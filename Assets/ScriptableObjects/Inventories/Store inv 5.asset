@@ -16,13 +16,13 @@ MonoBehaviour:
     Slots:
     - AllowedItems: 
       item:
-        name: Crystal
-        id: 0
+        name: 
+        id: -1
         listPrice:
           originalPrice: 36
         craftable: 0
         recipe: {fileID: 0}
-      amount: 1
+      amount: 0
   savePath: /store.inventory5.save
   database: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
   type: 2
