@@ -13,6 +13,7 @@ namespace Tutorial
         [SerializeField] private GameObject[] tutorialPages;
         [SerializeField] private TMP_Text pagesCounter;
         private int currentPage = 0;
+        private bool hasBeenAccessed;
 
         private void Awake()
         {
@@ -20,10 +21,12 @@ namespace Tutorial
             {
                 nextButton.interactable = false;
             }
+
             if (currentPage == 0)
             {
                 previousButton.interactable = false;
             }
+
             UpdatePageCounter();
         }
 
@@ -32,8 +35,13 @@ namespace Tutorial
             nextButton.onClick.AddListener(NextPage);
             previousButton.onClick.AddListener(PreviousPage);
             closeButton.onClick.AddListener(CloseTutorial);
+            hasBeenAccessed = PlayerPrefs.GetInt("TutorialAccessed", 0) == 1;
+            
+            if (hasBeenAccessed) CloseTutorial();
+            
+            PlayerPrefs.SetInt("TutorialAccessed", 1);
         }
-        
+
         private void NextPage()
         {
             tutorialPages[currentPage].SetActive(false);
@@ -47,7 +55,7 @@ namespace Tutorial
 
             UpdatePageCounter();
         }
-        
+
         private void PreviousPage()
         {
             tutorialPages[currentPage].SetActive(false);
@@ -61,12 +69,12 @@ namespace Tutorial
 
             UpdatePageCounter();
         }
-        
+
         private void CloseTutorial()
         {
             transform.parent.gameObject.SetActive(false);
         }
-        
+
         private void UpdatePageCounter()
         {
             pagesCounter.text = $"{currentPage + 1}/{tutorialPages.Length}";
