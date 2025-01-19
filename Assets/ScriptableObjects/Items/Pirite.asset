@@ -21,7 +21,7 @@ MonoBehaviour:
     experiments and as decoration.
   data:
     name: Pirite
-    id: -1
+    id: 11
     listPrice:
       originalPrice: 18
     craftable: 0

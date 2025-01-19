@@ -17,7 +17,8 @@ MonoBehaviour:
   stackable: 1
   maxStack: 3
   type: 8
-  description: Heals 70 hit points.
+  description: Heals some of the most dreadful wounds. May even reattach a severed
+    limb.
   data:
     name: Medium Potion
     id: 6
@@ -26,4 +27,4 @@ MonoBehaviour:
     craftable: 1
     recipe: {fileID: 11400000, guid: c7121ebd2a593614ea5591af084928cf, type: 2}
   boneNames: []
-  price: 35
+  price: 0

@@ -21,7 +21,7 @@ MonoBehaviour:
     damascene steel, showing beautiful swirling patterns, and the crossguard is gold-plated.
   data:
     name: Kilij Sword
-    id: -1
+    id: 17
     listPrice:
       originalPrice: 160
     craftable: 1

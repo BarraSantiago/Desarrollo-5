@@ -20,10 +20,10 @@ MonoBehaviour:
   description: Sickle.
   data:
     name: Sickle
-    id: 0
+    id: 2
     listPrice:
       originalPrice: 65
     craftable: 0
     recipe: {fileID: 0}
   boneNames: []
-  price: 50
+  price: 0

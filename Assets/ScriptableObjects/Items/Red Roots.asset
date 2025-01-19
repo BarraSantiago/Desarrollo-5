@@ -20,7 +20,7 @@ MonoBehaviour:
   description: Red roots from the trees in the magic forest.
   data:
     name: Red Roots
-    id: 5
+    id: 4
     listPrice:
       originalPrice: 23
     craftable: 0

@@ -21,7 +21,7 @@ MonoBehaviour:
     head. Iron tassels near the base add flair while helping to balance the weapon.
   data:
     name: "Ar\u0161ti Spear"
-    id: -1
+    id: 16
     listPrice:
       originalPrice: 75
     craftable: 1

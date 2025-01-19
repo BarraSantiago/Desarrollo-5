@@ -20,8 +20,8 @@ MonoBehaviour:
   description: A broad, silvery leaf from the mythical Haraq tree. It remains cool
     to the touch even in blazing heat.
   data:
-    name: Haraq leaf
-    id: -1
+    name: Haraq Leaf
+    id: 9
     listPrice:
       originalPrice: 15
     craftable: 0

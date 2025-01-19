@@ -21,7 +21,7 @@ MonoBehaviour:
     into tools or weapons.
   data:
     name: Iron Nugget
-    id: -1
+    id: 14
     listPrice:
       originalPrice: 28
     craftable: 0

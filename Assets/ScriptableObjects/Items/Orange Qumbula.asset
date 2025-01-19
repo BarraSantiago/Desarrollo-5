@@ -21,7 +21,7 @@ MonoBehaviour:
     in traps and as a diversionary tactic.
   data:
     name: Orange Qumbula
-    id: -1
+    id: 10
     listPrice:
       originalPrice: 26
     craftable: 0

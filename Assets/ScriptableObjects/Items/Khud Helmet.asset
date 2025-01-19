@@ -22,7 +22,7 @@ MonoBehaviour:
     back to guard the neck.
   data:
     name: Khud Helmet
-    id: -1
+    id: 15
     listPrice:
       originalPrice: 65
     craftable: 1

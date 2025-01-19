@@ -20,7 +20,7 @@ MonoBehaviour:
   description: Short and sharp blade, perfect for mundane activities.
   data:
     name: Knife
-    id: -1
+    id: 7
     listPrice:
       originalPrice: 45
     craftable: 0

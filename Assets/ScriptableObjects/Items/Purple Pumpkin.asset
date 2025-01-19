@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
-  m_Name: Dagger
+  m_Name: Purple Pumpkin
   m_EditorClassIdentifier: 
   uiDisplay: {fileID: 21300000, guid: 209544ac9adb78b409b5a27d060c6be2, type: 3}
   characterDisplay: {fileID: 6043674831698372808, guid: ea6f10f7d200e1848ab8d382994969dc, type: 3}
@@ -20,8 +20,8 @@ MonoBehaviour:
   description: An unusually colored gourd with a metallic sheen to its skin. Rare
     and sought after by potion makers.
   data:
-    name: Dagger
-    id: -1
+    name: Purple Pumpkin
+    id: 8
     listPrice:
       originalPrice: 35
     craftable: 0

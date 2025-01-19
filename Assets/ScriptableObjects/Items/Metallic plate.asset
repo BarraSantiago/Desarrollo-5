@@ -20,7 +20,7 @@ MonoBehaviour:
   description: A sheet of hammered brass. Often used in armor crafting.
   data:
     name: Metallic plate
-    id: -1
+    id: 12
     listPrice:
       originalPrice: 35
     craftable: 0

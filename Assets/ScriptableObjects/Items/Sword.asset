@@ -20,10 +20,10 @@ MonoBehaviour:
   description: Sword.
   data:
     name: Sword
-    id: 0
+    id: 3
     listPrice:
       originalPrice: 70
     craftable: 0
     recipe: {fileID: 0}
   boneNames: []
-  price: 65
+  price: 0
