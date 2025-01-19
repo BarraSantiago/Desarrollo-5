@@ -6,6 +6,7 @@ using InventorySystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace SceneLoader
 {
@@ -26,8 +27,7 @@ namespace SceneLoader
 
         private IEnumerator LoadAsync(string levelName)
         {
-            // Wait for 1 second before starting the scene loading
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(Random.Range(0.3f, 1.2f));
 
             float targetProgress = 0;
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(levelName);
@@ -36,7 +36,6 @@ namespace SceneLoader
             {
                 targetProgress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
                 loadingSlider.value = Mathf.Lerp(loadingSlider.value, targetProgress, Time.deltaTime * 5);
-                Debug.Log($"Loading progress: {loadingSlider.value * 100}%");
                 yield return null;
             }
             
@@ -79,7 +78,7 @@ namespace SceneLoader
             {
                 objectTransform.gameObject.SetActive(false);
             }
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(Random.Range(0.3f, 1.2f));
         }
     }
 }
