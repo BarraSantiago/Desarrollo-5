@@ -193,12 +193,13 @@ namespace Store.Shops
         {
             if (int.TryParse(inputField.text, out int newPrice))
             {
-                inputField.text = newPrice switch
+                newPrice = newPrice switch
                 {
-                    < MinAmount => MinAmount.ToString(),
-                    > MaxAmount => MaxAmount.ToString(),
-                    _ => inputField.text
+                    < MinAmount => MinAmount,
+                    > MaxAmount => MaxAmount,
+                    _ => newPrice
                 };
+                inputField.text = newPrice.ToString();
 
                 CurrentCost = _selectedItem.data.listPrice.originalPrice / 3 + newPrice;
                 CraftChanceMultiplier = ((float)newPrice / _selectedItem.data.listPrice.originalPrice) + 1;
