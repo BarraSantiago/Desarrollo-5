@@ -40,7 +40,7 @@ namespace Store
                 }
             }
         }
-        private const int MaxAmount = 999999;
+        private const int MaxAmount = 99999;
         private const int MinAmount = 1;
 
         private void Start()
@@ -159,12 +159,13 @@ namespace Store
                 }
             }
 
-            inputField.text = result switch
+            result = result switch
             {
-                < MinAmount => MinAmount.ToString(),
-                > MaxAmount => MaxAmount.ToString(),
-                _ => "$" + inputField.text
+                < MinAmount => MinAmount,
+                > MaxAmount => MaxAmount,
+                _ => result
             };
+            inputField.text = result.ToString();
 
             Item.price = result;
             UpdatePrice();
@@ -172,9 +173,9 @@ namespace Store
 
         private void UpdatePrice()
         {
-            inputField.text = "$" + Item.price;
-            showPrice.text = "$" + Item.price;
-            totalPriceText.text = "$" + (Item.price * amount);
+            inputField.text = Item.price.ToString();
+            showPrice.text = Item.price.ToString();
+            totalPriceText.text = (Item.price * amount).ToString();
         }
 
         private void UpdateShowEmpty()
