@@ -27,4 +27,4 @@ MonoBehaviour:
     craftable: 1
     recipe: {fileID: 11400000, guid: dbacefa41033fc440b7055a126c372ed, type: 2}
   boneNames: []
-  price: 0
+  price: 1
