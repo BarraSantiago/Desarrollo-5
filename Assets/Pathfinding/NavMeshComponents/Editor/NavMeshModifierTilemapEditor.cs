@@ -82,8 +82,8 @@ namespace NavMeshPlus.Editors.Components
 
                                 int idx = m_TileModifiers.arraySize;
                                 m_TileModifiers.InsertArrayElementAtIndex(idx);
-                                var newElem = m_TileModifiers.GetArrayElementAtIndex(idx);
-                                var tileProperty = newElem.FindPropertyRelative(nameof(NavMeshModifierTilemap.TileModifier.tile));
+                                SerializedProperty newElem = m_TileModifiers.GetArrayElementAtIndex(idx);
+                                SerializedProperty tileProperty = newElem.FindPropertyRelative(nameof(NavMeshModifierTilemap.TileModifier.tile));
                                 tileProperty.objectReferenceValue = tileBase;
                             }
                         }
@@ -110,7 +110,7 @@ namespace NavMeshPlus.Editors.Components
                 property.isExpanded = EditorGUI.Foldout(expandRect, property.isExpanded, label);
                 if (property.isExpanded)
                 {
-                    var tileProperty = property.FindPropertyRelative(nameof(NavMeshModifierTilemap.TileModifier.tile));
+                    SerializedProperty tileProperty = property.FindPropertyRelative(nameof(NavMeshModifierTilemap.TileModifier.tile));
                     Rect tileRect = ClaimAdvance(ref position, 40);
                     tileRect.width -= 40;
 
@@ -130,13 +130,13 @@ namespace NavMeshPlus.Editors.Components
                     }
 
                     Rect toggleRect = ClaimAdvance(ref position, 20);
-                    var overrideAreaProperty = property.FindPropertyRelative(nameof(NavMeshModifierTilemap.TileModifier.overrideArea));
+                    SerializedProperty overrideAreaProperty = property.FindPropertyRelative(nameof(NavMeshModifierTilemap.TileModifier.overrideArea));
                     EditorGUI.PropertyField(toggleRect, overrideAreaProperty);
 
                     if (overrideAreaProperty.boolValue)
                     {
                         Rect areaRect = ClaimAdvance(ref position, 20);
-                        var areaProperty = property.FindPropertyRelative(nameof(NavMeshModifierTilemap.TileModifier.area));
+                        SerializedProperty areaProperty = property.FindPropertyRelative(nameof(NavMeshModifierTilemap.TileModifier.area));
                         EditorGUI.indentLevel++;
                         EditorGUI.PropertyField(areaRect, areaProperty);
                         EditorGUI.indentLevel--;
@@ -148,7 +148,7 @@ namespace NavMeshPlus.Editors.Components
             {
                 if (property.isExpanded)
                 {
-                    var overrideAreaProperty = property.FindPropertyRelative(nameof(NavMeshModifierTilemap.TileModifier.overrideArea));
+                    SerializedProperty overrideAreaProperty = property.FindPropertyRelative(nameof(NavMeshModifierTilemap.TileModifier.overrideArea));
                     if (overrideAreaProperty.boolValue)
                     {
                         return 100;

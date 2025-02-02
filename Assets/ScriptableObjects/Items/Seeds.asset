@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 3049528660967095849, guid: 04f3c5c03abeac7469ab6723aad26d27, type: 3}
   stackable: 1
   maxStack: 5
-  type: 9
+  type: 0
   description: Seeds from the trees in the magic forest.
   data:
     name: Seeds

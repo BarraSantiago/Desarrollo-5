@@ -13,7 +13,7 @@ namespace InventorySystem
             slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
             for (int i = 0; i < inventory.GetSlots.Length; i++)
             {
-                var obj = slots[i];
+                GameObject obj = slots[i];
 
                 AddEvent(obj, EventTriggerType.PointerEnter, delegate { OnEnter(obj); });
                 AddEvent(obj, EventTriggerType.PointerExit, delegate { OnExit(obj); });
@@ -23,8 +23,6 @@ namespace InventorySystem
                 inventory.GetSlots[i].slotDisplay = obj;
                 slotsOnInterface.Add(obj, inventory.GetSlots[i]);
             }
-
-
         }
     }
 }

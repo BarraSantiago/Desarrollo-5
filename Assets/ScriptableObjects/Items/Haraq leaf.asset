@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 2907919344913024125, guid: 9ce1e6ed08c5720468647558b4ad885f, type: 3}
   stackable: 1
   maxStack: 5
-  type: 3
+  type: 0
   description: A broad, silvery leaf from the mythical Haraq tree. It remains cool
     to the touch even in blazing heat.
   data:

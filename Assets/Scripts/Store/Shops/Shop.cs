@@ -162,7 +162,7 @@ namespace Store.Shops
         private bool CraftItem()
         {
             if (!CheckRecipe()) return false;
-            foreach (var itemEntry in _selectedItem.data.recipe.items)
+            foreach (ItemRecipe.ItemEntry itemEntry in _selectedItem.data.recipe.items)
             {
                 ItemObject currentEntry = completeDatabase.ItemObjects[itemEntry.itemID];
                 player.inventory.RemoveItem(currentEntry.data, itemEntry.amount);
@@ -284,10 +284,10 @@ namespace Store.Shops
         {
             for (int i = 0; i < _shopLevel; i++)
             {
-                var itemDatabase = databases[i];
-                foreach (var itemObject in itemDatabase.ItemObjects)
+                ItemIdDatabaseObject itemDatabase = databases[i];
+                foreach (ItemObject itemObject in itemDatabase.ItemObjects)
                 {
-                    var shopItem = Instantiate(shopItemPrefab, shopItemsParent);
+                    GameObject shopItem = Instantiate(shopItemPrefab, shopItemsParent);
                     ShopItem newItem = shopItem.GetComponent<ShopItem>();
                     newItem.SetItem(itemObject, itemCostMultiplier);
                     _shopItems.Add(newItem);
@@ -312,7 +312,7 @@ namespace Store.Shops
 
         public void Initialize()
         {
-            foreach (var shopItem in _shopItems)
+            foreach (ShopItem shopItem in _shopItems)
             {
                 shopItem.OnSelectItem += SelectItem;
             }
@@ -333,7 +333,7 @@ namespace Store.Shops
 
         public void Deinitialize()
         {
-            foreach (var shopItem in _shopItems)
+            foreach (ShopItem shopItem in _shopItems)
             {
                 shopItem.OnSelectItem -= SelectItem;
             }

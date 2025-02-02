@@ -31,9 +31,9 @@ namespace NavMeshPlus.Extensions
         [UnityEditor.Callbacks.DidReloadScripts]
         static void OnScriptReload()
         {
-            var extensions = Resources.FindObjectsOfTypeAll(
+            NavMeshExtension[] extensions = Resources.FindObjectsOfTypeAll(
                 typeof(NavMeshExtension)) as NavMeshExtension[];
-            foreach (var e in extensions)
+            foreach (NavMeshExtension e in extensions)
                 e.ConnectToVcam(true);
         }
 #endif

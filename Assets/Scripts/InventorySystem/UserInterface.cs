@@ -25,7 +25,7 @@ namespace InventorySystem
         public void Awake()
         {
             CreateSlots();
-            foreach (var slot in inventory.GetSlots)
+            foreach (InventorySlot slot in inventory.GetSlots)
             {
                 slot.parent = this;
                 slot.onAfterUpdated += OnSlotUpdate;
@@ -40,7 +40,7 @@ namespace InventorySystem
         private void UpdateInventoryLinks()
         {
             int i = 0;
-            foreach (var key in slotsOnInterface.Keys.ToList())
+            foreach (GameObject key in slotsOnInterface.Keys.ToList())
             {
                 slotsOnInterface[key] = inventory.GetSlots[i];
                 i++;
@@ -88,7 +88,7 @@ namespace InventorySystem
                 trigger = obj.AddComponent<EventTrigger>();
             }
 
-            var eventTrigger = new EventTrigger.Entry { eventID = type };
+            EventTrigger.Entry eventTrigger = new EventTrigger.Entry { eventID = type };
             eventTrigger.callback.AddListener(action);
             trigger.triggers.Add(eventTrigger);
         }
@@ -110,7 +110,7 @@ namespace InventorySystem
             Vector2 itemDisplaySize = itemDisplayPrefab.GetComponent<RectTransform>().sizeDelta;
 
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, null,
-                out var localMousePosition);
+                out Vector2 localMousePosition);
 
             localMousePosition.x = Mathf.Clamp(localMousePosition.x,
                 -canvasRect.sizeDelta.x / 2 + itemDisplaySize.x / 2,
@@ -120,7 +120,7 @@ namespace InventorySystem
                 canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
 
             Vector3 worldMousePosition = canvasRect.TransformPoint(localMousePosition);
-            var itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
+            GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
 
             ItemInfoPanel infoPanel = itemDisplay.GetComponent<ItemInfoPanel>();
             infoPanel.slot = slotsOnInterface[obj];
@@ -146,7 +146,7 @@ namespace InventorySystem
 
         protected void OnDragStart(GameObject obj)
         {
-            var slot = slotsOnInterface[obj];
+            InventorySlot slot = slotsOnInterface[obj];
             if (slot.item.id >= 0)
             {
                 MouseData.TempItemBeingDragged = CreateTempItem(obj);
@@ -160,9 +160,9 @@ namespace InventorySystem
             if (slotsOnInterface[obj].item.id < 0) return tempItem;
 
             tempItem = new GameObject();
-            var rt = tempItem.AddComponent<RectTransform>();
+            RectTransform rt = tempItem.AddComponent<RectTransform>();
             rt.sizeDelta = new Vector2(75, 75);
-            var img = tempItem.AddComponent<Image>();
+            Image img = tempItem.AddComponent<Image>();
             img.sprite = slotsOnInterface[obj].GetItemObject().uiDisplay;
             img.raycastTarget = false;
             img.preserveAspect = true;

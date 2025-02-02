@@ -25,7 +25,7 @@ namespace NavMeshPlus.Editors.Extensions
         {
             serializedObject.Update();
     
-            var surf = target as CollectSources2d;
+            CollectSources2d surf = target as CollectSources2d;
 
             EditorGUILayout.PropertyField(m_OverrideByGrid);
             using (new EditorGUI.DisabledScope(!m_OverrideByGrid.boolValue))

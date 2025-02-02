@@ -38,7 +38,7 @@ namespace NavMeshPlus.Extensions
 
         public bool AddSource(GameObject gameObject, NavMeshBuildSource source)
         {
-            var res = _lookup.ContainsKey(gameObject);
+            bool res = _lookup.ContainsKey(gameObject);
             if (res)
             {
                 return UpdateSource(gameObject);
@@ -50,12 +50,12 @@ namespace NavMeshPlus.Extensions
         }
         public bool UpdateSource(GameObject gameObject)
         {
-            var res = _lookup.ContainsKey(gameObject);
+            bool res = _lookup.ContainsKey(gameObject);
             if(res)
             {
                 IsDirty = true;
-                var source = _lookup[gameObject];
-                var idx = _sources.IndexOf(source);
+                NavMeshBuildSource source = _lookup[gameObject];
+                int idx = _sources.IndexOf(source);
                 if (idx >= 0)
                 {
                     source.transform = Matrix4x4.TRS(gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.lossyScale);
@@ -68,11 +68,11 @@ namespace NavMeshPlus.Extensions
 
         public bool RemoveSource(GameObject gameObject)
         {
-            var res = _lookup.ContainsKey(gameObject);
+            bool res = _lookup.ContainsKey(gameObject);
             if (res)
             {
                 IsDirty = true;
-                var source = _lookup[gameObject];
+                NavMeshBuildSource source = _lookup[gameObject];
                 _lookup.Remove(gameObject);
                 _sources.Remove(source);
             }

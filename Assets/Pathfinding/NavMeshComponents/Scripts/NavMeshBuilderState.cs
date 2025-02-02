@@ -85,7 +85,7 @@ namespace NavMeshPlus.Extensions
             if (disposing)
             {
                 // TODO: dispose managed state (managed objects).
-                foreach (var item in extraStates)
+                foreach (IDisposable item in extraStates)
                 {
                     item?.Dispose();
                 }

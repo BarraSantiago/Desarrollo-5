@@ -1,5 +1,6 @@
 #define NAVMESHCOMPONENTS_SHOW_NAVMESHDATA_REF
 
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.IMGUI.Controls;
 using UnityEditorInternal;
@@ -87,7 +88,7 @@ namespace NavMeshPlus.Editors.Components
 
         Bounds GetBounds()
         {
-            var navSurface = (NavMeshSurface)target;
+            NavMeshSurface navSurface = (NavMeshSurface)target;
             return new Bounds(navSurface.transform.position, navSurface.size);
         }
 
@@ -98,7 +99,7 @@ namespace NavMeshPlus.Editors.Components
 
             serializedObject.Update();
 
-            var bs = NavMesh.GetSettingsByID(m_AgentTypeID.intValue);
+            NavMeshBuildSettings bs = NavMesh.GetSettingsByID(m_AgentTypeID.intValue);
 
             if (bs.agentTypeID != -1)
             {
@@ -201,25 +202,25 @@ namespace NavMeshPlus.Editors.Components
 
             serializedObject.ApplyModifiedProperties();
 
-            var hadError = false;
-            var multipleTargets = targets.Length > 1;
+            bool hadError = false;
+            bool multipleTargets = targets.Length > 1;
             foreach (NavMeshSurface navSurface in targets)
             {
-                var settings = navSurface.GetBuildSettings();
+                NavMeshBuildSettings settings = navSurface.GetBuildSettings();
                 // Calculating bounds is potentially expensive when unbounded - so here we just use the center/size.
                 // It means the validation is not checking vertical voxel limit correctly when the surface is set to something else than "in volume".
-                var bounds = new Bounds(Vector3.zero, Vector3.zero);
+                Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
                 if (navSurface.collectObjects == CollectObjects.Volume)
                 {
                     bounds = new Bounds(navSurface.center, navSurface.size);
                 }
 
-                var errors = settings.ValidationReport(bounds);
+                string[] errors = settings.ValidationReport(bounds);
                 if (errors.Length > 0)
                 {
                     if (multipleTargets)
                         EditorGUILayout.LabelField(navSurface.name);
-                    foreach (var err in errors)
+                    foreach (string err in errors)
                     {
                         EditorGUILayout.HelpBox(err, MessageType.Warning);
                     }
@@ -236,10 +237,10 @@ namespace NavMeshPlus.Editors.Components
                 EditorGUILayout.Space();
 
 #if NAVMESHCOMPONENTS_SHOW_NAVMESHDATA_REF
-            var nmdRect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
+            Rect nmdRect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
 
             EditorGUI.BeginProperty(nmdRect, GUIContent.none, m_NavMeshData);
-            var rectLabel = EditorGUI.PrefixLabel(nmdRect, GUIUtility.GetControlID(FocusType.Passive), new GUIContent(m_NavMeshData.displayName));
+            Rect rectLabel = EditorGUI.PrefixLabel(nmdRect, GUIUtility.GetControlID(FocusType.Passive), new GUIContent(m_NavMeshData.displayName));
             EditorGUI.EndProperty();
 
             using (new EditorGUI.DisabledScope(true))
@@ -268,17 +269,17 @@ namespace NavMeshPlus.Editors.Components
             }
 
             // Show progress for the selected targets
-            var bakeOperations = NavMeshAssetManager.instance.GetBakeOperations();
+            List<NavMeshAssetManager.AsyncBakeOperation> bakeOperations = NavMeshAssetManager.instance.GetBakeOperations();
             for (int i = bakeOperations.Count - 1; i >= 0; --i)
             {
                 if (!targets.Contains(bakeOperations[i].surface))
                     continue;
 
-                var oper = bakeOperations[i].bakeOperation;
+                AsyncOperation oper = bakeOperations[i].bakeOperation;
                 if (oper == null)
                     continue;
 
-                var p = oper.progress;
+                float p = oper.progress;
                 if (oper.isDone)
                 {
                     SceneView.RepaintAll();
@@ -289,7 +290,7 @@ namespace NavMeshPlus.Editors.Components
 
                 if (GUILayout.Button("Cancel", EditorStyles.miniButton))
                 {
-                    var bakeData = bakeOperations[i].bakeData;
+                    NavMeshData bakeData = bakeOperations[i].bakeData;
                     UnityEngine.AI.NavMeshBuilder.Cancel(bakeData);
                     bakeOperations.RemoveAt(i);
                 }
@@ -319,15 +320,15 @@ namespace NavMeshPlus.Editors.Components
 
         static void RenderBoxGizmo(NavMeshSurface navSurface, GizmoType gizmoType, bool selected)
         {
-            var color = selected ? s_HandleColorSelected : s_HandleColor;
+            Color color = selected ? s_HandleColorSelected : s_HandleColor;
             if (!navSurface.enabled)
                 color = s_HandleColorDisabled;
 
-            var oldColor = Gizmos.color;
-            var oldMatrix = Gizmos.matrix;
+            Color oldColor = Gizmos.color;
+            Matrix4x4 oldMatrix = Gizmos.matrix;
 
             // Use the unscaled matrix for the NavMeshSurface
-            var localToWorld = Matrix4x4.TRS(navSurface.transform.position, navSurface.transform.rotation, Vector3.one);
+            Matrix4x4 localToWorld = Matrix4x4.TRS(navSurface.transform.position, navSurface.transform.rotation, Vector3.one);
             Gizmos.matrix = localToWorld;
 
             if (navSurface.collectObjects == CollectObjects.Volume)
@@ -337,7 +338,7 @@ namespace NavMeshPlus.Editors.Components
 
                 if (selected && navSurface.enabled)
                 {
-                    var colorTrans = new Color(color.r * 0.75f, color.g * 0.75f, color.b * 0.75f, color.a * 0.15f);
+                    Color colorTrans = new Color(color.r * 0.75f, color.g * 0.75f, color.b * 0.75f, color.a * 0.15f);
                     Gizmos.color = colorTrans;
                     Gizmos.DrawCube(navSurface.center, navSurface.size);
                 }
@@ -346,7 +347,7 @@ namespace NavMeshPlus.Editors.Components
             {
                 if (navSurface.navMeshData != null)
                 {
-                    var bounds = navSurface.navMeshData.sourceBounds;
+                    Bounds bounds = navSurface.navMeshData.sourceBounds;
                     Gizmos.color = Color.grey;
                     Gizmos.DrawWireCube(bounds.center, bounds.size);
                 }
@@ -363,9 +364,9 @@ namespace NavMeshPlus.Editors.Components
             if (!editingCollider)
                 return;
 
-            var navSurface = (NavMeshSurface)target;
-            var color = navSurface.enabled ? s_HandleColor : s_HandleColorDisabled;
-            var localToWorld = Matrix4x4.TRS(navSurface.transform.position, navSurface.transform.rotation, Vector3.one);
+            NavMeshSurface navSurface = (NavMeshSurface)target;
+            Color color = navSurface.enabled ? s_HandleColor : s_HandleColorDisabled;
+            Matrix4x4 localToWorld = Matrix4x4.TRS(navSurface.transform.position, navSurface.transform.rotation, Vector3.one);
             using (new Handles.DrawingScope(color, localToWorld))
             {
                 m_BoundsHandle.center = navSurface.center;
@@ -388,10 +389,10 @@ namespace NavMeshPlus.Editors.Components
         [MenuItem("GameObject/Navigation/NavMesh Surface", false, 2000)]
         public static void CreateNavMeshSurface(MenuCommand menuCommand)
         {
-            var parent = menuCommand.context as GameObject;
-            var go = NavMeshComponentsGUIUtility.CreateAndSelectGameObject("NavMesh Surface", parent);
+            GameObject parent = menuCommand.context as GameObject;
+            GameObject go = NavMeshComponentsGUIUtility.CreateAndSelectGameObject("NavMesh Surface", parent);
             go.AddComponent<NavMeshSurface>();
-            var view = SceneView.lastActiveSceneView;
+            SceneView view = SceneView.lastActiveSceneView;
             if (view != null)
                 view.MoveToView(go.transform);
         }

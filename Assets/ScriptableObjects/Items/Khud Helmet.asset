@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 6962342672542805042, guid: bd04b1b40ee0e424f90f6f7a9d6bd7a3, type: 3}
   stackable: 1
   maxStack: 5
-  type: 2
+  type: 1
   description: A rounded steel helm with a protective nasal guard. Its surface is
     etched with flowing Arabic calligraphy, and a strip of chainmail hangs from the
     back to guard the neck.

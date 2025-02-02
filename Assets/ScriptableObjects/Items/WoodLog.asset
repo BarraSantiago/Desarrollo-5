@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 3138242233395258418, guid: 35ca0a924335e294bbf14a8a00ae76e0, type: 3}
   stackable: 1
   maxStack: 5
-  type: 9
+  type: 2
   description: Wood.
   data:
     name: Wood log

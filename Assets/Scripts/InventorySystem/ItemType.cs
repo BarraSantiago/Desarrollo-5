@@ -2,10 +2,9 @@
 {
     public enum ItemType
     {
-        Food,
-        Weapon,
-        Armor,
-        CraftingIngredient,
+        PotionIngredient,
+        Equipment,
+        Mineral,
         Potion,
         Default
     }

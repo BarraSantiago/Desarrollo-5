@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 9137201829624550657, guid: 24d7ed47f5cc3a9429dadd46bfd329b2, type: 3}
   stackable: 1
   maxStack: 5
-  type: 3
+  type: 2
   description: A rough ingot of raw iron, ready to be shaped by a skilled blacksmith
     into tools or weapons.
   data:

@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 1637394368824895257, guid: cc3b9bbf254b6554ebee3bd53a077d50, type: 3}
   stackable: 0
   maxStack: 0
-  type: 9
+  type: 0
   description: Red roots from the trees in the magic forest.
   data:
     name: Red Roots

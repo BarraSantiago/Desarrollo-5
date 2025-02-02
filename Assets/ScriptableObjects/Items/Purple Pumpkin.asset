@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 6043674831698372808, guid: ea6f10f7d200e1848ab8d382994969dc, type: 3}
   stackable: 1
   maxStack: 3
-  type: 5
+  type: 0
   description: An unusually colored gourd with a metallic sheen to its skin. Rare
     and sought after by potion makers.
   data:

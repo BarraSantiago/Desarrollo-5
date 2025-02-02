@@ -26,7 +26,7 @@ namespace Interactable
 
         public bool Interact()
         {
-            foreach (var menu in menus)
+            foreach (GameObject menu in menus)
             {
                 menu?.SetActive(true);
             }
@@ -41,7 +41,7 @@ namespace Interactable
 
         public void Close()
         {
-            foreach (var menu in menus)
+            foreach (GameObject menu in menus)
             {
                 menu?.SetActive(false);
             }

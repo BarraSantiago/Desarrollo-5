@@ -28,7 +28,7 @@ namespace NavMeshPlus.Editors.Extensions
         {
             serializedObject.Update();
 
-            var agent = target as AgentOverride2d;
+            AgentOverride2d agent = target as AgentOverride2d;
             EditorGUILayout.LabelField("Agent Override", agent.agentOverride?.GetType().Name);
         }
     }

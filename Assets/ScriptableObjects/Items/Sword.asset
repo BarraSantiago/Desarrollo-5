@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 3138242233395258418, guid: 4cfed86620cd58b4abe93e7da5a01aa7, type: 3}
   stackable: 0
   maxStack: 0
-  type: 9
+  type: 1
   description: Sword.
   data:
     name: Sword

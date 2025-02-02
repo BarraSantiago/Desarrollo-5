@@ -10,7 +10,7 @@ namespace InventorySystem
 
         public void Clear()
         {
-            foreach (var slot in Slots)
+            foreach (InventorySlot slot in Slots)
             {
                 slot.item = new Item();
                 slot.amount = 0;

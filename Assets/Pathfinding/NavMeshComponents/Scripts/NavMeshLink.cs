@@ -114,7 +114,7 @@ namespace NavMeshPlus.Components
             }
 #endif
 
-            var link = new NavMeshLinkData();
+            NavMeshLinkData link = new NavMeshLinkData();
             link.startPosition = m_StartPoint;
             link.endPosition = m_EndPoint;
             link.width = m_Width;
@@ -144,7 +144,7 @@ namespace NavMeshPlus.Components
 
         static void UpdateTrackedInstances()
         {
-            foreach (var instance in s_Tracked)
+            foreach (NavMeshLink instance in s_Tracked)
             {
                 if (instance.HasTransformChanged())
                     instance.UpdateLink();

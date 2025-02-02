@@ -45,7 +45,7 @@ namespace Store
         
         private void UpdateInventory()
         {
-            foreach (var displayItem in DisplayItems)
+            foreach (DisplayItem displayItem in DisplayItems)
             {
                 displayItem.Initialize();
             }

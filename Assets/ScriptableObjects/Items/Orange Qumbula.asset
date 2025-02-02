@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 5694304495590287946, guid: 7947fe500efb40d479cf91bb4bce643d, type: 3}
   stackable: 1
   maxStack: 5
-  type: 3
+  type: 0
   description: A small, explosive fruit that detonates when thrown with force. Used
     in traps and as a diversionary tactic.
   data:

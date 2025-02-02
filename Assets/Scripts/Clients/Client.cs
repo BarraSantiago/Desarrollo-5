@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using InventorySystem;
 using Store;
@@ -242,14 +243,14 @@ namespace Clients
 
         private void ChooseItem()
         {
-            var availableItems = ItemDisplayer.DisplayItems.Where(displayItem =>
+            List<DisplayItem> availableItems = ItemDisplayer.DisplayItems.Where(displayItem =>
                 displayItem is not null && !displayItem.BeingViewed && !displayItem.Bought &&
                 displayItem.amount > 0).ToList();
 
             if (availableItems.Count > 0)
             {
                 int randomItemIndex = Random.Range(0, availableItems.Count);
-                var chosenItem = availableItems[randomItemIndex];
+                DisplayItem chosenItem = availableItems[randomItemIndex];
                 chosenItem.BeingViewed = true;
                 _desiredItemIndex = Array.IndexOf(ItemDisplayer.DisplayItems, chosenItem);
 
@@ -275,8 +276,8 @@ namespace Clients
         /// </summary>
         private IEnumerator GrabItem()
         {
-            var targetItem = ItemDisplayer.DisplayItems[_desiredItemIndex];
-            var targetCollider = targetItem.displayObject.GetComponent<Collider>();
+            DisplayItem targetItem = ItemDisplayer.DisplayItems[_desiredItemIndex];
+            Collider targetCollider = targetItem.displayObject.GetComponent<Collider>();
 
             agent.SetDestination(targetCollider.bounds.center);
             float startTime = Time.time;

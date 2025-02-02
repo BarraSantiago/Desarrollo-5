@@ -32,10 +32,10 @@ namespace InventorySystem
             if(!characterDisplay.GetComponent<SkinnedMeshRenderer>())
                 return;
 
-            var renderer = characterDisplay.GetComponent<SkinnedMeshRenderer>();
-            var bones = renderer.bones;
+            SkinnedMeshRenderer renderer = characterDisplay.GetComponent<SkinnedMeshRenderer>();
+            Transform[] bones = renderer.bones;
 
-            foreach (var t in bones)
+            foreach (Transform t in bones)
             {
                 boneNames.Add(t.name);
             }

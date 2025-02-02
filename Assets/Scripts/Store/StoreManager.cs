@@ -105,7 +105,7 @@ namespace Store
             itemDisplayer.Initialize(storeInventories);
             UIManager.MainCanvas = mainCanvas;
 
-            foreach (var storeInventory in storeInventories)
+            foreach (InventoryObject storeInventory in storeInventories)
             {
                 storeInventory.Load();
             }
@@ -149,7 +149,7 @@ namespace Store
             Client.OnLeftStore += CheckEndCycle;
             //Client.OnLeftStore += PlayBackgroundNoise;
 
-            foreach (var item in itemDatabase.ItemObjects)
+            foreach (ItemObject item in itemDatabase.ItemObjects)
             {
                 item.data.listPrice.UpdatePrice();
             }
@@ -192,7 +192,7 @@ namespace Store
 
         private void UpdateCurrentPrices()
         {
-            foreach (var item in itemDatabase.ItemObjects)
+            foreach (ItemObject item in itemDatabase.ItemObjects)
             {
                 item.data.listPrice.UpdatePrice();
             }
@@ -313,7 +313,7 @@ namespace Store
 
         private void SaveInventories()
         {
-            foreach (var inventory in storeInventories)
+            foreach (InventoryObject inventory in storeInventories)
             {
                 inventory.Save();
             }

@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 1908675474870621718, guid: a561ed30d77514f44b63aea01d6e830a, type: 3}
   stackable: 0
   maxStack: 0
-  type: 5
+  type: 1
   description: Short and sharp blade, perfect for mundane activities.
   data:
     name: Knife

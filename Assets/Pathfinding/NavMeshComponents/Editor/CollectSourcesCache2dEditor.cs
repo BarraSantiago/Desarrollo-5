@@ -14,7 +14,7 @@ namespace NavMeshPlus.Editors.Extensions
         {
             serializedObject.Update();
     
-            var surf = target as CollectSourcesCache2d;
+            CollectSourcesCache2d surf = target as CollectSourcesCache2d;
 
             serializedObject.ApplyModifiedProperties();
             using (new EditorGUI.DisabledScope(!Application.isPlaying))

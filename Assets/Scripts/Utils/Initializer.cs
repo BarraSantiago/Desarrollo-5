@@ -10,7 +10,7 @@ namespace Utils
         public void InitializeAll()
         {
             _initializables = FindObjectsOfType<MonoBehaviour>().OfType<IInitializable>().ToArray();
-            foreach (var initializable in _initializables)
+            foreach (IInitializable initializable in _initializables)
             {
                 initializable.Initialize();
             }
@@ -18,7 +18,7 @@ namespace Utils
         
         public void DeinitializeAll()
         {
-            foreach (var initializable in _initializables)
+            foreach (IInitializable initializable in _initializables)
             {
                 initializable.Deinitialize();
             }

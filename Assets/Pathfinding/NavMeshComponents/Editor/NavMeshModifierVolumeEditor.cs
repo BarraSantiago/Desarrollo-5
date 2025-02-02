@@ -45,7 +45,7 @@ namespace NavMeshPlus.Editors.Components
 
         Bounds GetBounds()
         {
-            var navModifier = (NavMeshModifierVolume)target;
+            NavMeshModifierVolume navModifier = (NavMeshModifierVolume)target;
             return new Bounds(navModifier.transform.position, navModifier.size);
         }
 
@@ -68,11 +68,11 @@ namespace NavMeshPlus.Editors.Components
         [DrawGizmo(GizmoType.Selected | GizmoType.Active)]
         static void RenderBoxGizmo(NavMeshModifierVolume navModifier, GizmoType gizmoType)
         {
-            var color = navModifier.enabled ? s_HandleColor : s_HandleColorDisabled;
-            var colorTrans = new Color(color.r * 0.75f, color.g * 0.75f, color.b * 0.75f, color.a * 0.15f);
+            Color color = navModifier.enabled ? s_HandleColor : s_HandleColorDisabled;
+            Color colorTrans = new Color(color.r * 0.75f, color.g * 0.75f, color.b * 0.75f, color.a * 0.15f);
 
-            var oldColor = Gizmos.color;
-            var oldMatrix = Gizmos.matrix;
+            Color oldColor = Gizmos.color;
+            Matrix4x4 oldMatrix = Gizmos.matrix;
 
             Gizmos.matrix = navModifier.transform.localToWorldMatrix;
 
@@ -93,9 +93,9 @@ namespace NavMeshPlus.Editors.Components
         {
             if (NavMeshVisualizationSettings.showNavigation > 0)
             {
-                var color = navModifier.enabled ? s_HandleColor : s_HandleColorDisabled;
-                var oldColor = Gizmos.color;
-                var oldMatrix = Gizmos.matrix;
+                Color color = navModifier.enabled ? s_HandleColor : s_HandleColorDisabled;
+                Color oldColor = Gizmos.color;
+                Matrix4x4 oldMatrix = Gizmos.matrix;
 
                 Gizmos.matrix = navModifier.transform.localToWorldMatrix;
 
@@ -114,8 +114,8 @@ namespace NavMeshPlus.Editors.Components
             if (!editingCollider)
                 return;
 
-            var vol = (NavMeshModifierVolume)target;
-            var color = vol.enabled ? s_HandleColor : s_HandleColorDisabled;
+            NavMeshModifierVolume vol = (NavMeshModifierVolume)target;
+            Color color = vol.enabled ? s_HandleColor : s_HandleColorDisabled;
             using (new Handles.DrawingScope(color, vol.transform.localToWorldMatrix))
             {
                 m_BoundsHandle.center = vol.center;
@@ -138,10 +138,10 @@ namespace NavMeshPlus.Editors.Components
         [MenuItem("GameObject/Navigation/NavMesh Modifier Volume", false, 2001)]
         static public void CreateNavMeshModifierVolume(MenuCommand menuCommand)
         {
-            var parent = menuCommand.context as GameObject;
-            var go = NavMeshComponentsGUIUtility.CreateAndSelectGameObject("NavMesh Modifier Volume", parent);
+            GameObject parent = menuCommand.context as GameObject;
+            GameObject go = NavMeshComponentsGUIUtility.CreateAndSelectGameObject("NavMesh Modifier Volume", parent);
             go.AddComponent<NavMeshModifierVolume>();
-            var view = SceneView.lastActiveSceneView;
+            SceneView view = SceneView.lastActiveSceneView;
             if (view != null)
                 view.MoveToView(go.transform);
         }

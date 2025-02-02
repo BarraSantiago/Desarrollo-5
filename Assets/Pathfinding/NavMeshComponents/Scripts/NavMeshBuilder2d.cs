@@ -86,11 +86,11 @@ namespace NavMeshPlus.Extensions
                 case CollectObjects.All:
                 default:
                     {
-                        var list = new List<GameObject>();
-                        var roots = new List<GameObject>();
+                        List<GameObject> list = new List<GameObject>();
+                        List<GameObject> roots = new List<GameObject>();
                         for (int i = 0; i < SceneManager.sceneCount; ++i)
                         {
-                            var s = SceneManager.GetSceneAt(i);
+                            Scene s = SceneManager.GetSceneAt(i);
                             if (!s.isLoaded) continue;
                             s.GetRootGameObjects(list);
                             roots.AddRange(list);
@@ -110,7 +110,7 @@ namespace NavMeshPlus.Extensions
             if (disposing)
             {
                 // TODO: dispose managed state (managed objects).
-                foreach (var item in spriteMeshMap)
+                foreach (KeyValuePair<Sprite, Mesh> item in spriteMeshMap)
                 {
 #if UNITY_EDITOR
                     Object.DestroyImmediate(item.Value);
@@ -118,7 +118,7 @@ namespace NavMeshPlus.Extensions
                     Object.Destroy(item.Value);
 #endif
                 }
-                foreach (var item in coliderMeshMap)
+                foreach (KeyValuePair<uint, Mesh> item in coliderMeshMap)
                 {
 #if UNITY_EDITOR
                     Object.DestroyImmediate(item.Value);
@@ -149,7 +149,7 @@ namespace NavMeshPlus.Extensions
     {
         public static void CollectSources(List<NavMeshBuildSource> sources, NavMeshBuilder2dState builder)
         {
-            foreach (var it in builder.Root)
+            foreach (GameObject it in builder.Root)
             {
                 CollectSources(it, sources, builder);
             }
@@ -158,7 +158,7 @@ namespace NavMeshPlus.Extensions
 
         public static void CollectSources(GameObject root, List<NavMeshBuildSource> sources, NavMeshBuilder2dState builder)
         {
-            foreach (var modifier in root.GetComponentsInChildren<NavMeshModifier>())
+            foreach (NavMeshModifier modifier in root.GetComponentsInChildren<NavMeshModifier>())
             {
                 if (((0x1 << modifier.gameObject.layer) & builder.layerMask) == 0)
                 {
@@ -190,7 +190,7 @@ namespace NavMeshPlus.Extensions
         {
             if (builder.CollectGeometry == NavMeshCollectGeometry.PhysicsColliders)
             {
-                var collider = modifier.GetComponent<Collider2D>();
+                Collider2D collider = modifier.GetComponent<Collider2D>();
                 if (collider != null)
                 {
                     CollectSources(sources, collider, area, builder);
@@ -198,12 +198,12 @@ namespace NavMeshPlus.Extensions
             }
             else
             {
-                var tilemap = modifier.GetComponent<Tilemap>();
+                Tilemap tilemap = modifier.GetComponent<Tilemap>();
                 if (tilemap != null)
                 {
                     CollectTileSources(sources, tilemap, area, builder);
                 }
-                var sprite = modifier.GetComponent<SpriteRenderer>();
+                SpriteRenderer sprite = modifier.GetComponent<SpriteRenderer>();
                 if (sprite != null)
                 {
                     CollectSources(sources, sprite, area, builder);
@@ -213,7 +213,7 @@ namespace NavMeshPlus.Extensions
 
         private static void AddDefaultWalkableTilemap(List<NavMeshBuildSource> sources, NavMeshBuilder2dState builder, NavMeshModifier modifier)
         {
-            var tilemap = modifier.GetComponent<Tilemap>();
+            Tilemap tilemap = modifier.GetComponent<Tilemap>();
             if (tilemap != null)
             {
                 if (builder.compressBounds)
@@ -222,7 +222,7 @@ namespace NavMeshPlus.Extensions
                 }
 
                 if (!builder.hideEditorLogs) Debug.Log($"Walkable Bounds [{tilemap.name}]: {tilemap.localBounds}");
-                var box = BoxBoundSource(NavMeshSurface.GetWorldBounds(tilemap.transform.localToWorldMatrix, tilemap.localBounds));
+                NavMeshBuildSource box = BoxBoundSource(NavMeshSurface.GetWorldBounds(tilemap.transform.localToWorldMatrix, tilemap.localBounds));
                 box.area = builder.defaultArea;
                 sources.Add(box);
             }
@@ -241,7 +241,7 @@ namespace NavMeshPlus.Extensions
                 if (!builder.hideEditorLogs) Debug.Log($"{spriteRenderer.name} mesh is null");
                 return;
             }
-            var src = new NavMeshBuildSource();
+            NavMeshBuildSource src = new NavMeshBuildSource();
             src.shape = NavMeshBuildSourceShape.Mesh;
             src.component = spriteRenderer;
             src.area = area;
@@ -267,7 +267,7 @@ namespace NavMeshPlus.Extensions
                 return;
             }
 
-            var src = new NavMeshBuildSource();
+            NavMeshBuildSource src = new NavMeshBuildSource();
             src.shape = NavMeshBuildSourceShape.Mesh;
             src.area = area;
             src.component = collider;
@@ -288,18 +288,18 @@ namespace NavMeshPlus.Extensions
 
         public static void CollectTileSources(List<NavMeshBuildSource> sources, Tilemap tilemap, int area, NavMeshBuilder2dState builder)
         {
-            var bound = tilemap.cellBounds;
+            BoundsInt bound = tilemap.cellBounds;
 
-            var modifierTilemap = tilemap.GetComponent<NavMeshModifierTilemap>();
+            NavMeshModifierTilemap modifierTilemap = tilemap.GetComponent<NavMeshModifierTilemap>();
 
             if (modifierTilemap && !modifierTilemap.AffectsAgentType(builder.agentID))
             {
                 return;
             }
 
-            var vec3int = new Vector3Int(0, 0, 0);
+            Vector3Int vec3int = new Vector3Int(0, 0, 0);
 
-            var size = new Vector3(tilemap.layoutGrid.cellSize.x, tilemap.layoutGrid.cellSize.y, 0);
+            Vector3 size = new Vector3(tilemap.layoutGrid.cellSize.x, tilemap.layoutGrid.cellSize.y, 0);
             Mesh sharedMesh = null;
             Quaternion rot = default;
 
@@ -313,7 +313,7 @@ namespace NavMeshPlus.Extensions
             {
                 for (int j = bound.yMin; j < bound.yMax; j++)
                 {
-                    var src = new NavMeshBuildSource();
+                    NavMeshBuildSource src = new NavMeshBuildSource();
                     src.area = area;
 
                     vec3int.x = i;
@@ -339,7 +339,7 @@ namespace NavMeshPlus.Extensions
         {
             if (!builder.overrideByGrid && tilemap.GetColliderType(vec3int) == Tile.ColliderType.Sprite)
             {
-                var sprite = tilemap.GetSprite(vec3int);
+                Sprite sprite = tilemap.GetSprite(vec3int);
                 if (sprite != null)
                 {
                     Mesh mesh = builder.GetMesh(sprite);
@@ -387,7 +387,7 @@ namespace NavMeshPlus.Extensions
 
         static private NavMeshBuildSource BoxBoundSource(Bounds localBounds)
         {
-            var src = new NavMeshBuildSource();
+            NavMeshBuildSource src = new NavMeshBuildSource();
             src.transform = Matrix4x4.Translate(localBounds.center);
             src.shape = NavMeshBuildSourceShape.Box;
             src.size = localBounds.size;

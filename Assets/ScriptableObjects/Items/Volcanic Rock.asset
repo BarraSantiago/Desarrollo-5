@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 537743702736821799, guid: 7af6ce4f4a82ae24fbe1deaf855c2272, type: 3}
   stackable: 1
   maxStack: 5
-  type: 3
+  type: 2
   description: A piece of porous black stone, still warm to the touch. Useful in
     forging and enchanting.
   data:

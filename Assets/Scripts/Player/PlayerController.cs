@@ -155,7 +155,7 @@ namespace player
                 return;
             }
 
-            foreach (var hit in hits)
+            foreach (RaycastHit hit in hits)
             {
                 IInteractable interactable = hit.collider.GetComponent<IInteractable>();
                 if (interactable == null) continue;

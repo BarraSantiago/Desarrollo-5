@@ -60,7 +60,7 @@ namespace Store
             {
                 elapsedTime += Time.deltaTime;
                 float intensity = Mathf.Lerp(a, b, elapsedTime / lightIncreaseDuration);
-                foreach (var light in lightComponents)
+                foreach (Light light in lightComponents)
                 {
                     light.intensity = intensity;
                 }

@@ -36,8 +36,8 @@ namespace NavMeshPlus.Extensions
 
         public void Add(NavMeshExtension extension, int order)
         {
-            var meta = new NavMeshExtensionMeta(order, extension);
-            var at = _extensions.BinarySearch(meta, Comparer);
+            NavMeshExtensionMeta meta = new NavMeshExtensionMeta(order, extension);
+            int at = _extensions.BinarySearch(meta, Comparer);
             if (at < 0)
             {
                 _extensions.Add(meta);

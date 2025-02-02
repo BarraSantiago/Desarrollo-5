@@ -39,7 +39,7 @@ namespace Store
 
         private void Deinitialize()
         {
-            foreach (var position in _queuePositions)
+            foreach (WaitingPosition position in _queuePositions)
             {
                 position.occupied = false;
                 position.client = null;
@@ -66,7 +66,7 @@ namespace Store
 
             if (_queuePositions.All(queuePosition => queuePosition.occupied)) return false;
 
-            foreach (var position in _queuePositions)
+            foreach (WaitingPosition position in _queuePositions)
             {
                 if (position.occupied) continue;
 

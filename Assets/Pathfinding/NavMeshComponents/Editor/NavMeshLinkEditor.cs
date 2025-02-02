@@ -54,18 +54,18 @@ namespace NavMeshPlus.Editors.Components
 
         void AlignTransformToEndPoints(NavMeshLink navLink)
         {
-            var mat = UnscaledLocalToWorldMatrix(navLink.transform);
+            Matrix4x4 mat = UnscaledLocalToWorldMatrix(navLink.transform);
 
-            var worldStartPt = mat.MultiplyPoint(navLink.startPoint);
-            var worldEndPt = mat.MultiplyPoint(navLink.endPoint);
+            Vector3 worldStartPt = mat.MultiplyPoint(navLink.startPoint);
+            Vector3 worldEndPt = mat.MultiplyPoint(navLink.endPoint);
 
-            var forward = worldEndPt - worldStartPt;
-            var up = navLink.transform.up;
+            Vector3 forward = worldEndPt - worldStartPt;
+            Vector3 up = navLink.transform.up;
 
             // Flatten
             forward -= Vector3.Dot(up, forward) * up;
 
-            var transform = navLink.transform;
+            Transform transform = navLink.transform;
             transform.rotation = Quaternion.LookRotation(forward, up);
             transform.position = (worldEndPt + worldStartPt) * 0.5f;
             transform.localScale = Vector3.one;
@@ -90,7 +90,7 @@ namespace NavMeshPlus.Editors.Components
             {
                 foreach (NavMeshLink navLink in targets)
                 {
-                    var tmp = navLink.startPoint;
+                    Vector3 tmp = navLink.startPoint;
                     navLink.startPoint = navLink.endPoint;
                     navLink.endPoint = tmp;
                 }
@@ -122,14 +122,14 @@ namespace NavMeshPlus.Editors.Components
 
         static Vector3 CalcLinkRight(NavMeshLink navLink)
         {
-            var dir = navLink.endPoint - navLink.startPoint;
+            Vector3 dir = navLink.endPoint - navLink.startPoint;
             return (new Vector3(-dir.z, 0.0f, dir.x)).normalized;
         }
 
         static void DrawLink(NavMeshLink navLink)
         {
-            var right = CalcLinkRight(navLink);
-            var rad = navLink.width * 0.5f;
+            Vector3 right = CalcLinkRight(navLink);
+            float rad = navLink.width * 0.5f;
 
             Gizmos.DrawLine(navLink.startPoint - right * rad, navLink.startPoint + right * rad);
             Gizmos.DrawLine(navLink.endPoint - right * rad, navLink.endPoint + right * rad);
@@ -143,12 +143,12 @@ namespace NavMeshPlus.Editors.Components
             if (!EditorApplication.isPlaying)
                 navLink.UpdateLink();
 
-            var color = s_HandleColor;
+            Color color = s_HandleColor;
             if (!navLink.enabled)
                 color = s_HandleColorDisabled;
 
-            var oldColor = Gizmos.color;
-            var oldMatrix = Gizmos.matrix;
+            Color oldColor = Gizmos.color;
+            Matrix4x4 oldMatrix = Gizmos.matrix;
 
             Gizmos.matrix = UnscaledLocalToWorldMatrix(navLink.transform);
 
@@ -166,12 +166,12 @@ namespace NavMeshPlus.Editors.Components
         {
             if (NavMeshVisualizationSettings.showNavigation > 0)
             {
-                var color = s_HandleColor;
+                Color color = s_HandleColor;
                 if (!navLink.enabled)
                     color = s_HandleColorDisabled;
 
-                var oldColor = Gizmos.color;
-                var oldMatrix = Gizmos.matrix;
+                Color oldColor = Gizmos.color;
+                Matrix4x4 oldMatrix = Gizmos.matrix;
 
                 Gizmos.matrix = UnscaledLocalToWorldMatrix(navLink.transform);
 
@@ -187,23 +187,23 @@ namespace NavMeshPlus.Editors.Components
 
         public void OnSceneGUI()
         {
-            var navLink = (NavMeshLink)target;
+            NavMeshLink navLink = (NavMeshLink)target;
             if (!navLink.enabled)
                 return;
 
-            var mat = UnscaledLocalToWorldMatrix(navLink.transform);
+            Matrix4x4 mat = UnscaledLocalToWorldMatrix(navLink.transform);
 
-            var startPt = mat.MultiplyPoint(navLink.startPoint);
-            var endPt = mat.MultiplyPoint(navLink.endPoint);
-            var midPt = Vector3.Lerp(startPt, endPt, 0.35f);
-            var startSize = HandleUtility.GetHandleSize(startPt);
-            var endSize = HandleUtility.GetHandleSize(endPt);
-            var midSize = HandleUtility.GetHandleSize(midPt);
+            Vector3 startPt = mat.MultiplyPoint(navLink.startPoint);
+            Vector3 endPt = mat.MultiplyPoint(navLink.endPoint);
+            Vector3 midPt = Vector3.Lerp(startPt, endPt, 0.35f);
+            float startSize = HandleUtility.GetHandleSize(startPt);
+            float endSize = HandleUtility.GetHandleSize(endPt);
+            float midSize = HandleUtility.GetHandleSize(midPt);
 
-            var zup = Quaternion.FromToRotation(Vector3.forward, Vector3.up);
-            var right = mat.MultiplyVector(CalcLinkRight(navLink));
+            Quaternion zup = Quaternion.FromToRotation(Vector3.forward, Vector3.up);
+            Vector3 right = mat.MultiplyVector(CalcLinkRight(navLink));
 
-            var oldColor = Handles.color;
+            Color oldColor = Handles.color;
             Handles.color = s_HandleColor;
 
             Vector3 pos;
@@ -270,10 +270,10 @@ namespace NavMeshPlus.Editors.Components
         [MenuItem("GameObject/Navigation/NavMesh Link", false, 2002)]
         static public void CreateNavMeshLink(MenuCommand menuCommand)
         {
-            var parent = menuCommand.context as GameObject;
+            GameObject parent = menuCommand.context as GameObject;
             GameObject go = NavMeshComponentsGUIUtility.CreateAndSelectGameObject("NavMesh Link", parent);
             go.AddComponent<NavMeshLink>();
-            var view = SceneView.lastActiveSceneView;
+            SceneView view = SceneView.lastActiveSceneView;
             if (view != null)
                 view.MoveToView(go.transform);
         }

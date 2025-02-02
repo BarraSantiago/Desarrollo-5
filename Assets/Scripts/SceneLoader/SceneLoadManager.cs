@@ -56,7 +56,7 @@ namespace SceneLoader
 
             List<Transform> transforms = new List<Transform>();
 
-            foreach (var dynamicInterface in dynamicInterfaces)
+            foreach (DynamicInterface dynamicInterface in dynamicInterfaces)
             {
                 Transform parent = dynamicInterface.transform.parent;
 
@@ -74,7 +74,7 @@ namespace SceneLoader
 
             yield return new WaitForEndOfFrame();
 
-            foreach (var objectTransform in transforms)
+            foreach (Transform objectTransform in transforms)
             {
                 objectTransform.gameObject.SetActive(false);
             }

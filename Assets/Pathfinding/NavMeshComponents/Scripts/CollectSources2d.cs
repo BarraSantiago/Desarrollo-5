@@ -36,15 +36,15 @@ namespace NavMeshPlus.Extensions
 
         private static Bounds CalculateGridWorldBounds(NavMeshSurface surface, Matrix4x4 worldToLocal, Bounds bounds)
         {
-            var grid = FindObjectOfType<Grid>();
-            var tilemaps = grid?.GetComponentsInChildren<Tilemap>();
+            Grid grid = FindObjectOfType<Grid>();
+            Tilemap[] tilemaps = grid?.GetComponentsInChildren<Tilemap>();
             if (tilemaps == null || tilemaps.Length < 1)
             {
                 return bounds;
             }
-            foreach (var tilemap in tilemaps)
+            foreach (Tilemap tilemap in tilemaps)
             {
-                var lbounds = NavMeshSurface.GetWorldBounds(worldToLocal * tilemap.transform.localToWorldMatrix, tilemap.localBounds);
+                Bounds lbounds = NavMeshSurface.GetWorldBounds(worldToLocal * tilemap.transform.localToWorldMatrix, tilemap.localBounds);
                 bounds.Encapsulate(lbounds);
                 if (!surface.hideEditorLogs)
                 {
@@ -71,7 +71,7 @@ namespace NavMeshPlus.Extensions
                     }
                 }
             }
-            var builder = navNeshState.GetExtraState<NavMeshBuilder2dState>();
+            NavMeshBuilder2dState builder = navNeshState.GetExtraState<NavMeshBuilder2dState>();
             builder.defaultArea = surface.defaultArea;
             builder.layerMask = surface.layerMask;
             builder.agentID = surface.agentTypeID;

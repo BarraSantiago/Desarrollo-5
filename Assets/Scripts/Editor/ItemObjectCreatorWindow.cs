@@ -123,7 +123,7 @@ namespace Editor
 
             GameObject gameObject = new GameObject(_itemName);
             gameObject.AddComponent<SpriteRenderer>().sprite = _sprite;
-            var collider = gameObject.AddComponent<BoxCollider>();
+            BoxCollider collider = gameObject.AddComponent<BoxCollider>();
             collider.isTrigger = true;
             GroundItem groundItem = gameObject.AddComponent<GroundItem>();
             groundItem.amount = 1;
