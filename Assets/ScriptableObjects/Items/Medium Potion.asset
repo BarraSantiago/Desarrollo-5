@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 8538405217374085528, guid: 580fe4b15ef52a84c9e509b509bba757, type: 3}
   stackable: 1
   maxStack: 3
-  type: 8
+  type: 3
   description: Heals some of the most dreadful wounds. May even reattach a severed
     limb.
   data:

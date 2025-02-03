@@ -15,11 +15,13 @@ namespace InventorySystem
         public int ItemId;
         public int Amount;
     }
+
     [Serializable]
     public class SerializableInventory
     {
         public SerializableInventorySlot[] Slots;
     }
+
     [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
     public class InventoryObject : ScriptableObject
     {
@@ -34,7 +36,7 @@ namespace InventorySystem
 
         public void UpdateInventory()
         {
-            foreach (var slot in GetSlots)
+            foreach (InventorySlot slot in GetSlots)
             {
                 slot.UpdateSlot(slot.item, slot.amount);
             }
@@ -82,6 +84,95 @@ namespace InventorySystem
                 OnItemAdded?.Invoke(Array.IndexOf(GetSlots, emptySlot));
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Sorts the inventory slots in place using the swap function.
+        /// Sorting is done by:
+        ///   1. Bringing slots whose GetItemObject().type matches selectedItemType to the front.
+        ///   2. Then ordering by item.listPrice.CurrentPrice.
+        ///   3. Then by item.id.
+        ///   4. Then by amount.
+        /// Empty slots (with item.id less than 0) will be moved to the end.
+        /// </summary>
+        /// <param name="selectedItemType">The item type that should come first.</param>
+        public void SortInventory(ItemType selectedItemType)
+        {
+            // Get the array of slots from our container.
+            InventorySlot[] slots = GetSlots;
+            int n = slots.Length;
+
+            // Use a simple selection sort.
+            for (int i = 0; i < n - 1; i++)
+            {
+                // Find the slot with the smallest value (according to our comparer) among slots[i...n-1]
+                int minIndex = i;
+                for (int j = i + 1; j < n; j++)
+                {
+                    if (CompareSlots(slots[j], slots[minIndex], selectedItemType) < 0)
+                    {
+                        minIndex = j;
+                    }
+                }
+
+                // If a slot out-of-order is found, swap its contents with the current slot.
+                if (minIndex != i)
+                {
+                    // SwapItems will move the items between these two slots.
+                    SwapItems(slots[i], slots[minIndex]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Compares two slots using the following criteria:
+        /// 1. Non-empty slots come before empty slots.
+        /// 2. Slots whose item type matches selectedItemType come first.
+        /// 3. Then by listPrice.CurrentPrice (lowest first).
+        /// 4. Then by item.id.
+        /// 5. Then by amount.
+        /// </summary>
+        /// <param name="a">First slot.</param>
+        /// <param name="b">Second slot.</param>
+        /// <param name="selectedItemType">The item type that should be prioritized.</param>
+        /// <returns>
+        /// A negative value if slot a should come before slot b,
+        /// zero if they are equal,
+        /// and a positive value if slot a should come after slot b.
+        /// </returns>
+        private int CompareSlots(InventorySlot a, InventorySlot b, ItemType selectedItemType)
+        {
+            // First, determine whether either slot is empty.
+            bool aEmpty = a.item == null || a.GetItemObject() == null || a.item.id < 0;
+            bool bEmpty = b.item == null || b.GetItemObject() == null || b.item.id < 0;
+
+            if (aEmpty && bEmpty)
+                return 0;
+            if (aEmpty)
+                return 1; // a is empty: push it to the end.
+            if (bEmpty)
+                return -1; // b is empty: push it to the end.
+
+            // Primary criterion: Compare by whether the slot’s type matches the selected type.
+            // (In the LINQ code, OrderBy(slot => slot.GetItemObject().type != selectedItemType) causes
+            //  slots with a matching type (false) to come before those that do not (true).)
+            bool aNonMatch = a.GetItemObject().type != selectedItemType;
+            bool bNonMatch = b.GetItemObject().type != selectedItemType;
+            if (aNonMatch != bNonMatch)
+                return aNonMatch ? 1 : -1;
+
+            // Secondary criterion: Compare by listPrice.CurrentPrice.
+            int cmp = a.item.listPrice.CurrentPrice.CompareTo(b.item.listPrice.CurrentPrice);
+            if (cmp != 0)
+                return cmp;
+
+            // Tertiary criterion: Compare by item.id.
+            cmp = a.item.id.CompareTo(b.item.id);
+            if (cmp != 0)
+                return cmp;
+
+            // Finally, compare by amount.
+            return a.amount.CompareTo(b.amount);
         }
 
         public int EmptySlotCount
@@ -154,7 +245,7 @@ namespace InventorySystem
             }
         }
 
-        [ContextMenu("Save")]   
+        [ContextMenu("Save")]
         public void Save()
         {
             SerializableInventory serializableInventory = new SerializableInventory
@@ -165,15 +256,15 @@ namespace InventorySystem
                     ItemId = slot.item.id,
                     Amount = slot.amount
                 }).ToArray()
-                
             };
-            
+
             IFormatter formatter = new BinaryFormatter();
             Stream stream = null;
-            
+
             try
             {
-                stream = new FileStream(string.Concat(Application.persistentDataPath, savePath), FileMode.Create, FileAccess.Write);
+                stream = new FileStream(string.Concat(Application.persistentDataPath, savePath), FileMode.Create,
+                    FileAccess.Write);
                 formatter.Serialize(stream, serializableInventory);
             }
             catch (SerializationException e)
@@ -200,9 +291,9 @@ namespace InventorySystem
 
                 IFormatter formatter = new BinaryFormatter();
                 SerializableInventory newContainer = (SerializableInventory)formatter.Deserialize(stream);
-                foreach (var slot in newContainer.Slots)
+                foreach (SerializableInventorySlot slot in newContainer.Slots)
                 {
-                    if(slot is null || slot.ItemId == -1) continue;
+                    if (slot is null || slot.ItemId == -1) continue;
                     GetSlots[slot.SlotIndex].UpdateSlot(database.ItemObjects[slot.ItemId].data, slot.Amount);
                 }
             }
@@ -225,7 +316,7 @@ namespace InventorySystem
 
         public void RemoveAllItems()
         {
-            foreach (var slot in GetSlots)
+            foreach (InventorySlot slot in GetSlots)
             {
                 slot.RemoveItem();
             }
@@ -233,7 +324,7 @@ namespace InventorySystem
 
         public int GetItemCount(Item item)
         {
-            var slots = FindAllItemsOnInventory(item);
+            List<InventorySlot> slots = FindAllItemsOnInventory(item);
 
             return slots.Sum(slot => slot.amount);
         }

@@ -26,6 +26,7 @@ namespace player
         public bool dayEnded;
         private GameObject lastHighlightedObject;
         private Color originalColor;
+        private int _currentCursorState;
 
         private void Update()
         {
@@ -173,7 +174,9 @@ namespace player
         
         private void SetCursor(int cursorIndex)
         {
-            if (cursorIndex < 0 || cursorIndex >= cursors.Length) return;
+            if (cursorIndex < 0 || cursorIndex >= cursors.Length || cursorIndex == _currentCursorState) return;
+            _currentCursorState = cursorIndex;
+            
             Cursor.SetCursor(cursors[cursorIndex], Vector2.zero, CursorMode.Auto);
         }
     }

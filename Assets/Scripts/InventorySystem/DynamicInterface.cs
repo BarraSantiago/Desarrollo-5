@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace InventorySystem
 {
@@ -16,13 +19,14 @@ namespace InventorySystem
         [SerializeField] private Transform slotsParent;
         [SerializeField] private ItemInfo itemInfo;
         [SerializeField] private ItemDatabaseObject itemDatabase;
+        [SerializeField] private Button[] sortButton;
 
         protected override void CreateSlots()
         {
             slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
             for (int i = 0; i < inventory.GetSlots.Length; i++)
             {
-                var obj = Instantiate(inventoryPrefab, Vector3.zero, Quaternion.identity, transform);
+                GameObject obj = Instantiate(inventoryPrefab, Vector3.zero, Quaternion.identity, transform);
                 if (slotsParent)
                 {
                     obj.transform.SetParent(slotsParent);
@@ -36,13 +40,13 @@ namespace InventorySystem
                 AddEvent(obj, EventTriggerType.PointerExit, delegate { OnExit(obj); });
                 AddEvent(obj, EventTriggerType.PointerClick, delegate(BaseEventData data)
                 {
-                    var slot = slotsOnInterface[obj];
+                    InventorySlot slot = slotsOnInterface[obj];
                     if (slot.item == null) return; // Null check for slot.item
 
-                    var itemId = slot.item.id;
+                    int itemId = slot.item.id;
                     ItemObject matchedItem = null;
 
-                    foreach (var item in itemDatabase.ItemObjects)
+                    foreach (ItemObject item in itemDatabase.ItemObjects)
                     {
                         if (item.data.id != itemId) continue;
                         matchedItem = item;
@@ -58,7 +62,27 @@ namespace InventorySystem
                 inventory.GetSlots[i].slotDisplay = obj;
                 slotsOnInterface.Add(obj, inventory.GetSlots[i]);
             }
+
+            if (sortButton == null || sortButton.Length <= 0) return;
+            
+            
+                sortButton[0].onClick.AddListener(delegate { UpdateSlots((ItemType)0); });
+                sortButton[1].onClick.AddListener(delegate { UpdateSlots((ItemType)3); });
+                sortButton[2].onClick.AddListener(delegate { UpdateSlots((ItemType)2); });
+                sortButton[3].onClick.AddListener(delegate { UpdateSlots((ItemType)1); });
+            
         }
+
+        private void UpdateSlots(ItemType type)
+        {
+            inventory.SortInventory(type);
+            foreach (var slot in slotsOnInterface.Values)
+            {
+                OnSlotUpdate(slot);
+            }
+
+        }
+
 
         private Vector3 GetPosition(int i)
         {
