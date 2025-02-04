@@ -95,7 +95,7 @@ AnimatorStateMachine:
     m_Position: {x: 770, y: -90, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1025894785551166430}
-    m_Position: {x: 640, y: -20, z: 0}
+    m_Position: {x: 580, y: 0, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8548371759432119302}
     m_Position: {x: 260, y: 110, z: 0}
@@ -171,13 +171,13 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Speed
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -198,7 +198,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: woman client walk
+  m_Name: female client walk
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -261,7 +261,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: woman client grab
+  m_Name: female client grab
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -275,7 +275,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 984980805293484314, guid: 6ae71ec011c75b448877ebd079784593, type: 3}
+  m_Motion: {fileID: 7400000, guid: 98a396cfb7bc5cf4f96bcf1492a54f5a, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -288,7 +288,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: woman client idle
+  m_Name: female client idle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:

@@ -276,6 +276,7 @@ namespace Clients
         /// </summary>
         private IEnumerator GrabItem()
         {
+            // 1) Move to the item
             DisplayItem targetItem = ItemDisplayer.DisplayItems[_desiredItemIndex];
             Collider targetCollider = targetItem.displayObject.GetComponent<Collider>();
 
@@ -283,27 +284,47 @@ namespace Clients
             float startTime = Time.time;
             float maxWaitTime = 6f;
 
+            // Wait until we're near the item or time out
             while (!NearItem(targetCollider))
             {
                 if (Time.time - startTime > maxWaitTime)
-                {
                     break;
-                }
-
                 yield return null;
             }
 
+            // Check if client is still willing to buy
+            if (!CheckBuyItem())
+                yield break;
 
-            if (!CheckBuyItem()) yield break;
-
+            // Stop moving
             agent.ResetPath();
+            animator.SetFloat("Speed", 0);
+            float currentSpeed = agent.speed;
+            agent.speed = 0;
+            agent.velocity = Vector3.zero;
 
+            yield return null;
+
+            // 2) Trigger the "GrabItem" animation
             animator.SetTrigger("GrabItem");
 
-            StartCoroutine(LerpDisplayObjectPosition());
-            yield return new WaitForSeconds(_reactionTime);
+            // Give Animator a frame to transition into the GrabItem state 
+            // so GetCurrentAnimatorClipInfo returns the new clip.
+            yield return null;
 
+            // 3) Determine the clip length for the GrabItem animation
+            var clipInfos = animator.GetCurrentAnimatorClipInfo(0);
+            float grabAnimLength = 0.5f; // fallback length
+            if (clipInfos.Length > 0)
+            {
+                // If your "GrabItem" clip is first, clipInfos[0] is the correct clip
+                grabAnimLength = clipInfos[0].clip.length;
+            }
 
+            // 4) Lerp the item to the hand *during* the animation
+            yield return new WaitForSeconds(3f);
+
+            // If item got destroyed mid-lerp, leave
             if (!targetItem.displayObject)
             {
                 targetItem.BeingViewed = false;
@@ -311,35 +332,68 @@ namespace Clients
                 yield break;
             }
 
-            targetItem.displayObject.transform.SetParent(transform);
+            // 5) Finally, set the item as a child of this client’s transform
+            targetItem.displayObject.transform.SetParent(itemPosition);
             targetItem.displayObject.transform.position = itemPosition.position;
+
+            // Cache item info
             _itemPrice = targetItem.Item.price;
             _itemAmount = targetItem.amount;
             _itemId = targetItem.Item.data.id;
+
+            // Clear the display so it doesn't show the old item
             targetItem.displayObject = null;
             targetItem.CleanDisplay();
             targetItem.inventory.RemoveItem(ItemDatabase.ItemObjects[_itemId].data, _itemAmount);
+
+            agent.speed = currentSpeed;
+
+            // 6) Proceed to queue in line
             CurrentState = State.WaitingInline;
         }
 
-        private IEnumerator LerpDisplayObjectPosition()
+        public void MoveItemToHand()
         {
-            float lerpTime = 0.3f;
-            float startTime = Time.time;
+            DisplayItem targetItem = ItemDisplayer.DisplayItems[_desiredItemIndex];
 
-            Vector3 initialPosition = ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position;
+            if (!targetItem || !targetItem.displayObject) return;
+            
+            targetItem.displayObject.transform.position = itemPosition.position;
+            targetItem.displayObject.transform.SetParent(itemPosition);
+        }
+
+        private IEnumerator LerpDisplayObjectPosition(float duration)
+        {
+            DisplayItem targetItem = ItemDisplayer.DisplayItems[_desiredItemIndex];
+            if (!targetItem || !targetItem.displayObject)
+                yield break;
+
+            // Initial and final positions
+            Vector3 initialPosition = targetItem.displayObject.transform.position;
             Vector3 targetPosition = itemPosition.position;
-
-            while (Time.time - startTime < lerpTime)
+            float startTime = Time.time;
+            /*
+            while (Time.time - startTime < duration)
             {
-                float t = (Time.time - startTime) / lerpTime;
-                ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position =
-                    Vector3.Lerp(initialPosition, targetPosition, t);
-                yield return null;
-            }
+                float t = (Time.time - startTime) / duration;
 
-            ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.position = targetPosition;
-            ItemDisplayer.DisplayItems[_desiredItemIndex].displayObject.transform.SetParent(itemPosition);
+                // In case the display object was destroyed or removed mid-animation
+                if (targetItem.displayObject == null)
+                    yield break;
+
+                targetItem.displayObject.transform.position =
+                    Vector3.Lerp(initialPosition, targetPosition, t);
+
+                yield return null;
+            }*/
+            yield return new WaitForSeconds(2f);
+
+            // Snap to final position and parent to the hand's transform
+            if (targetItem.displayObject != null)
+            {
+                targetItem.displayObject.transform.position = targetPosition;
+                targetItem.displayObject.transform.SetParent(itemPosition);
+            }
         }
 
         private IEnumerator StartWaitingLine()

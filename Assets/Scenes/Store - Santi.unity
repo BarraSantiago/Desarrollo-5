@@ -13017,8 +13017,8 @@ MonoBehaviour:
   itemDisplayer: {fileID: 1317004243}
   checkOut: {fileID: 776556892}
   waitingLineStart: {fileID: 1340443659}
-  posAmount: 4
-  distanceBetweenPos: 1.2
+  posAmount: 15
+  distanceBetweenPos: 4
   timeCycle: {fileID: 1470657748}
   uiManager: {fileID: 26083492}
   mainCanvas: {fileID: 1289141503}
