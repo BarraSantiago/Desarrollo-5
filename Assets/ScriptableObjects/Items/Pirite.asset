@@ -16,7 +16,7 @@ MonoBehaviour:
   characterDisplay: {fileID: 4725459605743296824, guid: 12bd0e592c5c1f444b9903a23ba247fc, type: 3}
   stackable: 1
   maxStack: 5
-  type: 0
+  type: 2
   description: A chunk of fool's gold, glittering deceptively. Used in alchemical
     experiments and as decoration.
   data:
