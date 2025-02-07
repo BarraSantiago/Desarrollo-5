@@ -17,8 +17,8 @@ MonoBehaviour:
   stackable: 1
   maxStack: 5
   type: 2
-  description: A piece of porous black stone, still warm to the touch. Useful in
-    forging and enchanting.
+  description: Very valuable and useful, this piece of volcano rock contains a heat
+    in its core that is used as an energy source.
   data:
     name: Volcanic Rock
     id: 13

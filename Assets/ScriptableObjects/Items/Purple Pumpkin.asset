@@ -17,8 +17,8 @@ MonoBehaviour:
   stackable: 1
   maxStack: 3
   type: 0
-  description: An unusually colored gourd with a metallic sheen to its skin. Rare
-    and sought after by potion makers.
+  description: This purple pumpkin is very famous for its flavour and aroma. It is
+    used for desserts or perfumes.
   data:
     name: Purple Pumpkin
     id: 8

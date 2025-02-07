@@ -17,7 +17,8 @@ MonoBehaviour:
   stackable: 0
   maxStack: 0
   type: 0
-  description: Red roots from the trees in the magic forest.
+  description: A gnarled root said to have magical properties. It requires special
+    care to mantain its nutrients.
   data:
     name: Red Roots
     id: 4

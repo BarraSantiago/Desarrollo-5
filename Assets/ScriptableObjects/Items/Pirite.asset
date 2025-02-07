@@ -17,8 +17,7 @@ MonoBehaviour:
   stackable: 1
   maxStack: 5
   type: 2
-  description: A chunk of fool's gold, glittering deceptively. Used in alchemical
-    experiments and as decoration.
+  description: This gold-like mineral, is very much used for weapons and armor crafting.
   data:
     name: Pirite
     id: 11

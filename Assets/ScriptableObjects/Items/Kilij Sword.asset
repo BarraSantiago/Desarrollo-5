@@ -17,10 +17,10 @@ MonoBehaviour:
   stackable: 0
   maxStack: 1
   type: 1
-  description: A broad-bladed kilij with a pronounced forward curve. The blade is
-    damascene steel, showing beautiful swirling patterns, and the crossguard is gold-plated.
+  description: One of the most rare and desired blades in the lands, this one has
+    magical ice properties. It can only be crafted with ancient magic.
   data:
-    name: Kilij Sword
+    name: Ice Crystal Sword
     id: 17
     listPrice:
       originalPrice: 160

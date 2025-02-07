@@ -17,10 +17,10 @@ MonoBehaviour:
   stackable: 1
   maxStack: 3
   type: 3
-  description: Heals some of the most dreadful wounds. May even reattach a severed
-    limb.
+  description: This bottle contains a red-hued concoction that can relieve pain and
+    improve the condition of the individual who drinks it.
   data:
-    name: Medium Potion
+    name: Healing Potion
     id: 6
     listPrice:
       originalPrice: 22

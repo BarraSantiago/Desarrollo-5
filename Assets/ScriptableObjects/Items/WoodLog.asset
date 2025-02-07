@@ -17,9 +17,9 @@ MonoBehaviour:
   stackable: 1
   maxStack: 5
   type: 2
-  description: Wood.
+  description: A piece of desert tree, mostly used for constructions and weapon crafting.
   data:
-    name: Wood log
+    name: Wood Log
     id: 1
     listPrice:
       originalPrice: 30

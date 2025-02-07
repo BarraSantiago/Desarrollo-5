@@ -17,8 +17,8 @@ MonoBehaviour:
   stackable: 1
   maxStack: 5
   type: 1
-  description: A long, slender shaft of polished wood topped with a long and sharp
-    head. Iron tassels near the base add flair while helping to balance the weapon.
+  description: Perfect for long range combats, this long, slender shaft of polished
+    wood topped with a leaf-shaped steel head is used by hunters and scavengers.
   data:
     name: "Ar\u0161ti Spear"
     id: 16

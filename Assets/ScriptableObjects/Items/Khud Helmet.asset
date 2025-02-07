@@ -17,9 +17,8 @@ MonoBehaviour:
   stackable: 1
   maxStack: 5
   type: 1
-  description: A rounded steel helm with a protective nasal guard. Its surface is
-    etched with flowing Arabic calligraphy, and a strip of chainmail hangs from the
-    back to guard the neck.
+  description: A rounded steel helm with a protective nasal guard. Mostly used by
+    royal guards.
   data:
     name: Khud Helmet
     id: 15

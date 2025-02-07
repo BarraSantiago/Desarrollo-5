@@ -17,7 +17,7 @@ MonoBehaviour:
   stackable: 1
   maxStack: 5
   type: 2
-  description: Crystal ore.
+  description: 'A translucent blue crystal that seems to contain swirling water within. '
   data:
     name: Crystal
     id: 0

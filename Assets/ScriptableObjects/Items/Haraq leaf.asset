@@ -17,8 +17,8 @@ MonoBehaviour:
   stackable: 1
   maxStack: 5
   type: 0
-  description: A broad, silvery leaf from the mythical Haraq tree. It remains cool
-    to the touch even in blazing heat.
+  description: Taken from Haraq trees, this orange leaf is mostly used for delicious
+    skewers.
   data:
     name: Haraq Leaf
     id: 9

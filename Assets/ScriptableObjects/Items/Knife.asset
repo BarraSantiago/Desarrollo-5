@@ -17,7 +17,8 @@ MonoBehaviour:
   stackable: 0
   maxStack: 0
   type: 1
-  description: Short and sharp blade, perfect for mundane activities.
+  description: A small knife with a wood handle. It may be fragile but perfect for
+    concealing in clothing.
   data:
     name: Knife
     id: 7

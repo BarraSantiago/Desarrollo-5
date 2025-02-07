@@ -17,7 +17,7 @@ MonoBehaviour:
   stackable: 1
   maxStack: 5
   type: 0
-  description: Seeds from the trees in the magic forest.
+  description: Small yellow seeds that can be found inside various plants.
   data:
     name: Seeds
     id: 5
