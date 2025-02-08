@@ -10,6 +10,7 @@ namespace Tutorial
         [SerializeField] private Button nextButton;
         [SerializeField] private Button previousButton;
         [SerializeField] private Button closeButton;
+        [SerializeField] private Button closeButton2;
         [SerializeField] private GameObject[] tutorialPages;
         [SerializeField] private TMP_Text pagesCounter;
         private int currentPage = 0;
@@ -35,6 +36,7 @@ namespace Tutorial
             nextButton.onClick.AddListener(NextPage);
             previousButton.onClick.AddListener(PreviousPage);
             closeButton.onClick.AddListener(CloseTutorial);
+            closeButton2.onClick.AddListener(CloseTutorial);
             hasBeenAccessed = PlayerPrefs.GetInt("TutorialAccessed", 0) == 1;
             
             if (hasBeenAccessed) CloseTutorial();

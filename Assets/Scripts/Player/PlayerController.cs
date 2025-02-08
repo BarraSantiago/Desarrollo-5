@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Interactable;
 using InventorySystem;
 using UI;
@@ -13,6 +14,7 @@ namespace player
         Hover,
         Interact
     }
+
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private GameObject inventoryUI;
@@ -22,11 +24,21 @@ namespace player
         [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private Color highlightColor = Color.white;
         [SerializeField] private Texture2D[] cursors;
-        
+
         public bool dayEnded;
         private GameObject lastHighlightedObject;
         private Color originalColor;
         private int _currentCursorState;
+        private List<IInteractable> interactables = new List<IInteractable>();
+
+        private void Start()
+        {
+            Cursor.SetCursor(cursors[(int)CursorStates.Default], Vector2.zero, CursorMode.Auto);
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+
+            interactables.AddRange(FindObjectsOfType<MonoBehaviour>().OfType<IInteractable>());
+        }
 
         private void Update()
         {
@@ -62,13 +74,11 @@ namespace player
                 {
                     HighlightObject(hit.collider.gameObject);
                     SetCursor((int)CursorStates.Hover);
-
                 }
                 else
                 {
                     ResetHighlight();
                     SetCursor((int)CursorStates.Default);
-
                 }
             }
             else
@@ -87,6 +97,12 @@ namespace player
 
         public void OnInventoryOpen(InputValue context)
         {
+            if (interactables.Any(interactable => interactable.State))
+            {
+                interactables.ForEach(interactable => interactable.Close());
+                return;
+            }
+
             inventoryUI.SetActive(!inventoryUI.activeSelf);
 
             if (!inventoryUI.activeSelf)
@@ -171,12 +187,12 @@ namespace player
             endDayStats.SetActive(true);
             endDayInput.SetActive(false);
         }
-        
+
         private void SetCursor(int cursorIndex)
         {
             if (cursorIndex < 0 || cursorIndex >= cursors.Length || cursorIndex == _currentCursorState) return;
             _currentCursorState = cursorIndex;
-            
+
             Cursor.SetCursor(cursors[cursorIndex], Vector2.zero, CursorMode.Auto);
         }
     }
