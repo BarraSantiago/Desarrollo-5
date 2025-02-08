@@ -8,6 +8,7 @@ namespace Interactable
     {
         [SerializeField] private GameObject[] menus;
         [SerializeField] private GameObject playerInventoryUi;
+        [SerializeField] private GameObject itemInfoUi;
         [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private Transform inventoryOriginalTransform;
         [SerializeField] private Transform inventoryNewTransform;
@@ -31,10 +32,14 @@ namespace Interactable
                 menu?.SetActive(true);
             }
 
-            if (isSellingPoint) InventoryGO.transform.SetParent(playerInventoryUi.transform);
-            playerInventoryUi.SetActive(true);
-            //playerInventoryUi.transform.position = inventoryNewTransform.position;
-            playerInventory.UpdateInventory();
+            if (isSellingPoint)
+            {
+                InventoryGO.transform.SetParent(playerInventoryUi.transform);
+                playerInventoryUi.SetActive(true);
+                itemInfoUi.SetActive(false);
+                //playerInventoryUi.transform.position = inventoryNewTransform.position;
+                playerInventory.UpdateInventory();
+            }
 
             return true;
         }
@@ -46,8 +51,13 @@ namespace Interactable
                 menu?.SetActive(false);
             }
 
-            if (isSellingPoint) InventoryGO.transform.SetParent(menus[0].transform);
-            playerInventoryUi.SetActive(false);
+            if (isSellingPoint)
+            {
+                InventoryGO.transform.SetParent(menus[0].transform);
+                itemInfoUi.SetActive(true);
+                playerInventoryUi.SetActive(false);
+            }
+
             //playerInventoryUi.transform.position = inventoryOriginalTransform.position;
         }
     }
