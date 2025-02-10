@@ -2,6 +2,7 @@
 using System.Linq;
 using Interactable;
 using InventorySystem;
+using Menu;
 using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -30,7 +31,7 @@ namespace player
         private Color originalColor;
         private int _currentCursorState;
         private List<IInteractable> interactables = new List<IInteractable>();
-
+        private PauseManager _pauseManager;
         private void Start()
         {
             Cursor.SetCursor(cursors[(int)CursorStates.Default], Vector2.zero, CursorMode.Auto);
@@ -38,6 +39,7 @@ namespace player
             Cursor.visible = true;
 
             interactables.AddRange(FindObjectsOfType<MonoBehaviour>().OfType<IInteractable>());
+            _pauseManager = FindObjectOfType<PauseManager>();
         }
 
         private void Update()
@@ -116,7 +118,7 @@ namespace player
 
         public void OnPause(InputValue context)
         {
-            Application.Quit();
+            _pauseManager.OnPause();
         }
 
         public void OnDebug(InputValue ctx)
