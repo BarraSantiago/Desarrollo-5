@@ -19,13 +19,21 @@ namespace Menu
         [SerializeField] private Button resumeButton;
         [SerializeField] private Button menuButton;
         [SerializeField] private Button quitButton;
+        [SerializeField] private Toggle fullscreenToggle;
+
+        private const string FullscreenKey = "fullscreen";
 
         private void Awake()
         {
             resumeButton.onClick.AddListener(ResumeGame);
             menuButton.onClick.AddListener(LoadMenu);
             quitButton.onClick.AddListener(Quit);
+            fullscreenToggle.onValueChanged.AddListener(FullscreenToggle);
             resumeButton.Select();
+
+            FullscreenToggle(PlayerPrefs.GetInt(FullscreenKey, 1) == 1);
+            
+            fullscreenToggle.isOn = Screen.fullScreen;
         }
 
         /// <summary>
@@ -65,6 +73,7 @@ namespace Menu
         {
             Application.Quit();
         }
+
 
         /// <summary>
         /// In case of game ending by win or lose event, stops time and disables this menu.
@@ -124,6 +133,12 @@ namespace Menu
         private void ResumeTime()
         {
             Time.timeScale = NormalTimeScale;
+        }
+
+        private void FullscreenToggle(bool isFullscreen)
+        {
+            Screen.fullScreen = isFullscreen;
+            PlayerPrefs.SetInt(FullscreenKey, isFullscreen ? 1 : 0);
         }
     }
 }
