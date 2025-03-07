@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using InventorySystem;
@@ -7,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
+using Random = UnityEngine.Random;
 
 namespace Store.Shops
 {
@@ -42,7 +44,7 @@ namespace Store.Shops
         [SerializeField] private GameObject FailWindow;
         [SerializeField] private Image FailImage;
         [SerializeField] private Image SuccessImage;
-        
+
         #endregion
 
         #region Properties
@@ -87,12 +89,21 @@ namespace Store.Shops
         #endregion
 
 
+        private const string ShopLevelKey = "ShopLevel";
+
+        private void Awake()
+        {
+            _shopMaxLevel = databases.Length+1;
+            _shopLevel = PlayerPrefs.GetInt(ShopLevelKey, 1);
+
+            CheckLevel();
+        }
+
         private void Start()
         {
-            _shopLevel = 1;
-            _shopMaxLevel = databases.Length;
+            
             _shopUpgradeCost = 150;
-            _shopUpgradeCostMultiplier = 5;
+            _shopUpgradeCostMultiplier = 3;
             _shopUpgradeCost *= _shopUpgradeCostMultiplier * _shopLevel;
             if (amountText) amountText.text = _currentAmount.ToString();
             if (upgradeText) upgradeText.text = _shopUpgradeCost.ToString();
@@ -176,7 +187,7 @@ namespace Store.Shops
             }
 
             messageWindow.SetActive(true);
-            
+
             if (Random.Range(0, 100) < _craftChance * CraftChanceMultiplier)
             {
                 player.inventory.AddItem(_selectedItem.data, _currentAmount);
@@ -262,12 +273,19 @@ namespace Store.Shops
         private void UpdateTextColor()
         {
             costText.color = player.Money < CurrentCost ? Color.red : Color.green;
-            if (upgradeText) upgradeText.color = player.Money < _shopUpgradeCost ? Color.red : Color.green;
+            if (upgradeText && _shopLevel < _shopMaxLevel)
+            {
+                upgradeText.color = player.Money < _shopUpgradeCost ? Color.red : Color.green;
+            }
         }
 
         private void CheckLevel()
         {
-            if (_shopLevel < _shopMaxLevel) return;
+            if (_shopLevel < _shopMaxLevel-1)
+            {
+                if (upgradeButton) upgradeButton.interactable = true;
+                return;
+            }
 
             if (upgradeButton) upgradeButton.interactable = false;
             if (upgradeText) upgradeText.text = "Max Level";
@@ -290,21 +308,28 @@ namespace Store.Shops
             player.Money -= _shopUpgradeCost;
             _shopUpgradeCost *= _shopUpgradeCostMultiplier;
             upgradeText.text = _shopUpgradeCost.ToString();
+            ListDatabaseItems(databases[_shopLevel]);
             _shopLevel++;
+            PlayerPrefs.SetInt(ShopLevelKey, _shopLevel);
+            UpdateAvailability(player.Money);
         }
 
         private void ListItems()
         {
             for (int i = 0; i < _shopLevel; i++)
             {
-                ItemIdDatabaseObject itemDatabase = databases[i];
-                foreach (ItemObject itemObject in itemDatabase.ItemObjects)
-                {
-                    GameObject shopItem = Instantiate(shopItemPrefab, shopItemsParent);
-                    ShopItem newItem = shopItem.GetComponent<ShopItem>();
-                    newItem.SetItem(itemObject, itemCostMultiplier);
-                    _shopItems.Add(newItem);
-                }
+                ListDatabaseItems(databases[i]);
+            }
+        }
+        
+        private void ListDatabaseItems(ItemIdDatabaseObject database)
+        {
+            foreach (ItemObject itemObject in database.ItemObjects)
+            {
+                GameObject shopItem = Instantiate(shopItemPrefab, shopItemsParent);
+                ShopItem newItem = shopItem.GetComponent<ShopItem>();
+                newItem.SetItem(itemObject, itemCostMultiplier);
+                _shopItems.Add(newItem);
             }
         }
 
