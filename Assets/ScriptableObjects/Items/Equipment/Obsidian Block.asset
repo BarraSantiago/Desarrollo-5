@@ -21,7 +21,7 @@ MonoBehaviour:
     is very valuable in the market.
   data:
     name: Obsidian Block
-    id: -1
+    id: 24
     listPrice:
       originalPrice: 180
     craftable: 1

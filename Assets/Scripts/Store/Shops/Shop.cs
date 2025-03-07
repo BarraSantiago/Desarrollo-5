@@ -36,6 +36,13 @@ namespace Store.Shops
         [SerializeField] private TMP_Text costText;
         [SerializeField] private float itemCostMultiplier = 0.8f;
 
+        [Header("Item crafting setup")] 
+        [SerializeField] private GameObject messageWindow;
+        [SerializeField] private GameObject SuccessWindow;
+        [SerializeField] private GameObject FailWindow;
+        [SerializeField] private Image FailImage;
+        [SerializeField] private Image SuccessImage;
+        
         #endregion
 
         #region Properties
@@ -123,7 +130,7 @@ namespace Store.Shops
                 {
                     ItemObject itemRecipe = completeDatabase.ItemObjects[_selectedItem.data.recipe.items[i].itemID];
                     shopRecipes[i].SetRecipe(itemRecipe, _selectedItem.data.recipe.items[i].amount,
-                        player.inventory.GetItemCount(_selectedItem.data));
+                        player.inventory.GetItemCount(itemRecipe.data));
                 }
 
                 _craftChance = completeDatabase.ItemObjects[_selectedItem.data.id].data.recipe.craftChance;
@@ -168,13 +175,19 @@ namespace Store.Shops
                 player.inventory.RemoveItem(currentEntry.data, itemEntry.amount);
             }
 
+            messageWindow.SetActive(true);
+            
             if (Random.Range(0, 100) < _craftChance * CraftChanceMultiplier)
             {
                 player.inventory.AddItem(_selectedItem.data, _currentAmount);
+                SuccessWindow.SetActive(true);
+                SuccessImage.sprite = _selectedItem.uiDisplay;
                 AudioManager.instance.Play("CraftingSuccess");
             }
             else
             {
+                FailWindow.SetActive(true);
+                FailImage.sprite = _selectedItem.uiDisplay;
                 AudioManager.instance.Play("CraftingFail");
             }
 
