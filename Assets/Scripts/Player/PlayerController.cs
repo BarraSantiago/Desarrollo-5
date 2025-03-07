@@ -23,9 +23,6 @@ namespace player
         [SerializeField] private GameObject endDayStats;
         [SerializeField] private GameObject endDayInput;
         [SerializeField] private InventoryObject playerInventory;
-        [SerializeField] private Color highlightColor = Color.white;
-        [SerializeField] private Material highlightMaterial;
-        [SerializeField] private Material tableMaterial;
         [SerializeField] private Texture2D[] cursors;
 
         public bool dayEnded;
@@ -52,11 +49,11 @@ namespace player
             HighlightInteractable();
         }
 
+        
         private void HighlightInteractable()
         {
             if (UIHelper.IsPointerOverUIElement())
             {
-                ResetHighlight();
                 SetCursor((int)CursorStates.Default);
                 return;
             }
@@ -77,18 +74,15 @@ namespace player
 
                 if (interactable != null)
                 {
-                    HighlightObject(hit.collider.gameObject);
                     SetCursor((int)CursorStates.Hover);
                 }
                 else
                 {
-                    ResetHighlight();
                     SetCursor((int)CursorStates.Default);
                 }
             }
             else
             {
-                ResetHighlight();
                 SetCursor((int)CursorStates.Default);
             }
         }
@@ -129,6 +123,7 @@ namespace player
             debugUI?.SetActive(!debugUI.activeSelf);
         }
 
+        /*
         private void HighlightObject(GameObject obj)
         {
             if (lastHighlightedObject && lastHighlightedObject != obj)
@@ -159,7 +154,7 @@ namespace player
             }
 
             lastHighlightedObject = null;
-        }
+        }*/
 
 
         private void RaycastFromMouse()
