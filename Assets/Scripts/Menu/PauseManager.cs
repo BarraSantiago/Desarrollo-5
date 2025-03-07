@@ -25,11 +25,11 @@ namespace Menu
 
         private void Awake()
         {
-            resumeButton.onClick.AddListener(ResumeGame);
-            menuButton.onClick.AddListener(LoadMenu);
-            quitButton.onClick.AddListener(Quit);
-            fullscreenToggle.onValueChanged.AddListener(FullscreenToggle);
-            resumeButton.Select();
+            resumeButton?.onClick.AddListener(ResumeGame);
+            menuButton?.onClick.AddListener(LoadMenu);
+            quitButton?.onClick.AddListener(Quit);
+            fullscreenToggle?.onValueChanged.AddListener(FullscreenToggle);
+            resumeButton?.Select();
 
             FullscreenToggle(PlayerPrefs.GetInt(FullscreenKey, 1) == 1);
             

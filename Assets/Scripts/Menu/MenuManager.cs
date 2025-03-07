@@ -12,7 +12,7 @@ namespace Menu
         
         public void Start()
         {
-            if (versionText != null) versionText.text = Application.version;
+            if (versionText != null) versionText.text = "Ver " + Application.version;
         }
         /// <summary>
         /// Quits the application
@@ -36,6 +36,11 @@ namespace Menu
         public void LoadSceneById(int id)
         {
             SceneManager.LoadScene(id);
+        }
+
+        public void OpenMenu(GameObject menu)
+        {
+            menu.SetActive(!menu.activeSelf);
         }
     }
 }
