@@ -11,14 +11,22 @@ namespace Menu
     {
         [SerializeField] private AudioMixer mainMixer;
         [SerializeField] private Slider volumeSlider;
+        [SerializeField] private Toggle volumeToggle;
 
         private const string MixerVolume = "Volume";
-
+        private float lastVolume;
         private void Start()
         {
             mainMixer.GetFloat(MixerVolume, out float currentVolume);
             volumeSlider.value = Mathf.Pow(10, currentVolume / 20f); // Convert dB to linear value
             volumeSlider.onValueChanged.AddListener(SetVolume);
+            volumeToggle.onValueChanged.AddListener(ToggleVolume);
+            lastVolume = volumeSlider.value;
+        }
+
+        private void ToggleVolume(bool arg0)
+        {
+            mainMixer.SetFloat(MixerVolume, !arg0 ? lastVolume : -80);
         }
 
         /// <summary>
@@ -30,6 +38,7 @@ namespace Menu
             if(volume <= 0.0001f) volume = 0.0001f;
             float dB = 20f * Mathf.Log10(volume); // Convert linear value to dB
             mainMixer.SetFloat(MixerVolume, dB);
+            lastVolume = dB;
         }
     }
 }
