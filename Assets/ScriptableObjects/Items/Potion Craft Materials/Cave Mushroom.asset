@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e69b010a6fdbbf45a3b4dabefc08ddc, type: 3}
+  m_Name: Cave Mushroom
+  m_EditorClassIdentifier: 
+  uiDisplay: {fileID: 21300000, guid: 0e63250f383610b4cae26305616a7dee, type: 3}
+  characterDisplay: {fileID: 1952401581705920911, guid: dacb5bd86db734a49bfff101ffeb99e4, type: 3}
+  stackable: 1
+  maxStack: 5
+  type: 0
+  description: A peculiar fungus that can be found in dark, damp caves. Known for
+    its alchemical uses.
+  data:
+    name: Cave Mushroom
+    id: -1
+    listPrice:
+      originalPrice: 20
+    craftable: 0
+    recipe: {fileID: 0}
+  boneNames: []
+  price: 0

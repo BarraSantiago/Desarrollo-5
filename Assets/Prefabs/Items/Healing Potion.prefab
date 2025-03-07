@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1454477295846655916}
   - component: {fileID: 7128279844926302087}
   m_Layer: 0
-  m_Name: Medium Potion
+  m_Name: Healing Potion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
