@@ -383,7 +383,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2007581228167623360}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -11.616, y: -3.422, z: -0.95}
   m_LocalScale: {x: 200, y: 200, z: 200}
   m_ConstrainProportionsScale: 1
@@ -458,6 +458,7 @@ MonoBehaviour:
   menus:
   - {fileID: 1665546451699658478}
   playerInventoryUi: {fileID: 0}
+  itemInfoUi: {fileID: 0}
   playerInventory: {fileID: 11400000, guid: 871251e7f17d13e4b97533a348629bc0, type: 2}
   inventoryOriginalTransform: {fileID: 0}
   inventoryNewTransform: {fileID: 0}
@@ -650,7 +651,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4936986281038526419, guid: 59b16e36e473c3f40a8c40477e3cdf96, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.000061035156
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4936986281038526419, guid: 59b16e36e473c3f40a8c40477e3cdf96, type: 3}
       propertyPath: m_AnchoredPosition.y

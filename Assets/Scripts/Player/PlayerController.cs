@@ -24,6 +24,8 @@ namespace player
         [SerializeField] private GameObject endDayInput;
         [SerializeField] private InventoryObject playerInventory;
         [SerializeField] private Color highlightColor = Color.white;
+        [SerializeField] private Material highlightMaterial;
+        [SerializeField] private Material tableMaterial;
         [SerializeField] private Texture2D[] cursors;
 
         public bool dayEnded;
@@ -32,6 +34,7 @@ namespace player
         private int _currentCursorState;
         private List<IInteractable> interactables = new List<IInteractable>();
         private PauseManager _pauseManager;
+        
         private void Start()
         {
             Cursor.SetCursor(cursors[(int)CursorStates.Default], Vector2.zero, CursorMode.Auto);
