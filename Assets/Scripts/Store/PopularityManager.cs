@@ -14,7 +14,7 @@ namespace Store
         [SerializeField] private int[] minClientsPerPopularity;
         [SerializeField] private Image popularityMedal;
         [SerializeField] private Sprite[] medals;
-
+        private const string LevelKey = "LevelUp";
         public float PopularityVariation => Random.Range(0.1f, 1);
 
         public int MaxClients => maxClientsPerPopularity[_popularitryLevel];
@@ -58,6 +58,7 @@ namespace Store
             popularitySlider.value = 0;
             popularityMedal.sprite = medals[_popularitryLevel];
             popularitySlider.maxValue = popularityXpLevels[_popularitryLevel];
+            AudioManager.instance.Play(LevelKey);
         }
     }
 }

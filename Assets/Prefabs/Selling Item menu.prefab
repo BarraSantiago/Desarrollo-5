@@ -369,6 +369,7 @@ GameObject:
   - component: {fileID: 2826104717188474840}
   - component: {fileID: 2826104717188474841}
   - component: {fileID: 2826104717188474846}
+  - component: {fileID: 543450652059815973}
   m_Layer: 0
   m_Name: Selling Item menu
   m_TagString: Untagged
@@ -488,6 +489,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.010757519, y: 0.009976772, z: 0.010757519}
   m_Center: {x: 0, y: -9.313226e-10, z: -0.0000000037252903}
+--- !u!114 &543450652059815973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2007581228167623360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b919f5bf15aaa974a89dda6758c56a18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMaterial: {fileID: 2100000, guid: 657658f5e9924084a87aac926f9ad75e, type: 2}
 --- !u!1 &6659274123506469915
 GameObject:
   m_ObjectHideFlags: 0

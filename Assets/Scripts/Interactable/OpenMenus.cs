@@ -15,6 +15,7 @@ namespace Interactable
         [SerializeField] private bool isSellingPoint;
         private GameObject InventoryGO;
 
+        private const string AudioKey = "OpenMenu";
         private void Awake()
         {
             InventoryGO = menus[0].transform.GetChild(0).gameObject;
@@ -31,7 +32,7 @@ namespace Interactable
             {
                 menu?.SetActive(true);
             }
-
+            AudioManager.instance.Play(AudioKey);
             if (isSellingPoint)
             {
                 InventoryGO.transform.SetParent(playerInventoryUi.transform);

@@ -30,7 +30,6 @@ namespace Store
 
         [Header("Items Setup")]
         [SerializeField] private InventoryObject[] storeInventories;
-
         [SerializeField] private DisplayItem[] displayItems;
         [SerializeField] public ItemDatabaseObject itemDatabase;
         [SerializeField] private ItemDisplayer itemDisplayer;
