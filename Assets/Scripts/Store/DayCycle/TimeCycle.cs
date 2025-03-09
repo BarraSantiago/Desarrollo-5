@@ -10,6 +10,7 @@ namespace Store
         [SerializeField] private Transform directionalLight;
         [SerializeField] private Image timeImage;
         [SerializeField] private GameObject[] lights;
+        [SerializeField] private Animator animator;
         [SerializeField] private float timeOfDay;
         [SerializeField] private float timeSpeed;
         [SerializeField] private float lightIncreaseDuration = 2f;
@@ -19,6 +20,11 @@ namespace Store
         private void Awake()
         {
             lightComponents = lights.Select(light => light.GetComponent<Light>()).ToArray();
+            timeOfDay = 0;
+            StartCycle = false;
+            directionalLight.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+            timeImage.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+            DayTime();
         }
 
         public float CycleDuration { get; set; }
@@ -41,6 +47,12 @@ namespace Store
             {
                 DayTime();
             }
+        }
+
+        public void StartDay()
+        {
+            StartCycle = true;
+            animator.SetTrigger("Play");
         }
 
         private void DayTime()
@@ -76,6 +88,7 @@ namespace Store
             directionalLight.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
             timeImage.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
             DayTime();
+            animator.SetTrigger("Stop");
         }
     }
 }

@@ -69,7 +69,7 @@ namespace Store
         private int _buyersInShop;
         private float _timeBetweenClients;
         private readonly float _clientTimer = 7.87f;
-        private const float CycleMaxTime = 60f;
+        private const float CycleMaxTime = 210f;
         private int _experienceWon;
         private int _moneyWon;
         private int _moneyLost;
@@ -154,7 +154,7 @@ namespace Store
             }
 
             timeCycle.CycleDuration = CycleMaxTime;
-            timeCycle.StartCycle = true;
+            timeCycle.StartDay();
             popularityManager.Initialize();
             StartCoroutine(SendClients());
         }
@@ -205,6 +205,7 @@ namespace Store
             endDayStats.UpdateStats(_satisfiedClients, _angryClients, _experienceWon, _moneyWon, _itemsSold, _moneyLost);
             endDayInput.SetActive(true);
             playerController.dayEnded = true;
+            
         }
 
         public void AddItem()
