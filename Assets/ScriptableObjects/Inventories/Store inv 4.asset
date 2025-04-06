@@ -19,7 +19,7 @@ MonoBehaviour:
         name: 
         id: -1
         listPrice:
-          originalPrice: 36
+          originalPrice: 0
         craftable: 0
         recipe: {fileID: 0}
       amount: 0
