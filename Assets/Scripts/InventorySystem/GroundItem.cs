@@ -8,8 +8,6 @@ namespace InventorySystem
         private void Awake()
         {
             _mainCamera ??= Camera.main;
-            
-            transform.LookAt(_mainCamera.transform);
         }
         private void Update()
         {
