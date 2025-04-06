@@ -53,6 +53,7 @@ namespace player
         }
 
 
+        
         private void DropItem(GameObject obj, int amount)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -65,10 +66,6 @@ namespace player
             Rigidbody rb = droppedItem.AddComponent<Rigidbody>();
             rb.mass = 1f;
             droppedItem.AddComponent<BoxCollider>();
-            GroundItem groundItem = droppedItem.GetComponent<GroundItem>();
-            groundItem.droppedByPlayer = true;
-            groundItem.droppedTime = Time.time;
-            groundItem.amount = amount;
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

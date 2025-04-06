@@ -125,9 +125,7 @@ namespace Editor
             gameObject.AddComponent<SpriteRenderer>().sprite = _sprite;
             BoxCollider collider = gameObject.AddComponent<BoxCollider>();
             collider.isTrigger = true;
-            GroundItem groundItem = gameObject.AddComponent<GroundItem>();
-            groundItem.amount = 1;
-            groundItem.item = itemObject;
+            gameObject.AddComponent<GroundItem>();
 
             PrefabUtility.SaveAsPrefabAsset(gameObject, "Assets/Prefabs/Items/" + _itemName + ".prefab");
             

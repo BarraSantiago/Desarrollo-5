@@ -179,12 +179,11 @@ namespace InventorySystem
 
                 if (!Physics.Raycast(ray, out RaycastHit hit)) return;
 
+                
                 if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Walkable")) return;
 
-                OnDropItem?.Invoke(slotsOnInterface[obj].GetItemObject().characterDisplay,
-                    slotsOnInterface[obj].amount);
-                slotsOnInterface[obj].RemoveItem();
-                InventoryObject.OnItemSwapInventory?.Invoke(0);
+                //DropItem(obj);
+                
                 return;
             }
 
@@ -195,6 +194,13 @@ namespace InventorySystem
             inventory.SwapItems(slotsOnInterface[obj], mouseHoverSlotData);
         }
 
+        private void DropItem(GameObject obj)
+        {
+            OnDropItem?.Invoke(slotsOnInterface[obj].GetItemObject().characterDisplay,
+                slotsOnInterface[obj].amount);
+            slotsOnInterface[obj].RemoveItem();
+            InventoryObject.OnItemSwapInventory?.Invoke(0);
+        }
         protected void OnDrag(GameObject obj)
         {
             if (MouseData.TempItemBeingDragged != null)

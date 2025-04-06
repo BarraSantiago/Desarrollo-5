@@ -138,7 +138,6 @@ namespace Store
         private void CreateDisplayItem(ItemObject itemObject)
         {
             displayObject = Instantiate(itemObject.characterDisplay, itemPosition);
-            displayObject.GetComponent<GroundItem>().enabled = false;
             displayObject.GetComponent<BoxCollider>().enabled = false;
         }
 

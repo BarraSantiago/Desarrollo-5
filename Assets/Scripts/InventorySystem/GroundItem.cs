@@ -1,17 +1,9 @@
-﻿using System;
-using Interactable;
-using player;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace InventorySystem
 {
-    public class GroundItem : MonoBehaviour, IInteractable
+    public class GroundItem : MonoBehaviour
     {
-        public ItemObject item;
-        public int amount = 1;
-        public bool droppedByPlayer = false;
-        public float droppedTime;
-        public bool State { get; }
         private static Camera _mainCamera;
         private void Awake()
         {
@@ -19,19 +11,12 @@ namespace InventorySystem
             
             transform.LookAt(_mainCamera.transform);
         }
-
-        public bool Interact()
+        private void Update()
         {
-            Player player = FindObjectOfType<Player>();
-            
-            if (player is null || !player.inventory.AddItem(new Item(item), amount)) return false;
-            
-            Destroy(gameObject);
-            return true;
-        }
-
-        public void Close()
-        {
+            if (_mainCamera)
+            {
+                transform.LookAt(_mainCamera.transform);
+            }
         }
     }
 }

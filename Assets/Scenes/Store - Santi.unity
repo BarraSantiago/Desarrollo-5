@@ -2732,12 +2732,12 @@ MonoBehaviour:
     pitch: 1
     loop: 1
   - name: ClientHum
-    clip: {fileID: 8300000, guid: 2184650beb31a60469c2afd8371a235a, type: 3}
+    clip: {fileID: 8300000, guid: 1b52bd6765aab9d449d26631f1fdd3ec, type: 3}
     volume: 0.7
     pitch: 1
     loop: 0
   - name: ClientGrunt
-    clip: {fileID: 8300000, guid: fa2a4ca4894507640b5252401a68bd6d, type: 3}
+    clip: {fileID: 8300000, guid: 0fcfe5e60f90ecd41abae8f0e4a6a46b, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -2748,6 +2748,11 @@ MonoBehaviour:
     loop: 0
   - name: LevelUp
     clip: {fileID: 8300000, guid: da99e6edf4d757c418e7a7c300d97ae8, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+  - name: ClientMeh
+    clip: {fileID: 0}
     volume: 1
     pitch: 1
     loop: 0
