@@ -10,12 +10,11 @@ namespace Interactable
         [SerializeField] private GameObject playerInventoryUi;
         [SerializeField] private GameObject itemInfoUi;
         [SerializeField] private InventoryObject playerInventory;
-        [SerializeField] private Transform inventoryOriginalTransform;
-        [SerializeField] private Transform inventoryNewTransform;
         [SerializeField] private bool isSellingPoint;
         private GameObject InventoryGO;
 
         private const string AudioKey = "OpenMenu";
+
         private void Awake()
         {
             InventoryGO = menus[0].transform.GetChild(0).gameObject;
@@ -32,13 +31,13 @@ namespace Interactable
             {
                 menu?.SetActive(true);
             }
+
             AudioManager.instance.Play(AudioKey);
             if (isSellingPoint)
             {
                 InventoryGO.transform.SetParent(playerInventoryUi.transform);
                 playerInventoryUi.SetActive(true);
                 itemInfoUi.SetActive(false);
-                //playerInventoryUi.transform.position = inventoryNewTransform.position;
                 playerInventory.UpdateInventory();
             }
 
@@ -58,8 +57,6 @@ namespace Interactable
                 itemInfoUi.SetActive(true);
                 playerInventoryUi.SetActive(false);
             }
-
-            //playerInventoryUi.transform.position = inventoryOriginalTransform.position;
         }
     }
 }
