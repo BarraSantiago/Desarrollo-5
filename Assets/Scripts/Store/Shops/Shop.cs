@@ -89,7 +89,7 @@ namespace Store.Shops
         #endregion
 
 
-        private const string ShopLevelKey = "ShopLevel";
+        [SerializeField] private string ShopLevelKey = "ShopLevel";
 
         private void Awake()
         {
