@@ -17,8 +17,9 @@ namespace Menu
         private float lastVolume;
         private void Start()
         {
-            mainMixer.GetFloat(MixerVolume, out float currentVolume);
-            volumeSlider.value = Mathf.Pow(10, currentVolume / 20f); // Convert dB to linear value
+            lastVolume = PlayerPrefs.GetFloat(MixerVolume, 0);
+            mainMixer.SetFloat(MixerVolume, lastVolume);
+            volumeSlider.value = Mathf.Pow(10, lastVolume / 20f); // Convert dB to linear value
             volumeSlider.onValueChanged.AddListener(SetVolume);
             volumeToggle.onValueChanged.AddListener(ToggleVolume);
             lastVolume = volumeSlider.value;
@@ -39,6 +40,7 @@ namespace Menu
             float dB = 20f * Mathf.Log10(volume); // Convert linear value to dB
             mainMixer.SetFloat(MixerVolume, dB);
             lastVolume = dB;
+            PlayerPrefs.SetFloat(MixerVolume, lastVolume);
         }
     }
 }
