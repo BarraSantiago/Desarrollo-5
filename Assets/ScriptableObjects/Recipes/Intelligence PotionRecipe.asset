@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Intelligence PotionRecipe
   m_EditorClassIdentifier: 
   items:
-  - itemID: 9
-    amount: 2
   - itemID: 0
-    amount: 1
+    amount: 3
+  - itemID: 5
+    amount: 2
   craftChance: 45

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Speed PotionRecipe
   m_EditorClassIdentifier: 
   items:
-  - itemID: 10
-    amount: 1
-  - itemID: 4
+  - itemID: 0
     amount: 2
+  - itemID: 21
+    amount: 1
   craftChance: 45

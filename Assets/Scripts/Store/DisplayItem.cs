@@ -166,15 +166,15 @@ namespace Store
             };
             inputField.text = result.ToString();
 
-            Item.price = result;
+            Item.Price = result;
             UpdatePrice();
         }
 
         private void UpdatePrice()
         {
-            inputField.text = Item.price.ToString();
-            showPrice.text = Item.price.ToString();
-            totalPriceText.text = (Item.price * amount).ToString();
+            inputField.text = Item.Price.ToString();
+            showPrice.text = Item.Price.ToString();
+            totalPriceText.text = (Item.Price * amount).ToString();
         }
 
         private void UpdateShowEmpty()

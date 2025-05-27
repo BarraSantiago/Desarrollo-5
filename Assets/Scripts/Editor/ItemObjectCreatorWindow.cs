@@ -103,7 +103,7 @@ namespace Editor
             itemObject.name = _itemName;
             itemObject.description = _description;
             itemObject.type = _type;
-            itemObject.price = 0;
+            itemObject.Price = 0;
             itemObject.stackable = _isStackable;
             itemObject.maxStack = _maxStack;
             itemObject.data = itemObject.CreateItem();

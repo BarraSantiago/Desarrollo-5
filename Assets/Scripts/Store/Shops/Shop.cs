@@ -147,7 +147,7 @@ namespace Store.Shops
                 _craftChance = completeDatabase.ItemObjects[_selectedItem.data.id].data.recipe.craftChance;
                 craftChanceText.text =
                     (_craftChance * _craftChanceMultiplier).ToString(CultureInfo.CurrentCulture) + "%";
-                CurrentCost = _selectedItem.data.listPrice.originalPrice / 3;
+                CurrentCost = 0;
                 inputField.text = 0.ToString();
                 CraftChanceMultiplier = 1;
             }
@@ -225,7 +225,7 @@ namespace Store.Shops
                 };
                 inputField.text = newPrice.ToString();
 
-                CurrentCost = _selectedItem.data.listPrice.originalPrice / 3 + newPrice;
+                CurrentCost = newPrice;
                 CraftChanceMultiplier = ((float)newPrice / _selectedItem.data.listPrice.originalPrice) + 1;
 
                 if (!(CraftChanceMultiplier * _selectedItem.data.recipe.craftChance > 100)) return;
@@ -236,7 +236,7 @@ namespace Store.Shops
             {
                 inputField.text = 0.ToString();
                 CraftChanceMultiplier = 1;
-                CurrentCost = _selectedItem.data.listPrice.originalPrice / 3;
+                CurrentCost = 0;
             }
         }
 
@@ -244,8 +244,7 @@ namespace Store.Shops
         {
             CraftChanceMultiplier = 100 / _selectedItem.data.recipe.craftChance;
             inputField.text = (_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier).ToString("0");
-            CurrentCost = _selectedItem.data.listPrice.originalPrice / 3 +
-                          (int)(_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier);
+            CurrentCost = (int)(_selectedItem.data.listPrice.originalPrice * CraftChanceMultiplier);
         }
 
 

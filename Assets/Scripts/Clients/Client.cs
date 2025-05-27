@@ -337,7 +337,7 @@ namespace Clients
             targetItem.displayObject.transform.position = itemPosition.position;
 
             // Cache item info
-            _itemPrice = targetItem.Item.price;
+            _itemPrice = targetItem.Item.Price;
             _itemAmount = targetItem.amount;
             _itemId = targetItem.Item.data.id;
 
@@ -416,11 +416,11 @@ namespace Clients
 
             ListPrice itemList = ItemDatabase.ItemObjects[ItemDisplayer.DisplayItems[_desiredItemIndex].Item.data.id]
                 .data.listPrice;
-            float difference = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price - itemList.CurrentPrice;
+            float difference = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.Price - itemList.CurrentPrice;
             float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
 
             InstantiateTexture(percentageDifference);
-            if (ItemDisplayer.DisplayItems[_desiredItemIndex].Item.price >= itemList.CurrentPrice)
+            if (ItemDisplayer.DisplayItems[_desiredItemIndex].Item.Price >= itemList.CurrentPrice)
             {
                 // Reaction somewhat happy
                 if (percentageDifference < _willingnessToPay) return true;

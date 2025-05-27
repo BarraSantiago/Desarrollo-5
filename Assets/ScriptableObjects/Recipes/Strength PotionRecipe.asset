@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Strength PotionRecipe
   m_EditorClassIdentifier: 
   items:
-  - itemID: 14
-    amount: 2
   - itemID: 8
-    amount: 1
+    amount: 2
+  - itemID: 21
+    amount: 2
   craftChance: 45

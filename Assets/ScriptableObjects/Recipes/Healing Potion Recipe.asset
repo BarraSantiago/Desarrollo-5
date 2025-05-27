@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Healing Potion Recipe
   m_EditorClassIdentifier: 
   items:
-  - itemID: 0
-    amount: 1
-  - itemID: 5
+  - itemID: 4
+    amount: 2
+  - itemID: 9
     amount: 2
   craftChance: 35

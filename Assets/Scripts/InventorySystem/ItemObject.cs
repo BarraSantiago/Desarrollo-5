@@ -16,7 +16,26 @@ namespace InventorySystem
         [TextArea(15, 20)] public string description;
         public Item data = new Item();
         public List<string> boneNames = new List<string>();
-        public int price;
+
+        private int price;
+        public int Price
+        {
+            get => price;
+            set
+            {
+                price = value;
+                PlayerPrefs.SetInt(data.id.ToString(), value);
+            }
+            
+        }
+
+        private void Awake()
+        {
+            if(data != null)
+            {
+                price = PlayerPrefs.GetInt(data.id.ToString(), 0);
+            }
+        }
 
         public Item CreateItem()
         {
