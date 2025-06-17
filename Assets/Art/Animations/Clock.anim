@@ -1534,7 +1534,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 39.616665
+  - time: 39.316666
     functionName: BringMidDayForward
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -1542,14 +1542,14 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 100.13333
-    functionName: BringEveningForward
+    functionName: BringAfternoonForward
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 180.06667
-    functionName: BringAfternoonForward
+    functionName: BringEveningForward
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
