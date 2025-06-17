@@ -41,7 +41,7 @@ namespace Store
         [SerializeField] private float distanceBetweenPos;
 
         [Header("Misc Setup")] 
-        [SerializeField] private TimeCycle timeCycle;
+        [SerializeField] private LightingManager lightingManager;
         [SerializeField] private UIManager uiManager;
         [SerializeField] private Canvas mainCanvas;
         [SerializeField] private Player player;
@@ -153,8 +153,7 @@ namespace Store
                 item.data.listPrice.UpdatePrice();
             }
 
-            timeCycle.CycleDuration = CycleMaxTime;
-            timeCycle.StartDay();
+            lightingManager.StartDay();
             popularityManager.Initialize();
             StartCoroutine(SendClients());
         }
@@ -184,7 +183,7 @@ namespace Store
 
             _clientsLeft = 0;
             startCycle.interactable = true; // TODO fix this
-            timeCycle.Deinitialize();
+            lightingManager.Deinitialize();
 
             popularityManager.Deinitialize();
         }

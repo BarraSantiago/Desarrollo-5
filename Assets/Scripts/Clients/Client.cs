@@ -306,6 +306,7 @@ namespace Clients
             yield return null;
 
             // 2) Trigger the "GrabItem" animation
+            targetItem.displayObject.GetComponent<Animator>().enabled = false;
             animator.SetTrigger("GrabItem");
 
             // Give Animator a frame to transition into the GrabItem state 

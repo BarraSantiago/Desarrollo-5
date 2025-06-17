@@ -12,9 +12,25 @@ namespace Clients
         [SerializeField] private Transform chestMid;
         [SerializeField] private Transform chestBot;
 
+        private int _maxMoney;
+        private int _currentMoney;
+        private readonly int _charge = Animator.StringToHash("Charge");
+        private readonly int _open = Animator.StringToHash("Open");
+
         private void Start()
         {
             StoreManager.OnMoneyUpdated += UpdateMoney;
+        }
+
+        private void Awake()
+        {
+            Client.OnItemBought += OpenChest;
+        }
+
+        private void OnDestroy()
+        {
+            Client.OnItemBought -= OpenChest;
+            StoreManager.OnMoneyUpdated -= UpdateMoney; // Unsubscribe from this event too
         }
 
         private void UpdateMoney(int currentMoney, int maxMoney)
@@ -35,8 +51,15 @@ namespace Clients
 
         private void UpdateChestLevel()
         {
-            int level = _currentMoney * 100 / _maxMoney;
-            
+            // Add null checks for all chest transforms
+            if (chestTop == null || chestMid == null || chestBot == null)
+            {
+                Debug.LogWarning("One or more chest transforms are null in SellerController");
+                return;
+            }
+
+            int level = _maxMoney > 0 ? _currentMoney * 100 / _maxMoney : 0;
+
             switch (level)
             {
                 case > 90:
@@ -62,25 +85,13 @@ namespace Clients
             }
         }
 
-        private int _maxMoney;
-        private int _currentMoney;
-        private readonly int _charge = Animator.StringToHash("Charge");
-        private readonly int _open = Animator.StringToHash("Open");
-
-        private void Awake()
-        {
-            Client.OnItemBought += OpenChest;
-        }
-
-        private void OnDestroy()
-        {
-            Client.OnItemBought -= OpenChest;
-        }
-
         private void OpenChest(int i, int i1)
         {
-            sellerAnimator.SetTrigger(_charge);
-            chestAnimator.SetTrigger(_open);
+            if (sellerAnimator != null && chestAnimator != null)
+            {
+                sellerAnimator.SetTrigger(_charge);
+                chestAnimator.SetTrigger(_open);
+            }
         }
     }
 }

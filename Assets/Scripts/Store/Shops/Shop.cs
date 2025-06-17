@@ -317,6 +317,7 @@ namespace Store.Shops
         {
             for (int i = 0; i < _shopLevel; i++)
             {
+                if(databases.Length <= i) continue;
                 ListDatabaseItems(databases[i]);
             }
         }
