@@ -23,6 +23,7 @@ namespace Store.Shops
         [SerializeField] private Player player;
         [SerializeField] private TMP_Text upgradeText;
         [SerializeField] private bool isCraftingShop;
+        [SerializeField] private string ShopLevelKey = "ShopLevel";
 
         [Header("Item setup")] 
         [SerializeField] private GameObject shopItemPrefab;
@@ -36,8 +37,10 @@ namespace Store.Shops
         [SerializeField] private TMP_Text craftChanceText;
         [SerializeField] private ShopRecipe[] shopRecipes;
         [SerializeField] private TMP_Text costText;
+        [SerializeField] private TMP_Text availableText;
         [SerializeField] private float itemCostMultiplier = 0.8f;
-
+        [SerializeField] private int ForceShopLevel = 0;
+        
         [Header("Item crafting setup")] 
         [SerializeField] private GameObject messageWindow;
         [SerializeField] private GameObject SuccessWindow;
@@ -89,11 +92,10 @@ namespace Store.Shops
         #endregion
 
 
-        [SerializeField] private string ShopLevelKey = "ShopLevel";
-        [SerializeField] private int ForceShopLevel = 0;
+
         private void Awake()
         {
-            _shopMaxLevel = databases.Length+1;
+            _shopMaxLevel = databases.Length + 1;
             _shopLevel = ForceShopLevel > 0 ? ForceShopLevel : PlayerPrefs.GetInt(ShopLevelKey, 1);
 
             CheckLevel();
@@ -101,7 +103,6 @@ namespace Store.Shops
 
         private void Start()
         {
-            
             _shopUpgradeCost = 150;
             _shopUpgradeCostMultiplier = 3;
             _shopUpgradeCost *= _shopUpgradeCostMultiplier * _shopLevel;
@@ -121,14 +122,15 @@ namespace Store.Shops
         {
             UpdateAvailability(player.Money);
         }
-        
+
         public void ResetAmount()
         {
             _currentAmount = 1;
-            if(amountText) amountText.text = _currentAmount.ToString();
-            if(_selectedItem) CurrentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
+            if (amountText) amountText.text = _currentAmount.ToString();
+            if (_selectedItem)
+                CurrentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
         }
-        
+
         private void SelectItem(int itemId)
         {
             _selectedItem = completeDatabase.ItemObjects[itemId];
@@ -288,15 +290,44 @@ namespace Store.Shops
 
         private void CheckLevel()
         {
-            if (_shopLevel < _shopMaxLevel-1)
+            // Check if shop level is limited by popularity level
+            int maxAllowableLevel = 1; // Base level
+
+            if (PopularityManager.Level >= 1)
+                maxAllowableLevel = 2; // Allow first upgrade
+            if (PopularityManager.Level >= 2)
+                maxAllowableLevel = 3; // Allow second upgrade
+            if (PopularityManager.Level >= 4)
+                maxAllowableLevel = _shopMaxLevel; // Allow all upgrades
+
+            if (_shopLevel < _shopMaxLevel - 1 && _shopLevel < maxAllowableLevel)
             {
                 if (upgradeButton) upgradeButton.interactable = true;
                 return;
             }
 
             if (upgradeButton) upgradeButton.interactable = false;
-            if (upgradeText) upgradeText.text = "Max Level";
-            if (upgradeText) upgradeText.color = Color.gray;
+
+            // Show appropriate message based on whether popularity level or max level is limiting factor
+            if (_shopLevel >= maxAllowableLevel && _shopLevel < _shopMaxLevel - 1)
+            {
+                string levelText = maxAllowableLevel switch
+                {
+                    1 => "Silver",
+                    2 => "Gold",
+                    3 => "Emerald",
+                    _ => "Max Level"
+                };
+                if (availableText) availableText.text = $"Prestige Level: {levelText}";
+                if (availableText) availableText.color = Color.yellow;
+            }
+            else
+            {
+                if (availableText) availableText.text = "Max Level";
+                if (upgradeText) upgradeText.text = "Max Level";
+                if (availableText) availableText.color = Color.gray;
+                if (upgradeText) upgradeText.color = Color.gray;
+            }
         }
 
         private void UpgradeShop()
@@ -325,11 +356,11 @@ namespace Store.Shops
         {
             for (int i = 0; i < _shopLevel; i++)
             {
-                if(databases.Length <= i) continue;
+                if (databases.Length <= i) continue;
                 ListDatabaseItems(databases[i]);
             }
         }
-        
+
         private void ListDatabaseItems(ItemIdDatabaseObject database)
         {
             foreach (ItemObject itemObject in database.ItemObjects)

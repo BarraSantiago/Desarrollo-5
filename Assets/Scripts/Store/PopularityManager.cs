@@ -19,6 +19,7 @@ namespace Store
         [SerializeField] private GameObject levelUpPanel;
         [SerializeField] private Image levelUpMedalImage;
         [SerializeField] private TMP_Text levelUpText;
+        [SerializeField] private int ForceLevel = 0;
         private const string LevelKey = "LevelUp";
         public float PopularityVariation => Random.Range(0.1f, 1);
 
@@ -29,13 +30,20 @@ namespace Store
         public int DailyClients => (int)math.lerp(MinClients, MaxClients, PopularityVariation);
 
         private int _popularityXp = 0;
-        private int _popularityLevel = 0;
+        private static int _popularityLevel = 0;
+
+        public static int Level => _popularityLevel;
 
         public void Initialize()
         {
             _popularityXp = PlayerPrefs.GetInt("PopularityXp", 0);
             _popularityLevel = PlayerPrefs.GetInt("PopularityLevel", 0);
-
+            
+            if (ForceLevel > 0)
+            {
+                _popularityLevel = ForceLevel;
+                _popularityXp = 0;
+            }
             popularitySlider.maxValue = popularityXpLevels[_popularityLevel];
             popularitySlider.value = _popularityXp;
             popularityMedal.sprite = medals[_popularityLevel];
@@ -59,6 +67,7 @@ namespace Store
         [ContextMenu("Level up")]
         private void LevelUpPopularity()
         {
+            if(_popularityLevel >= medals.Length - 1) return;
             _popularityLevel++;
             _popularityXp = 0;
             popularitySlider.value = 0;

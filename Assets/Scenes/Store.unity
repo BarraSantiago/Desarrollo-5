@@ -2319,6 +2319,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &333850907 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7888877695175465196, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
+  m_PrefabInstance: {fileID: 8226464349429175159}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &338096692 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8226464347730235404, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
@@ -8060,6 +8071,7 @@ MonoBehaviour:
   player: {fileID: 1641869752}
   upgradeText: {fileID: 0}
   isCraftingShop: 1
+  ShopLevelKey: CraftShopLevel
   shopItemPrefab: {fileID: 346873307589420, guid: f5a299b15d8dd8347b1381f3db0a6c97, type: 3}
   selectedItemImage: {fileID: 1068600148}
   shopItemsParent: {fileID: 767901542}
@@ -8074,14 +8086,14 @@ MonoBehaviour:
   - {fileID: 1497063705}
   - {fileID: 540242287}
   costText: {fileID: 547363653}
+  availableText: {fileID: 0}
   itemCostMultiplier: 0.3
+  ForceShopLevel: 0
   messageWindow: {fileID: 8226464349429175167}
   SuccessWindow: {fileID: 8226464349429175163}
   FailWindow: {fileID: 8226464349429175164}
   FailImage: {fileID: 8226464349429175165}
   SuccessImage: {fileID: 8226464349429175166}
-  ShopLevelKey: CraftShopLevel
-  ForceShopLevel: 0
 --- !u!1 &1151010690
 GameObject:
   m_ObjectHideFlags: 0
@@ -8701,6 +8713,7 @@ MonoBehaviour:
   player: {fileID: 1641869752}
   upgradeText: {fileID: 338096692}
   isCraftingShop: 0
+  ShopLevelKey: ShopLevel
   shopItemPrefab: {fileID: 346873307589420, guid: f5a299b15d8dd8347b1381f3db0a6c97, type: 3}
   selectedItemImage: {fileID: 8226464349429175162}
   shopItemsParent: {fileID: 8226464349429175160}
@@ -8712,14 +8725,14 @@ MonoBehaviour:
   craftChanceText: {fileID: 0}
   shopRecipes: []
   costText: {fileID: 2109446893}
+  availableText: {fileID: 333850907}
   itemCostMultiplier: 0.8
+  ForceShopLevel: 0
   messageWindow: {fileID: 0}
   SuccessWindow: {fileID: 0}
   FailWindow: {fileID: 0}
   FailImage: {fileID: 0}
   SuccessImage: {fileID: 0}
-  ShopLevelKey: ShopLevel
-  ForceShopLevel: 0
 --- !u!4 &1260653617
 Transform:
   m_ObjectHideFlags: 0
@@ -9728,6 +9741,7 @@ MonoBehaviour:
   levelUpPanel: {fileID: 1202499920}
   levelUpMedalImage: {fileID: 1197840200}
   levelUpText: {fileID: 429529921}
+  ForceLevel: 0
 --- !u!114 &1360386325 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6659274123506469913, guid: 1f489eb41adda3743a9b0de8e2e00f78, type: 3}
@@ -10978,8 +10992,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chargeButton: {fileID: 1453524305}
   clientPrefabs:
-  - {fileID: 3902183864996437716, guid: ff2bfc861036c4c49a64b598f93da06a, type: 3}
-  - {fileID: 8603869271539175587, guid: 25bb73e071e124a4ca340049c79ee2ee, type: 3}
+  - {fileID: 3738610664015545467, guid: 2c1dd0c466e41ed429d431fc76ae04cb, type: 3}
+  - {fileID: 8776773699647159725, guid: cec0ce01a5176aa46b536b075f6dbd49, type: 3}
+  - {fileID: 4037592863402827598, guid: a552b27d37f205e478af4f7a9323c191, type: 3}
+  - {fileID: 3146823805757242441, guid: 5503b2500e68b2d448d39099ca9988fe, type: 3}
+  - {fileID: 8520110788874843736, guid: d4b48e73ea30c854b964d9a4194c7a15, type: 3}
   clientTransforms:
     SpawnPoint: {fileID: 2018906402}
     Exit: {fileID: 264479065}
