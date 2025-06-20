@@ -90,11 +90,11 @@ namespace Store.Shops
 
 
         [SerializeField] private string ShopLevelKey = "ShopLevel";
-
+        [SerializeField] private int ForceShopLevel = 0;
         private void Awake()
         {
             _shopMaxLevel = databases.Length+1;
-            _shopLevel = PlayerPrefs.GetInt(ShopLevelKey, 1);
+            _shopLevel = ForceShopLevel > 0 ? ForceShopLevel : PlayerPrefs.GetInt(ShopLevelKey, 1);
 
             CheckLevel();
         }
@@ -121,11 +121,19 @@ namespace Store.Shops
         {
             UpdateAvailability(player.Money);
         }
-
+        
+        public void ResetAmount()
+        {
+            _currentAmount = 1;
+            if(amountText) amountText.text = _currentAmount.ToString();
+            if(_selectedItem) CurrentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
+        }
+        
         private void SelectItem(int itemId)
         {
             _selectedItem = completeDatabase.ItemObjects[itemId];
             selectedItemImage.sprite = _selectedItem.uiDisplay;
+            ResetAmount();
 
 
             int recipeItemsLength = _selectedItem.data.recipe?.items?.Length ?? 0;
@@ -329,6 +337,7 @@ namespace Store.Shops
                 GameObject shopItem = Instantiate(shopItemPrefab, shopItemsParent);
                 ShopItem newItem = shopItem.GetComponent<ShopItem>();
                 newItem.SetItem(itemObject, itemCostMultiplier);
+                newItem.OnSelectItem += SelectItem;
                 _shopItems.Add(newItem);
             }
         }
@@ -373,7 +382,7 @@ namespace Store.Shops
         {
             foreach (ShopItem shopItem in _shopItems)
             {
-                shopItem.OnSelectItem -= SelectItem;
+                shopItem.OnSelectItem = null;
             }
 
             Player.OnMoneyUpdate -= UpdateAvailability;

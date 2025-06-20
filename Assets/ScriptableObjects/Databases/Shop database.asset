@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Shop database
   m_EditorClassIdentifier: 
   ItemObjects:
-  - {fileID: 11400000, guid: af5e7d9fb48c4b64286e18f1729fbb39, type: 2}
   - {fileID: 11400000, guid: d1e06ad871aba9c46ab2a32eac08f751, type: 2}
   - {fileID: 11400000, guid: af593eeede61ee74a89a8da15d0e06f1, type: 2}
   - {fileID: 11400000, guid: 461717dc0b59b994fbb23cc1cf41e0c5, type: 2}
   - {fileID: 11400000, guid: 10cbafc314960384b822307adea40f81, type: 2}
   - {fileID: 11400000, guid: 4858cbed2a030804a95a383d85415d2f, type: 2}
   - {fileID: 11400000, guid: fd64f3986c7f6b348a317368d46d2082, type: 2}
+  - {fileID: 11400000, guid: af5e7d9fb48c4b64286e18f1729fbb39, type: 2}
   - {fileID: 11400000, guid: 9e77c0eb7c75ac24fa90fe1f4d6885e7, type: 2}
   - {fileID: 11400000, guid: 0add79753f83cd74981aed0b67a2f22b, type: 2}
   - {fileID: 11400000, guid: 8737399dde988eb45894efc1735eccc7, type: 2}

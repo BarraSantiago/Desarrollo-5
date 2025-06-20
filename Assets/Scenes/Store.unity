@@ -281,11 +281,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 951126891876459896, guid: ff17e08085557384cbd3d1a06cffcdae, type: 3}
   m_PrefabInstance: {fileID: 1114138}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &11434048 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 718136214277864379, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
-  m_PrefabAsset: {fileID: 0}
 --- !u!108 &11434051 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 718136214277864378, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
@@ -1200,11 +1195,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &219215060 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 718136215633815900, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
-  m_PrefabAsset: {fileID: 0}
 --- !u!108 &219215063 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 718136215633815903, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
@@ -4233,11 +4223,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!1 &555251667 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 718136214471728518, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
-  m_PrefabAsset: {fileID: 0}
 --- !u!108 &555251670 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 718136214471728537, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
@@ -5260,11 +5245,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &760233604 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 718136214382350108, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &766904988
 GameObject:
   m_ObjectHideFlags: 0
@@ -5646,11 +5626,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 796713008}
   m_CullTransparentMesh: 1
---- !u!1 &812362277 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 718136215595085906, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
-  m_PrefabAsset: {fileID: 0}
 --- !u!108 &812362280 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 718136215595085909, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
@@ -6212,11 +6187,6 @@ RectTransform:
   m_AnchoredPosition: {x: -550, y: -85}
   m_SizeDelta: {x: 345, y: 409.6702}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &900806039 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 718136215653938049, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
-  m_PrefabAsset: {fileID: 0}
 --- !u!108 &900806042 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 718136215653938048, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
@@ -7182,6 +7152,33 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1315186512897136690, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
   m_PrefabInstance: {fileID: 8226464349429175159}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1015752994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1015752992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12d365f871a44d1dae4f7b2f496b079e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnDisableEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1137960919}
+        m_TargetAssemblyTypeName: Store.Shops.Shop, Assembly-CSharp
+        m_MethodName: ResetAmount
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1049771708
 GameObject:
   m_ObjectHideFlags: 0
@@ -8084,6 +8081,7 @@ MonoBehaviour:
   FailImage: {fileID: 8226464349429175165}
   SuccessImage: {fileID: 8226464349429175166}
   ShopLevelKey: CraftShopLevel
+  ForceShopLevel: 0
 --- !u!1 &1151010690
 GameObject:
   m_ObjectHideFlags: 0
@@ -8695,7 +8693,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   completeDatabase: {fileID: 11400000, guid: f37f2fa5f5d4cbf499407e35a3c57e1f, type: 2}
   databases:
-  - {fileID: 11400000, guid: ff14a62c11efec748b0ada5a1d92193a, type: 2}
+  - {fileID: 11400000, guid: 8fbf311f300bd634db9352884921b7c5, type: 2}
+  - {fileID: 11400000, guid: 49a9e2e5a1f987549a09107314dc325d, type: 2}
+  - {fileID: 11400000, guid: a68f8a5226b4d0448a7fc3647255c2ce, type: 2}
+  - {fileID: 11400000, guid: 08f03cc8f481de94bae88f6d8c886130, type: 2}
   upgradeButton: {fileID: 979654962}
   player: {fileID: 1641869752}
   upgradeText: {fileID: 338096692}
@@ -8709,10 +8710,7 @@ MonoBehaviour:
   decreaseAmountButton: {fileID: 925017458}
   amountText: {fileID: 480748807}
   craftChanceText: {fileID: 0}
-  shopRecipes:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  shopRecipes: []
   costText: {fileID: 2109446893}
   itemCostMultiplier: 0.8
   messageWindow: {fileID: 0}
@@ -8721,6 +8719,7 @@ MonoBehaviour:
   FailImage: {fileID: 0}
   SuccessImage: {fileID: 0}
   ShopLevelKey: ShopLevel
+  ForceShopLevel: 0
 --- !u!4 &1260653617
 Transform:
   m_ObjectHideFlags: 0
@@ -8873,6 +8872,33 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8226464348258594543, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
   m_PrefabInstance: {fileID: 8226464349429175159}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1285481844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285481842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12d365f871a44d1dae4f7b2f496b079e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnDisableEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1260653616}
+        m_TargetAssemblyTypeName: Store.Shops.Shop, Assembly-CSharp
+        m_MethodName: ResetAmount
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1286807834 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5745226657990396864, guid: 358bd8c67e069494191ae811e8a22562, type: 3}
@@ -10258,11 +10284,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1394936941}
   m_CullTransparentMesh: 1
---- !u!1 &1417107503 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 718136215242028093, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
-  m_PrefabAsset: {fileID: 0}
 --- !u!108 &1417107506 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 718136215242028092, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
@@ -10910,27 +10931,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de57ba5c23434af49af45c07d7d1aa90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  directionalLight: {fileID: 760233604}
-  timeImage: {fileID: 0}
-  lights:
-  - {fileID: 812362277}
-  - {fileID: 1861680730}
-  - {fileID: 11434048}
-  - {fileID: 1651125553}
-  - {fileID: 1750516411}
-  - {fileID: 1417107503}
-  - {fileID: 555251667}
-  - {fileID: 219215060}
-  - {fileID: 900806039}
-  - {fileID: 2131841406}
-  animator: {fileID: 1968500323}
-  timeOfDay: 0
-  timeSpeed: 1
-  lightIncreaseDuration: 2
-  lightIntensity: 30
-  lightComponents: []
-  <CycleDuration>k__BackingField: 0
-  <StartCycle>k__BackingField: 0
 --- !u!4 &1470657749
 Transform:
   m_ObjectHideFlags: 0
@@ -11816,11 +11816,6 @@ MonoBehaviour:
   m_DefaultActionMap: Gameplay
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!1 &1651125553 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 718136214319941469, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
-  m_PrefabAsset: {fileID: 0}
 --- !u!108 &1651125556 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 718136214319941468, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
@@ -12845,11 +12840,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1747884301}
   m_CullTransparentMesh: 1
---- !u!1 &1750516411 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 718136215272010413, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
-  m_PrefabAsset: {fileID: 0}
 --- !u!108 &1750516414 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 718136215272010412, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
@@ -13327,11 +13317,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1861680730 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 718136214331886855, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
-  m_PrefabAsset: {fileID: 0}
 --- !u!108 &1861680733 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 718136214331886854, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
@@ -15166,11 +15151,6 @@ MonoBehaviour:
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3553240986081095906, guid: 1f489eb41adda3743a9b0de8e2e00f78, type: 3}
   m_PrefabInstance: {fileID: 436440887}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2131841406 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 718136214278450666, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
   m_PrefabAsset: {fileID: 0}
 --- !u!108 &2131841409 stripped
 Light:
