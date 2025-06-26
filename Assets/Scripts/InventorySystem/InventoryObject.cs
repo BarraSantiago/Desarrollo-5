@@ -347,5 +347,39 @@ namespace InventorySystem
                 }
             }
         }
+
+        public bool IsFull(Item selectedItemData, int currentAmount)
+        {
+            ItemObject itemObject = database.ItemObjects[selectedItemData.id];
+    
+            // If the item is stackable, check if it can fit in existing stacks
+            if (itemObject.stackable)
+            {
+                List<InventorySlot> existingSlots = FindAllItemsOnInventory(selectedItemData);
+        
+                // Calculate available space in existing stacks
+                int availableSpace = 0;
+                foreach (InventorySlot slot in existingSlots)
+                {
+                    int remainingSpace = itemObject.maxStack - slot.amount;
+                    availableSpace += remainingSpace;
+            
+                    // If we found enough space, the inventory is not full
+                    if (availableSpace >= currentAmount)
+                        return false;
+                }
+        
+                // Check if we have enough empty slots for the remaining items
+                int remainingAmount = currentAmount - availableSpace;
+                int neededEmptySlots = Mathf.CeilToInt((float)remainingAmount / itemObject.maxStack);
+        
+                return EmptySlotCount < neededEmptySlots;
+            }
+            else
+            {
+                // For non-stackable items, we need one slot per item
+                return EmptySlotCount < currentAmount;
+            }
+        }
     }
 }

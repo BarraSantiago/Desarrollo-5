@@ -24,6 +24,8 @@ namespace Store.Shops
         [SerializeField] private TMP_Text upgradeText;
         [SerializeField] private bool isCraftingShop;
         [SerializeField] private string ShopLevelKey = "ShopLevel";
+        [SerializeField] private TMP_Text errorText;
+        [SerializeField] private GameObject errorPopup;
 
         [Header("Item setup")] 
         [SerializeField] private GameObject shopItemPrefab;
@@ -171,6 +173,17 @@ namespace Store.Shops
         {
             if (player.Money < CurrentCost)
             {
+                AudioManager.instance.Play("Error");
+                errorPopup.SetActive(true);
+                errorText.text = $"You don't have enough money to buy {_selectedItem.data.name}!";
+                return;
+            }
+            
+            if(player.inventory.IsFull(_selectedItem.data, _currentAmount))
+            {
+                AudioManager.instance.Play("Error");
+                errorPopup.SetActive(true);
+                errorText.text = $"You don't have enough space in your inventory to buy {_selectedItem.data.name}!";
                 return;
             }
 
