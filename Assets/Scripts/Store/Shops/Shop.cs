@@ -171,11 +171,12 @@ namespace Store.Shops
 
         private void BuyItem()
         {
+            string itemAction = isCraftingShop ? "craft" : "buy";
             if (player.Money < CurrentCost)
             {
                 AudioManager.instance.Play("Error");
                 errorPopup.SetActive(true);
-                errorText.text = $"You don't have enough money to buy {_selectedItem.data.name}!";
+                errorText.text = $"You don't have enough money to {itemAction} {_selectedItem.data.name}!";
                 return;
             }
             
@@ -183,7 +184,7 @@ namespace Store.Shops
             {
                 AudioManager.instance.Play("Error");
                 errorPopup.SetActive(true);
-                errorText.text = $"You don't have enough space in your inventory to buy {_selectedItem.data.name}!";
+                errorText.text = $"You don't have enough space in your inventory to {itemAction} {_selectedItem.data.name}!";
                 return;
             }
 
