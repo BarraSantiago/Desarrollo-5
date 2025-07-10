@@ -51,7 +51,7 @@ namespace Store
 
             inventoryParent.SetActive(true);
 
-            foreach (var slot in inventory.GetSlots)
+            foreach (InventorySlot slot in inventory.GetSlots)
             {
                 slot.onAfterUpdated += UpdateSlot;
             }
@@ -80,7 +80,7 @@ namespace Store
         {
             inventoryParent.SetActive(true);
 
-            foreach (var slot in inventory.GetSlots)
+            foreach (InventorySlot slot in inventory.GetSlots)
             {
                 slot.onAfterUpdated += UpdateSlot;
             }

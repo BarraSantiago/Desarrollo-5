@@ -76,7 +76,7 @@ namespace InventorySystem
         private void UpdateSlots(ItemType type)
         {
             inventory.SortInventory(type);
-            foreach (var slot in slotsOnInterface.Values)
+            foreach (InventorySlot slot in slotsOnInterface.Values)
             {
                 OnSlotUpdate(slot);
             }

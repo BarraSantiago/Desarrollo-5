@@ -1,4 +1,5 @@
 using System;
+using InventorySystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,11 +10,12 @@ namespace Menu
 {
     public class MenuManager : MonoBehaviour
     {
-        [SerializeField] private TMP_Text versionText = null;
-        [SerializeField] private Button continueButton = null;
-        [SerializeField] private Button newGameButton = null;
-        [SerializeField] private Button confirmationButton = null;
-        [SerializeField] private GameObject confirmationWindow = null;
+        [SerializeField] private TMP_Text versionText;
+        [SerializeField] private Button continueButton;
+        [SerializeField] private Button newGameButton;
+        [SerializeField] private Button confirmationButton;
+        [SerializeField] private GameObject confirmationWindow;
+        [SerializeField] private InventoryObject inventories;
         private const string SceneName = "LoadingScene";
 
         public void Start()
@@ -37,26 +39,39 @@ namespace Menu
                 {
                     confirmationWindow.SetActive(true);
                 });
-                confirmationButton.onClick.AddListener(() =>
-                {
-                    PlayerPrefs.SetInt("PopularityXp", 0);
-                    PlayerPrefs.SetInt("PopularityLevel", 0);
-                    PlayerPrefs.SetInt("ShopLevel", 1);
-                    PlayerPrefs.SetInt("HasInteracted", 0);
-                    PlayerPrefs.SetInt("PlayerMoney", 250);
-                    PlayerPrefs.SetInt("TutorialAccessed", 0);
-                    PlayerPrefs.Save();
-                    SaveFileManager.DeleteAllSaves();
-                    SceneManager.LoadScene(SceneName);
-                });
+                confirmationButton.onClick.AddListener(ResetGame);
             }
             else
             {
                 newGameButton.onClick.AddListener(() =>
                 {
+                    foreach (InventoryObject inventory in FindObjectsOfType<InventoryObject>())
+                    {
+                        inventory.RemoveAllItems();
+                    }
+                    
                     SceneManager.LoadScene(SceneName);
                 });
             }
+        }
+
+        private static void ResetGame()
+        {
+            PlayerPrefs.SetInt("PopularityXp", 0);
+            PlayerPrefs.SetInt("PopularityLevel", 0);
+            PlayerPrefs.SetInt("ShopLevel", 1);
+            PlayerPrefs.SetInt("HasInteracted", 0);
+            PlayerPrefs.SetInt("PlayerMoney", 250);
+            PlayerPrefs.SetInt("TutorialAccessed", 0);
+            PlayerPrefs.Save();
+            SaveFileManager.DeleteAllSaves();
+            
+            foreach (InventoryObject inventory in FindObjectsOfType<InventoryObject>())
+            {
+                inventory.RemoveAllItems();
+            }
+            
+            SceneManager.LoadScene(SceneName);
         }
 
         /// <summary>

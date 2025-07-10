@@ -314,7 +314,7 @@ namespace Clients
             yield return null;
 
             // 3) Determine the clip length for the GrabItem animation
-            var clipInfos = animator.GetCurrentAnimatorClipInfo(0);
+            AnimatorClipInfo[] clipInfos = animator.GetCurrentAnimatorClipInfo(0);
             float grabAnimLength = 0.5f; // fallback length
             if (clipInfos.Length > 0)
             {
