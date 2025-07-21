@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
+﻿using System.Collections;
 using UnityEngine;
 
 [ExecuteAlways]
@@ -13,7 +11,7 @@ public class LightingManager : MonoBehaviour
     [SerializeField] private Light[] lights;
 
     //Variables
-    [SerializeField, Range(0, 24)] private float TimeOfDay;
+    [SerializeField, Range(0, 210)] private float TimeOfDay;
     [SerializeField] private Animator animator;
     [SerializeField] private float lightIncreaseDuration = 15f;
     [SerializeField] private float lightIntensity = 30f;
@@ -25,11 +23,15 @@ public class LightingManager : MonoBehaviour
     {
         TimeOfDay = 0;
         StartCycle = false;
+        foreach (Light light in lights)
+        {
+            light.intensity = 0;
+        }
     }
 
     private void Update()
     {
-        if (Preset == null)
+        if (!Preset)
             return;
 
         if (Application.isPlaying)
@@ -58,20 +60,21 @@ public class LightingManager : MonoBehaviour
         RenderSettings.fogColor = Preset.FogColor.Evaluate(timePercent);
 
         //If the directional light is set then rotate and set it's color, I actually rarely use the rotation because it casts tall shadows unless you clamp the value
-        if (DirectionalLight != null)
-        {
-            DirectionalLight.color = Preset.DirectionalColor.Evaluate(timePercent);
+        if (!DirectionalLight) return;
+        DirectionalLight.color = Preset.DirectionalColor.Evaluate(timePercent);
 
-            DirectionalLight.transform.localRotation =
-                Quaternion.Euler(new Vector3((timePercent * 360f) - 90f, 170f, 0));
-        }
+        DirectionalLight.transform.localRotation =
+            Quaternion.Euler(new Vector3((timePercent * 360f) - 90f, 170f, 0));
     }
 
     public void StartDay()
     {
         StartCycle = true;
         animator.SetTrigger("Play");
-        StartCoroutine(IncreaseLightIntensity(lightIntensity, 0));
+        foreach (Light light in lights)
+        {
+            light.intensity = 0;
+        }
         nightStarted = false;
     }
 
@@ -86,6 +89,10 @@ public class LightingManager : MonoBehaviour
         TimeOfDay = 0;
         StartCycle = false;
         UpdateLighting(TimeOfDay / 24f);
+        foreach (Light light in lights)
+        {
+            light.intensity = 0;
+        }
         animator.SetTrigger("Stop");
     }
 
@@ -119,7 +126,7 @@ public class LightingManager : MonoBehaviour
         //Search scene for light that fits criteria (directional)
         else
         {
-            Light[] lights = GameObject.FindObjectsOfType<Light>();
+            Light[] lights = FindObjectsOfType<Light>();
             foreach (Light light in lights)
             {
                 if (light.type == LightType.Directional)
