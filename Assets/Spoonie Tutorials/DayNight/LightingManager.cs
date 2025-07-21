@@ -9,12 +9,15 @@ public class LightingManager : MonoBehaviour
 
     [SerializeField] private LightingPreset Preset;
     [SerializeField] private Light[] lights;
+    [SerializeField] private Light spotLight;
 
     //Variables
     [SerializeField, Range(0, 210)] private float TimeOfDay;
     [SerializeField] private Animator animator;
     [SerializeField] private float lightIncreaseDuration = 15f;
     [SerializeField] private float lightIntensity = 30f;
+    [SerializeField] private float spotlightIncreaseDuration = 15f;
+    [SerializeField] private float spotlightIntensity = 1250f;
     public bool StartCycle { get; set; }
     public float CycleDuration = 24;
     private bool nightStarted = false;
@@ -27,6 +30,7 @@ public class LightingManager : MonoBehaviour
         {
             light.intensity = 0;
         }
+        spotLight.intensity = 0;
     }
 
     private void Update()
@@ -75,6 +79,7 @@ public class LightingManager : MonoBehaviour
         {
             light.intensity = 0;
         }
+        spotLight.intensity = 0;
         nightStarted = false;
     }
 
@@ -82,6 +87,7 @@ public class LightingManager : MonoBehaviour
     {
         nightStarted = true;
         StartCoroutine(IncreaseLightIntensity(0, lightIntensity));
+        StartCoroutine(IncreaseSpotlightIntensity(0, spotlightIntensity));
     }
 
     public void Deinitialize()
@@ -107,6 +113,20 @@ public class LightingManager : MonoBehaviour
             {
                 light.intensity = intensity;
             }
+
+            yield return null;
+        }
+    }
+    
+    private IEnumerator IncreaseSpotlightIntensity(float a, float b)
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < spotlightIncreaseDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float intensity = Mathf.Lerp(a, b, elapsedTime / lightIncreaseDuration);
+            
+            spotLight.intensity = intensity;
 
             yield return null;
         }
