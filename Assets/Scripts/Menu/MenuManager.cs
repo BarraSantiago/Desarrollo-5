@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using InventorySystem;
 using TMPro;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace Menu
         [SerializeField] private Button newGameButton;
         [SerializeField] private Button confirmationButton;
         [SerializeField] private GameObject confirmationWindow;
-        [SerializeField] private InventoryObject inventories;
+        [SerializeField] private InventoryObject[] inventories;
         private const string SceneName = "LoadingScene";
 
         public void Start()
@@ -24,54 +25,83 @@ namespace Menu
             SceneManager.sceneLoaded += OnSceneLoaded;
             OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
         }
-        
+
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             continueButton.interactable = SaveFileManager.HasSavedFiles();
             confirmationWindow.SetActive(false);
+
+            continueButton.onClick.RemoveAllListeners();
+            newGameButton.onClick.RemoveAllListeners();
+            confirmationButton.onClick.RemoveAllListeners();
+
             if (SaveFileManager.HasSavedFiles())
             {
-                continueButton.onClick.AddListener(() =>
-                {
-                    SceneManager.LoadScene(SceneName);
-                });
-                newGameButton.onClick.AddListener(() =>
-                {
-                    confirmationWindow.SetActive(true);
-                });
+                continueButton.onClick.AddListener(() => { SceneManager.LoadScene(SceneName); });
+                newGameButton.onClick.AddListener(() => { confirmationWindow.SetActive(true); });
                 confirmationButton.onClick.AddListener(ResetGame);
             }
             else
             {
                 newGameButton.onClick.AddListener(() =>
                 {
-                    foreach (InventoryObject inventory in FindObjectsOfType<InventoryObject>())
+                    foreach (InventoryObject inventory in inventories)
                     {
                         inventory.RemoveAllItems();
                     }
-                    
+
                     SceneManager.LoadScene(SceneName);
                 });
             }
         }
 
-        private static void ResetGame()
+        public void ResetGame()
         {
-            PlayerPrefs.SetInt("PopularityXp", 0);
-            PlayerPrefs.SetInt("PopularityLevel", 0);
-            PlayerPrefs.SetInt("ShopLevel", 1);
-            PlayerPrefs.SetInt("HasInteracted", 0);
-            PlayerPrefs.SetInt("PlayerMoney", 250);
-            PlayerPrefs.SetInt("TutorialAccessed", 0);
-            PlayerPrefs.Save();
-            SaveFileManager.DeleteAllSaves();
-            
-            foreach (InventoryObject inventory in FindObjectsOfType<InventoryObject>())
+            try
             {
-                inventory.RemoveAllItems();
+                Debug.Log("Resetting game data...");
+                PlayerPrefs.SetInt("PopularityXp", 0);
+                PlayerPrefs.SetInt("PopularityLevel", 0);
+                PlayerPrefs.SetInt("ShopLevel", 1);
+                PlayerPrefs.SetInt("HasInteracted", 0);
+                PlayerPrefs.SetInt("PlayerMoney", 250);
+                PlayerPrefs.SetInt("TutorialAccessed", 0);
+                PlayerPrefs.Save();
+                SaveFileManager.DeleteAllSaves();
+                Debug.Log("Deleting game data...");
+
+                if (inventories != null)
+                {
+                    foreach (InventoryObject inventory in inventories)
+                    {
+                        inventory.RemoveAllItems();
+                    }
+                }
+
+                LoadScene();
             }
-            
-            SceneManager.LoadScene(SceneName);
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                LoadScene();
+                throw;
+            }
+        }
+
+        public void LoadScene()
+        {
+            Debug.Log("Loading scene...");
+            StartCoroutine(LoadSceneAsync(SceneName));
+        }
+
+        private IEnumerator LoadSceneAsync(string sceneName)
+        {
+            yield return new WaitForSeconds(0.1f);
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
         }
 
         /// <summary>
