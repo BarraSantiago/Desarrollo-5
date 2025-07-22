@@ -67,8 +67,8 @@ namespace Menu
                 PlayerPrefs.SetInt("HasInteracted", 0);
                 PlayerPrefs.SetInt("PlayerMoney", 250);
                 PlayerPrefs.SetInt("TutorialAccessed", 0);
+                PlayerPrefs.SetInt("TutorialAccessed", 0);
                 PlayerPrefs.Save();
-                Debug.Log("Deleting game data...");
 
                 InventoryObject[] allInventories = Resources.FindObjectsOfTypeAll<InventoryObject>();
                 
