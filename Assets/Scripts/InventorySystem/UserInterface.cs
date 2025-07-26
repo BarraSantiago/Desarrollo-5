@@ -151,7 +151,7 @@ namespace InventorySystem
             if (slot.item.id >= 0)
             {
                 MouseData.TempItemBeingDragged = CreateTempItem(obj);
-                MouseData.TempItemBeingDragged.transform.SetParent(UIManager.MainCanvas.transform);
+                MouseData.TempItemBeingDragged.transform.SetParent(UIManager.TopCanvas.transform);
             }
         }
 
@@ -160,17 +160,9 @@ namespace InventorySystem
             GameObject tempItem = null;
             if (slotsOnInterface[obj].item.id < 0) return tempItem;
 
-            // Find the canvas with the highest sort order.
-            GameObject tCanvas = GameObject.FindGameObjectWithTag("TopCanvas");
-            Canvas topCanvas = tCanvas.GetComponent<Canvas>();
-
-            // Fallback to the current canvas if no other canvas is found
-            if (!topCanvas) topCanvas = canvas;
-
             tempItem = new GameObject();
             RectTransform rt = tempItem.AddComponent<RectTransform>();
             rt.sizeDelta = new Vector2(75, 75);
-            rt.SetParent(topCanvas.transform, false);
 
             Image img = tempItem.AddComponent<Image>();
             img.sprite = slotsOnInterface[obj].GetItemObject().uiDisplay;

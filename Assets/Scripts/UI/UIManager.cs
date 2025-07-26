@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 
 namespace UI
@@ -10,6 +11,13 @@ namespace UI
         [SerializeField] private TMP_Text showMoney;
 
         public static Canvas MainCanvas;
+        public static Canvas TopCanvas;
+
+        private void Start()
+        {
+            TopCanvas = GameObject.Find("TopCanvas").GetComponent<Canvas>();
+        }
+
         public void SpawnFlyingText(int num)
         {
             GameObject flyingText = Instantiate(flyingtext, flyingTextLocation);
