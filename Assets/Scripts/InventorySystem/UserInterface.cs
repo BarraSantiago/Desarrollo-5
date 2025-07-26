@@ -120,7 +120,8 @@ namespace InventorySystem
                 canvasRect.sizeDelta.y / 2 - itemDisplaySize.y / 2);
 
             Vector3 worldMousePosition = canvasRect.TransformPoint(localMousePosition);
-            GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity, canvas.transform);
+            GameObject itemDisplay = Instantiate(itemDisplayPrefab, worldMousePosition, Quaternion.identity,
+                canvas.transform);
 
             ItemInfoPanel infoPanel = itemDisplay.GetComponent<ItemInfoPanel>();
             infoPanel.slot = slotsOnInterface[obj];
@@ -159,9 +160,18 @@ namespace InventorySystem
             GameObject tempItem = null;
             if (slotsOnInterface[obj].item.id < 0) return tempItem;
 
+            // Find the canvas with the highest sort order.
+            GameObject tCanvas = GameObject.FindGameObjectWithTag("TopCanvas");
+            Canvas topCanvas = tCanvas.GetComponent<Canvas>();
+
+            // Fallback to the current canvas if no other canvas is found
+            if (!topCanvas) topCanvas = canvas;
+
             tempItem = new GameObject();
             RectTransform rt = tempItem.AddComponent<RectTransform>();
             rt.sizeDelta = new Vector2(75, 75);
+            rt.SetParent(topCanvas.transform, false);
+
             Image img = tempItem.AddComponent<Image>();
             img.sprite = slotsOnInterface[obj].GetItemObject().uiDisplay;
             img.raycastTarget = false;
@@ -179,11 +189,11 @@ namespace InventorySystem
 
                 if (!Physics.Raycast(ray, out RaycastHit hit)) return;
 
-                
+
                 if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Walkable")) return;
 
                 //DropItem(obj);
-                
+
                 return;
             }
 
@@ -201,6 +211,7 @@ namespace InventorySystem
             slotsOnInterface[obj].RemoveItem();
             InventoryObject.OnItemSwapInventory?.Invoke(0);
         }
+
         protected void OnDrag(GameObject obj)
         {
             if (MouseData.TempItemBeingDragged != null)

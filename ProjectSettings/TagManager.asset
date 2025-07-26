@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Melee
   - Ranged
+  - TopCanvas
   layers:
   - Default
   - TransparentFX
