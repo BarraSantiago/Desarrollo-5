@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
+    [SerializeField] private AudioMixer mainMixer;
     public static AudioManager instance;
 
     [System.Serializable]
@@ -46,6 +48,7 @@ public class AudioManager : MonoBehaviour
     {
         if (soundDictionary.ContainsKey(name))
         {
+            soundDictionary[name].volume = mainMixer.GetFloat("Volume", out float volume) ? Mathf.Pow(10, volume / 20f) : 1.0f;
             soundDictionary[name].Play();
         }
         else

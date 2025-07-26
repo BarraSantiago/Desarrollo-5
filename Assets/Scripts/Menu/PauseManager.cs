@@ -69,7 +69,7 @@ namespace Menu
         /// <summary>
         /// Quits the application
         /// </summary>
-        private void Quit()
+        public void Quit()
         {
             Application.Quit();
         }

@@ -51,13 +51,6 @@ namespace Store
 
             inventoryParent.SetActive(true);
 
-            foreach (InventorySlot slot in inventory.GetSlots)
-            {
-                slot.onAfterUpdated += UpdateSlot;
-            }
-            
-            
-
             if (inventory.GetSlots[0].GetItemObject())
             {
                 Initialize(inventory.GetSlots[0].GetItemObject());
