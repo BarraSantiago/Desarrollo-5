@@ -12,6 +12,12 @@ using Random = UnityEngine.Random;
 
 namespace Store.Shops
 {
+    public enum SortType
+    {
+        PriceHighToLow,
+        PriceLowToHigh,
+        ItemType
+    }
     public class Shop : MonoBehaviour, IInitializable
     {
         #region Serialized Fields
@@ -92,7 +98,6 @@ namespace Store.Shops
         private const int MinAmount = 0;
 
         #endregion
-
 
 
         private void Awake()
@@ -179,12 +184,13 @@ namespace Store.Shops
                 errorText.text = $"You don't have enough money to {itemAction} {_selectedItem.data.name}!";
                 return;
             }
-            
-            if(player.inventory.IsFull(_selectedItem.data, _currentAmount))
+
+            if (player.inventory.IsFull(_selectedItem.data, _currentAmount))
             {
                 AudioManager.instance.Play("Error");
                 errorPopup.SetActive(true);
-                errorText.text = $"You don't have enough space in your inventory to {itemAction} {_selectedItem.data.name}!";
+                errorText.text =
+                    $"You don't have enough space in your inventory to {itemAction} {_selectedItem.data.name}!";
                 return;
             }
 
@@ -217,13 +223,13 @@ namespace Store.Shops
                 player.inventory.AddItem(_selectedItem.data, _currentAmount);
                 SuccessWindow.SetActive(true);
                 SuccessImage.sprite = _selectedItem.uiDisplay;
-                AudioManager.instance.Play("CraftingSuccess");
+                AudioManager.instance.Play("CraftSuccess");
             }
             else
             {
                 FailWindow.SetActive(true);
                 FailImage.sprite = _selectedItem.uiDisplay;
-                AudioManager.instance.Play("CraftingFail");
+                AudioManager.instance.Play("CraftFailure");
             }
 
             return true;
@@ -400,6 +406,63 @@ namespace Store.Shops
             _currentAmount++;
             amountText.text = _currentAmount.ToString();
             CurrentCost = (int)(_selectedItem.data.listPrice.originalPrice * itemCostMultiplier * _currentAmount);
+        }
+
+        public void SortByPriceHighToLow()
+        {
+            SortShopItems(SortType.PriceHighToLow);
+        }
+        public void SortByPriceLowToHigh()
+        {
+            SortShopItems(SortType.PriceLowToHigh);
+        }
+        public void SortByItemType()
+        {
+            SortShopItems(SortType.ItemType);
+        }
+
+        public void SortShopItems(SortType sortType)
+        {
+            List<ShopItem> sortedItems = new List<ShopItem>(_shopItems);
+
+            switch (sortType)
+            {
+                case SortType.PriceHighToLow:
+                    sortedItems.Sort((item1, item2) =>
+                    {
+                        float price1 = completeDatabase.ItemObjects[item1.itemID].data.listPrice.originalPrice *
+                                       itemCostMultiplier;
+                        float price2 = completeDatabase.ItemObjects[item2.itemID].data.listPrice.originalPrice *
+                                       itemCostMultiplier;
+                        return price2.CompareTo(price1);
+                    });
+                    break;
+
+                case SortType.PriceLowToHigh:
+                    sortedItems.Sort((item1, item2) =>
+                    {
+                        float price1 = completeDatabase.ItemObjects[item1.itemID].data.listPrice.originalPrice *
+                                       itemCostMultiplier;
+                        float price2 = completeDatabase.ItemObjects[item2.itemID].data.listPrice.originalPrice *
+                                       itemCostMultiplier;
+                        return price1.CompareTo(price2);
+                    });
+                    break;
+
+                case SortType.ItemType:
+                    sortedItems.Sort((item1, item2) =>
+                    {
+                        ItemType type1 = completeDatabase.ItemObjects[item1.itemID].type;
+                        ItemType type2 = completeDatabase.ItemObjects[item2.itemID].type;
+                        return type1.CompareTo(type2);
+                    });
+                    break;
+            }
+
+            for (int i = 0; i < sortedItems.Count; i++)
+            {
+                sortedItems[i].transform.SetSiblingIndex(i);
+            }
         }
 
         public void Initialize()
