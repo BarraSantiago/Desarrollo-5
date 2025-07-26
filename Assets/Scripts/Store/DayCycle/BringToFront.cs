@@ -9,23 +9,26 @@ namespace Store.DayCycle
         [SerializeField] private Transform afternoonImage;
         [SerializeField] private Transform eveningImage;
 
-        public void BringMidDayForward()
-        {
-            midDayImage.SetAsLastSibling();
-        }
-        
         public void BringMorningForward()
         {
             morningImage.SetAsLastSibling();
         }
         
+        public void BringMidDayForward()
+        {
+            morningImage.SetAsFirstSibling();
+            midDayImage.SetAsLastSibling();
+        }
+        
         public void BringAfternoonForward()
         {
+            midDayImage.SetAsFirstSibling();
             afternoonImage.SetAsLastSibling();
         }
         
         public void BringEveningForward()
         {
+            afternoonImage.SetAsFirstSibling();
             eveningImage.SetAsLastSibling();
         }
     }
