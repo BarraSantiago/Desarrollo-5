@@ -36,7 +36,11 @@ namespace Menu
 
             if (SaveFileManager.HasSavedFiles())
             {
-                continueButton.onClick.AddListener(() => { SceneManager.LoadScene(SceneName); });
+                continueButton.onClick.AddListener(() =>
+                {
+                    SceneManager.LoadScene(SceneName);
+                    SaveFileManager.ResetGame = false;
+                });
                 newGameButton.onClick.AddListener(() => { confirmationWindow.SetActive(true); });
                 confirmationButton.onClick.AddListener(ResetGame);
             }
@@ -50,6 +54,7 @@ namespace Menu
                     {
                         inventory.RemoveAllItems();
                     }
+                    SaveFileManager.ResetGame = true;
 
                     SceneManager.LoadScene(SceneName);
                 });
@@ -69,7 +74,7 @@ namespace Menu
                 PlayerPrefs.SetInt("TutorialAccessed", 0);
                 PlayerPrefs.SetInt("TutorialAccessed", 0);
                 PlayerPrefs.Save();
-
+                SaveFileManager.ResetGame = true;
                 InventoryObject[] allInventories = Resources.FindObjectsOfTypeAll<InventoryObject>();
                 
                 foreach (InventoryObject inventory in allInventories)

@@ -19,35 +19,38 @@ namespace Store
 
         #region Serialized Fields
 
-        [Header("Client Setup")] 
-        [SerializeField] private Button chargeButton;
+        [Header("Client Setup")] [SerializeField]
+        private Button chargeButton;
+
         [SerializeField] private GameObject[] clientPrefabs;
         [SerializeField] private ClientTransforms clientTransforms;
         [SerializeField] private Texture[] reactionTextures;
 
-        [Header("Popularity Setup")] 
-        [SerializeField] private PopularityManager popularityManager;
+        [Header("Popularity Setup")] [SerializeField]
+        private PopularityManager popularityManager;
 
-        [Header("Items Setup")]
-        [SerializeField] private InventoryObject[] storeInventories;
+        [Header("Items Setup")] [SerializeField]
+        private InventoryObject[] storeInventories;
+
         [SerializeField] private DisplayItem[] displayItems;
         [SerializeField] public ItemDatabaseObject itemDatabase;
         [SerializeField] private ItemDisplayer itemDisplayer;
 
-        [Header("Waiting Line Setup")]
-        [SerializeField] private Transform checkOut;
+        [Header("Waiting Line Setup")] [SerializeField]
+        private Transform checkOut;
+
         [SerializeField] private Transform waitingLineStart;
         [SerializeField] private int posAmount;
         [SerializeField] private float distanceBetweenPos;
 
-        [Header("Misc Setup")] 
-        [SerializeField] private LightingManager lightingManager;
+        [Header("Misc Setup")] [SerializeField]
+        private LightingManager lightingManager;
+
         [SerializeField] private UIManager uiManager;
         [SerializeField] private Canvas mainCanvas;
         [SerializeField] private Player player;
 
-        [Header("Demo")] 
-        [SerializeField] private Button startCycle;
+        [Header("Demo")] [SerializeField] private Button startCycle;
         [SerializeField] private EndDayStats endDayStats;
         [SerializeField] private Button endCycle;
         [SerializeField] private PlayerController playerController;
@@ -104,9 +107,12 @@ namespace Store
             itemDisplayer.Initialize(storeInventories);
             UIManager.MainCanvas = mainCanvas;
 
-            foreach (InventoryObject storeInventory in storeInventories)
+            if (!SaveFileManager.ResetGame)
             {
-                storeInventory.Load();
+                foreach (InventoryObject storeInventory in storeInventories)
+                {
+                    storeInventory.Load();
+                }
             }
 
             Player.OnMoneyUpdate += UpdateMoneyText;
@@ -124,7 +130,6 @@ namespace Store
         public void OnApplicationQuit()
         {
             _initializer.DeinitializeAll();
-            SaveInventories();
         }
 
 
@@ -154,7 +159,6 @@ namespace Store
             }
 
             lightingManager.StartDay();
-            popularityManager.Initialize();
             StartCoroutine(SendClients());
         }
 
@@ -186,6 +190,8 @@ namespace Store
             lightingManager.Deinitialize();
 
             popularityManager.Deinitialize();
+            SaveInventories();
+            player.SaveMoney();
         }
 
         private void UpdateCurrentPrices()
@@ -201,10 +207,10 @@ namespace Store
             _clientsLeft++;
 
             if (_clientsLeft < _dailyClients) return;
-            endDayStats.UpdateStats(_satisfiedClients, _angryClients, _experienceWon, _moneyWon, _itemsSold, _moneyLost);
+            endDayStats.UpdateStats(_satisfiedClients, _angryClients, _experienceWon, _moneyWon, _itemsSold,
+                _moneyLost);
             endDayInput.SetActive(true);
             playerController.dayEnded = true;
-            
         }
 
         public void AddItem()
@@ -217,6 +223,11 @@ namespace Store
         {
             const int goldAdded = 500;
             SpawnText(goldAdded);
+        }
+
+        public void LevelUp()
+        {
+            popularityManager.LevelUpPopularity();
         }
 
         private void SpawnText(int money)

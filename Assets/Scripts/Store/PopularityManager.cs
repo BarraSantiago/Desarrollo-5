@@ -65,7 +65,7 @@ namespace Store
         }
 
         [ContextMenu("Level up")]
-        private void LevelUpPopularity()
+        public void LevelUpPopularity()
         {
             if(_popularityLevel >= medals.Length - 1) return;
             _popularityLevel++;

@@ -23,7 +23,6 @@ namespace player
                 if (value < _money) OnMoneyReduced?.Invoke(_money - value);
                 if (_money == value) return;
                 _money = value;
-                SaveMoney();
                 OnMoneyUpdate?.Invoke(_money);
             }
         }
@@ -46,13 +45,6 @@ namespace player
             SceneManager.sceneLoaded -= OnSceneLoaded;
             UserInterface.OnDropItem -= DropItem;
         }
-
-        public void OnApplicationQuit()
-        {
-            inventory.Save();
-        }
-
-
         
         private void DropItem(GameObject obj, int amount)
         {
@@ -73,7 +65,7 @@ namespace player
             inventory.UpdateInventory();
         }
 
-        private void SaveMoney()
+        public void SaveMoney()
         {
             PlayerPrefs.SetInt(MoneyKey, _money);
             PlayerPrefs.Save();

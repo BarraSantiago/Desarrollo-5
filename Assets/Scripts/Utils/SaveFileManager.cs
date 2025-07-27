@@ -5,6 +5,7 @@ namespace Utils
 
     public static class SaveFileManager
     {
+        public static bool ResetGame = false;
         // Checks if there are any files in the persistent data path
         public static bool HasSavedFiles()
         {
