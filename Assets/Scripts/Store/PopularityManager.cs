@@ -33,6 +33,7 @@ namespace Store
         private static int _popularityLevel = 0;
 
         public static int Level => _popularityLevel;
+        public static Action OnLevelUp;
 
         public void Initialize()
         {
@@ -86,6 +87,7 @@ namespace Store
                 _ => "Silver"
             };
             levelUpText.text = $"You have reached " + level + "!";
+            OnLevelUp?.Invoke();
         }
     }
 }

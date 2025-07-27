@@ -473,6 +473,7 @@ namespace Store.Shops
             }
 
             Player.OnMoneyUpdate += UpdateAvailability;
+            PopularityManager.OnLevelUp += UpdateAvailability;
 
             player.inventory.OnItemAdded += CheckCraftingMaterials;
             upgradeButton?.onClick.AddListener(UpgradeShop);
@@ -484,6 +485,11 @@ namespace Store.Shops
 
             inputField.onEndEdit.AddListener(delegate { ChangeCraftChanceMod(); });
             inputField.onDeselect.AddListener(delegate { ChangeCraftChanceMod(); });
+        }
+
+        private void UpdateAvailability()
+        {
+            UpdateAvailability(player.Money);
         }
 
         public void Deinitialize()

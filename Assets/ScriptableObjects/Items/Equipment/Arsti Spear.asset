@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiDisplay: {fileID: 21300000, guid: ae67ec473d1a78e409c77ba8e12f7573, type: 3}
   characterDisplay: {fileID: 5340671013885530385, guid: 5ea56d25a8267bd4d828fa11f9df505a, type: 3}
-  stackable: 1
-  maxStack: 5
+  stackable: 0
+  maxStack: 0
   type: 1
   description: Perfect for long range combats, this long, slender shaft of polished
     wood topped with a leaf-shaped steel head is used by hunters and scavengers.
@@ -27,4 +27,3 @@ MonoBehaviour:
     craftable: 1
     recipe: {fileID: 11400000, guid: dbacefa41033fc440b7055a126c372ed, type: 2}
   boneNames: []
-  price: 1

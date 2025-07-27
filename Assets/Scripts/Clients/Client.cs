@@ -131,12 +131,11 @@ namespace Clients
         {
             if (CurrentState == State.None) return;
             audioSource.enabled = agent.velocity.magnitude > 0.1f;
+            animator.SetFloat("Speed", agent.velocity.magnitude);
             if (agent.velocity.magnitude < 0.1f) return;
 
             Quaternion toRotation = Quaternion.LookRotation(agent.velocity, Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, Time.deltaTime * 10f);
-
-            animator.SetFloat("Speed", agent.velocity.magnitude);
         }
 
         public void Initialize(int id)
