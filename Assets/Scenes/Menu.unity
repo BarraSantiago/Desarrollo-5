@@ -4433,6 +4433,22 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3281192291887468304, guid: 001da1759eb67ec4bb56de3c22f645e8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1a7f13d962bf0294db0bfcd1169b1a21, type: 3}
+    - target: {fileID: 3281192291887468304, guid: 001da1759eb67ec4bb56de3c22f645e8, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281192291887468304, guid: 001da1759eb67ec4bb56de3c22f645e8, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281192291887468304, guid: 001da1759eb67ec4bb56de3c22f645e8, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4654234943221838836, guid: 001da1759eb67ec4bb56de3c22f645e8, type: 3}
       propertyPath: m_Name
       value: Settings
