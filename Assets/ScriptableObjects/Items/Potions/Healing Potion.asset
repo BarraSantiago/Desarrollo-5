@@ -23,8 +23,7 @@ MonoBehaviour:
     name: Healing Potion
     id: 6
     listPrice:
-      originalPrice: 22
+      originalPrice: 65
     craftable: 1
     recipe: {fileID: 11400000, guid: c7121ebd2a593614ea5591af084928cf, type: 2}
   boneNames: []
-  price: 1

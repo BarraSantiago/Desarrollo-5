@@ -122,15 +122,10 @@ namespace Store
             _initializer.InitializeAll();
             _waitingLine.OnItemPaid += popularityManager.ItemPaid;
         }
-    
+
         private void Update()
         {
             ChargeClient();
-        }
-
-        public void OnApplicationQuit()
-        {
-            _initializer.DeinitializeAll();
         }
 
 
@@ -208,6 +203,8 @@ namespace Store
             _clientsLeft++;
 
             if (_clientsLeft < _dailyClients) return;
+
+            if (!endDayStats || !endDayInput || !playerController) return;
             endDayStats.UpdateStats(_satisfiedClients, _angryClients, _experienceWon, _moneyWon, _itemsSold,
                 _moneyLost);
             endDayInput.SetActive(true);
@@ -328,6 +325,31 @@ namespace Store
             {
                 inventory.Save();
             }
+        }
+
+        private void OnDestroy()
+        {
+            Client.OnItemBought -= ItemBought;
+            Client.OnMoneyAdded -= SpawnText;
+            Client.OnStartLine -= AddToQueue;
+            Client.OnLeftStore -= CheckEndCycle;
+            Player.OnMoneyUpdate -= UpdateMoneyText;
+
+            for (int i = _clients.Count - 1; i >= 0; i--)
+            {
+                if (_clients[i] != null)
+                {
+                    _clients[i].Deinitialize();
+                }
+            }
+
+            _clients.Clear();
+        }
+
+        private void OnApplicationQuit()
+        {
+            OnDestroy();
+            _initializer?.DeinitializeAll();
         }
     }
 }

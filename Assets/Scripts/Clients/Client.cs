@@ -362,40 +362,6 @@ namespace Clients
             targetItem.displayObject.transform.SetParent(itemPosition);
         }
 
-        private IEnumerator LerpDisplayObjectPosition(float duration)
-        {
-            DisplayItem targetItem = ItemDisplayer.DisplayItems[_desiredItemIndex];
-            if (!targetItem || !targetItem.displayObject)
-                yield break;
-
-            // Initial and final positions
-            Vector3 initialPosition = targetItem.displayObject.transform.position;
-            Vector3 targetPosition = itemPosition.position;
-            float startTime = Time.time;
-            /*
-            while (Time.time - startTime < duration)
-            {
-                float t = (Time.time - startTime) / duration;
-
-                // In case the display object was destroyed or removed mid-animation
-                if (targetItem.displayObject == null)
-                    yield break;
-
-                targetItem.displayObject.transform.position =
-                    Vector3.Lerp(initialPosition, targetPosition, t);
-
-                yield return null;
-            }*/
-            yield return new WaitForSeconds(2f);
-
-            // Snap to final position and parent to the hand's transform
-            if (targetItem.displayObject != null)
-            {
-                targetItem.displayObject.transform.position = targetPosition;
-                targetItem.displayObject.transform.SetParent(itemPosition);
-            }
-        }
-
         private IEnumerator StartWaitingLine()
         {
             agent.SetDestination(ClientTransforms.WaitingLineStart.position);
@@ -477,26 +443,62 @@ namespace Clients
             }
         }
 
-        /// <summary>
+       /// <summary>
         /// Exits the store
         /// </summary>
         private void LeaveStore()
         {
-            // TODO update this
-            agent.SetDestination(ClientTransforms.Exit.transform.position);
+            // Add randomization around the exit point to prevent clustering
+            Vector3 exitPosition = ClientTransforms.Exit.transform.position;
+            Vector3 randomOffset = new Vector3(
+                Random.Range(-2f, 2f), 
+                0, 
+                Random.Range(-2f, 2f)
+            );
+            Vector3 randomizedExit = exitPosition + randomOffset;
+            
+            agent.SetDestination(randomizedExit);
             CurrentState = State.LeftStore;
         }
-
+        
         private IEnumerator CheckLeftStore()
         {
-            while (!NearExit())
+            float timeoutDuration = 10f; // Prevent infinite waiting
+            float startTime = Time.time;
+            
+            while (!NearExit() && Time.time - startTime < timeoutDuration)
             {
+                // Check if agent is stuck (not moving for too long)
+                if (agent.velocity.magnitude < 0.1f && Time.time - startTime > 3f)
+                {
+                    // Force move to a new randomized exit position
+                    Vector3 exitPosition = ClientTransforms.Exit.transform.position;
+                    Vector3 emergencyOffset = new Vector3(
+                        Random.Range(-3f, 3f), 
+                        0, 
+                        Random.Range(-3f, 3f)
+                    );
+                    agent.SetDestination(exitPosition + emergencyOffset);
+                }
+                
                 yield return null;
             }
-
+        
             CurrentState = State.None;
             OnLeftStore?.Invoke();
             gameObject.SetActive(false);
+        }
+        
+        private bool NearExit()
+        {
+            // Use a more generous distance check for the exit
+            float exitDistance = _minimumDistance + 3f; 
+            
+            // Also check if we're generally in the exit area, not just the exact point
+            Vector3 exitArea = ClientTransforms.Exit.position;
+            float distanceToExit = Vector3.Distance(transform.position, exitArea);
+            
+            return distanceToExit < exitDistance;
         }
 
         private bool NearWaitingLine()
@@ -509,11 +511,6 @@ namespace Clients
             float combinedRadius = GetComponent<Collider>().bounds.extents.magnitude +
                                    targetCollider.bounds.extents.magnitude;
             return CheckDistance(targetCollider.bounds.center, combinedRadius + _minimumDistance);
-        }
-
-        private bool NearExit()
-        {
-            return CheckDistance(ClientTransforms.Exit.position, _minimumDistance + 1f);
         }
 
         private bool CheckDistance(Vector3 pos, float distanceDif)
