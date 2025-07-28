@@ -277,8 +277,17 @@ namespace Clients
         {
             // 1) Move to the item
             DisplayItem targetItem = ItemDisplayer.DisplayItems[_desiredItemIndex];
-            Collider targetCollider = targetItem.displayObject.GetComponent<Collider>();
 
+            // Check if item still exists before proceeding
+            if (!targetItem?.displayObject)
+            {
+                targetItem.BeingViewed = false;
+                CurrentState = State.Angry;
+                InstantiateTexture(100);
+                yield break;
+            }
+
+            Collider targetCollider = targetItem.displayObject.GetComponent<Collider>();
             agent.SetDestination(targetCollider.bounds.center);
             float startTime = Time.time;
             float maxWaitTime = 6f;
@@ -286,9 +295,27 @@ namespace Clients
             // Wait until we're near the item or time out
             while (!NearItem(targetCollider))
             {
+                // Check if item was destroyed while moving to it
+                if (!targetItem?.displayObject)
+                {
+                    targetItem.BeingViewed = false;
+                    CurrentState = State.Angry;
+                    InstantiateTexture(100);
+                    yield break;
+                }
+
                 if (Time.time - startTime > maxWaitTime)
                     break;
                 yield return null;
+            }
+
+            // Final check before grabbing
+            if (!targetItem?.displayObject)
+            {
+                targetItem.BeingViewed = false;
+                CurrentState = State.Angry;
+                InstantiateTexture(100);
+                yield break;
             }
 
             // Check if client is still willing to buy
@@ -304,12 +331,20 @@ namespace Clients
 
             yield return null;
 
-            // 2) Trigger the "GrabItem" animation
+            // 2) Check again before animation - item could be destroyed at any moment
+            if (!targetItem?.displayObject)
+            {
+                targetItem.BeingViewed = false;
+                agent.speed = currentSpeed;
+                CurrentState = State.Angry;
+                InstantiateTexture(100);
+                yield break;
+            }
+
+            // Trigger the "GrabItem" animation
             targetItem.displayObject.GetComponent<Animator>().enabled = false;
             animator.SetTrigger("GrabItem");
 
-            // Give Animator a frame to transition into the GrabItem state 
-            // so GetCurrentAnimatorClipInfo returns the new clip.
             yield return null;
 
             // 3) Determine the clip length for the GrabItem animation
@@ -317,22 +352,40 @@ namespace Clients
             float grabAnimLength = 0.5f; // fallback length
             if (clipInfos.Length > 0)
             {
-                // If your "GrabItem" clip is first, clipInfos[0] is the correct clip
                 grabAnimLength = clipInfos[0].clip.length;
             }
 
-            // 4) Lerp the item to the hand *during* the animation
-            yield return new WaitForSeconds(3f);
+            // 4) Wait during animation but keep checking if item exists
+            float animationStartTime = Time.time;
+            while (Time.time - animationStartTime < 3f)
+            {
+                if (!targetItem?.displayObject)
+                {
+                    targetItem.BeingViewed = false;
+                    agent.speed = currentSpeed;
+                    CurrentState = State.Angry;
+                    InstantiateTexture(100);
+                    animator.ResetTrigger("GrabItem");
+                    animator.SetTrigger("Walk");
+                    yield break;
+                }
 
-            // If item got destroyed mid-lerp, leave
-            if (!targetItem.displayObject)
+                yield return null;
+            }
+
+            // Final check before completing the grab
+            if (!targetItem?.displayObject)
             {
                 targetItem.BeingViewed = false;
-                CurrentState = State.Leaving;
+                agent.speed = currentSpeed;
+                CurrentState = State.Angry;
+                InstantiateTexture(100);
+                animator.ResetTrigger("GrabItem");
+                animator.SetTrigger("Walk");
                 yield break;
             }
 
-            // 5) Finally, set the item as a child of this client’s transform
+            // 5) Set the item as a child of this client's transform
             targetItem.displayObject.transform.SetParent(itemPosition);
             targetItem.displayObject.transform.position = itemPosition.position;
 
@@ -357,7 +410,7 @@ namespace Clients
             DisplayItem targetItem = ItemDisplayer.DisplayItems[_desiredItemIndex];
 
             if (!targetItem || !targetItem.displayObject) return;
-            
+
             targetItem.displayObject.transform.position = itemPosition.position;
             targetItem.displayObject.transform.SetParent(itemPosition);
         }
@@ -443,7 +496,7 @@ namespace Clients
             }
         }
 
-       /// <summary>
+        /// <summary>
         /// Exits the store
         /// </summary>
         private void LeaveStore()
@@ -451,21 +504,21 @@ namespace Clients
             // Add randomization around the exit point to prevent clustering
             Vector3 exitPosition = ClientTransforms.Exit.transform.position;
             Vector3 randomOffset = new Vector3(
-                Random.Range(-2f, 2f), 
-                0, 
+                Random.Range(-2f, 2f),
+                0,
                 Random.Range(-2f, 2f)
             );
             Vector3 randomizedExit = exitPosition + randomOffset;
-            
+
             agent.SetDestination(randomizedExit);
             CurrentState = State.LeftStore;
         }
-        
+
         private IEnumerator CheckLeftStore()
         {
             float timeoutDuration = 10f; // Prevent infinite waiting
             float startTime = Time.time;
-            
+
             while (!NearExit() && Time.time - startTime < timeoutDuration)
             {
                 // Check if agent is stuck (not moving for too long)
@@ -474,30 +527,30 @@ namespace Clients
                     // Force move to a new randomized exit position
                     Vector3 exitPosition = ClientTransforms.Exit.transform.position;
                     Vector3 emergencyOffset = new Vector3(
-                        Random.Range(-3f, 3f), 
-                        0, 
+                        Random.Range(-3f, 3f),
+                        0,
                         Random.Range(-3f, 3f)
                     );
                     agent.SetDestination(exitPosition + emergencyOffset);
                 }
-                
+
                 yield return null;
             }
-        
+
             CurrentState = State.None;
             OnLeftStore?.Invoke();
             gameObject.SetActive(false);
         }
-        
+
         private bool NearExit()
         {
             // Use a more generous distance check for the exit
-            float exitDistance = _minimumDistance + 3f; 
-            
+            float exitDistance = _minimumDistance + 3f;
+
             // Also check if we're generally in the exit area, not just the exact point
             Vector3 exitArea = ClientTransforms.Exit.position;
             float distanceToExit = Vector3.Distance(transform.position, exitArea);
-            
+
             return distanceToExit < exitDistance;
         }
 
