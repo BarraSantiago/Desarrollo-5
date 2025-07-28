@@ -5,19 +5,6 @@ namespace Spoonie_Tutorials.DayNight
 {
     public class LightingManager : MonoBehaviour
     {
-        private static readonly int SunDiscColor = Shader.PropertyToID("_SunDiscColor");
-        private static readonly int SunDiscExponent = Shader.PropertyToID("_SunDiscExponent");
-        private static readonly int SunDiscMultiplier = Shader.PropertyToID("_SunDiscMultiplier");
-        private static readonly int SunHaloColor = Shader.PropertyToID("_SunHaloColor");
-        private static readonly int SunHaloExponent = Shader.PropertyToID("_SunHaloExponent");
-        private static readonly int SunHaloContribution = Shader.PropertyToID("_SunHaloContribution");
-        private static readonly int HorizonLineColor = Shader.PropertyToID("_HorizonLineColor");
-        private static readonly int HorizonLineExponent = Shader.PropertyToID("_HorizonLineExponent");
-        private static readonly int HorizonLineContribution = Shader.PropertyToID("_HorizonLineContribution");
-        private static readonly int SkyGradientTop = Shader.PropertyToID("_SkyGradientTop");
-        private static readonly int SkyGradientBottom = Shader.PropertyToID("_SkyGradientBottom");
-        private static readonly int SkyGradientExponent = Shader.PropertyToID("_SkyGradientExponent");
-        private static readonly int Play = Animator.StringToHash("Play");
         [SerializeField] private Light DirectionalLight;
         [SerializeField] private Material[] skyboxMaterials = new Material[4];
         [SerializeField] private Light[] lights;
@@ -31,11 +18,37 @@ namespace Spoonie_Tutorials.DayNight
         [SerializeField] private float lightIntensity = 30f;
         [SerializeField] private float spotlightIncreaseDuration = 15f;
         [SerializeField] private float spotlightIntensity = 1250f;
+        [SerializeField] private Material particleMaterial;
+        [SerializeField] private ParticleSystem[] particleSystems;
+        [SerializeField] private Color nightParticleColor = Color.gray;
+        [SerializeField] private float particleColorTransitionDuration = 15f;
+
+        #region Private Fields
+
+        private static readonly int SunDiscColor = Shader.PropertyToID("_SunDiscColor");
+        private static readonly int SunDiscExponent = Shader.PropertyToID("_SunDiscExponent");
+        private static readonly int SunDiscMultiplier = Shader.PropertyToID("_SunDiscMultiplier");
+        private static readonly int SunHaloColor = Shader.PropertyToID("_SunHaloColor");
+        private static readonly int SunHaloExponent = Shader.PropertyToID("_SunHaloExponent");
+        private static readonly int SunHaloContribution = Shader.PropertyToID("_SunHaloContribution");
+        private static readonly int HorizonLineColor = Shader.PropertyToID("_HorizonLineColor");
+        private static readonly int HorizonLineExponent = Shader.PropertyToID("_HorizonLineExponent");
+        private static readonly int HorizonLineContribution = Shader.PropertyToID("_HorizonLineContribution");
+        private static readonly int SkyGradientTop = Shader.PropertyToID("_SkyGradientTop");
+        private static readonly int SkyGradientBottom = Shader.PropertyToID("_SkyGradientBottom");
+        private static readonly int SkyGradientExponent = Shader.PropertyToID("_SkyGradientExponent");
+        private static readonly int Play = Animator.StringToHash("Play");
+        private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
+        private Color[] originalParticleColors;
+        private Color[] originalEmissionColors;
+        private Material[] originalMaterials;
         public bool StartCycle { get; set; }
         public float CycleDuration = 24;
         private bool nightStarted = false;
-
         private Material dynamicSkyboxMaterial;
+        private Color originalMatColor;
+
+        #endregion
 
         private void Awake()
         {
@@ -56,6 +69,30 @@ namespace Spoonie_Tutorials.DayNight
                 }
             }
 
+            // Store original particle colors and emission colors
+            if (particleSystems != null && particleSystems.Length > 0)
+            {
+                originalParticleColors = new Color[particleSystems.Length];
+                originalEmissionColors = new Color[particleSystems.Length];
+                originalMaterials = new Material[particleSystems.Length];
+
+                for (int i = 0; i < particleSystems.Length; i++)
+                {
+                    if (particleSystems[i] != null)
+                    {
+                        ParticleSystem.MainModule main = particleSystems[i].main;
+                        originalParticleColors[i] = main.startColor.color;
+
+                        ParticleSystemRenderer renderer = particleSystems[i].GetComponent<ParticleSystemRenderer>();
+                        if (renderer && renderer.material)
+                        {
+                            originalMaterials[i] = renderer.material;
+                            originalEmissionColors[i] = renderer.material.GetColor(EmissionColor);
+                        }
+                    }
+                }
+            }
+            originalMatColor = particleMaterial.GetColor(EmissionColor);
             if (!skyboxMaterials[0]) return;
             dynamicSkyboxMaterial = new Material(skyboxMaterials[0]);
             RenderSettings.skybox = dynamicSkyboxMaterial;
@@ -174,6 +211,7 @@ namespace Spoonie_Tutorials.DayNight
                 }
             }
 
+            StartCoroutine(TransitionParticleColors(false));
             nightStarted = false;
         }
 
@@ -183,6 +221,73 @@ namespace Spoonie_Tutorials.DayNight
             StartCoroutine(IncreaseLightIntensity(0, lightIntensity));
             StartCoroutine(IncreaseSpotlightIntensity(0, spotlightIntensity));
             StartCoroutine(IncreaseFireSize(0, fireSize));
+            StartCoroutine(TransitionParticleColors(true));
+        }
+
+        private IEnumerator TransitionParticleColors(bool toNight)
+        {
+            if (particleSystems == null || originalParticleColors == null) yield break;
+
+            float elapsedTime = 0f;
+            while (elapsedTime < particleColorTransitionDuration)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = elapsedTime / particleColorTransitionDuration;
+
+                for (int i = 0; i < particleSystems.Length; i++)
+                {
+                    if (!particleSystems[i]) continue;
+
+                    ParticleSystem.MainModule main = particleSystems[i].main;
+                    ParticleSystem.ColorOverLifetimeModule colorOverLifetime = particleSystems[i].colorOverLifetime;
+                    ParticleSystemRenderer renderer = particleSystems[i].GetComponent<ParticleSystemRenderer>();
+
+                    Color targetColor = toNight ? nightParticleColor : originalParticleColors[i];
+                    Color currentColor = toNight ? originalParticleColors[i] : nightParticleColor;
+
+                    // Update start color
+                    main.startColor = Color.Lerp(currentColor, targetColor, t);
+
+                    // Update color over lifetime if enabled
+                    if (colorOverLifetime.enabled)
+                    {
+                        Gradient gradient = new Gradient();
+                        GradientColorKey[] colorKeys = new GradientColorKey[2];
+                        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[2];
+
+                        Color lerpedColor = Color.Lerp(currentColor, targetColor, t);
+
+                        colorKeys[0].color = lerpedColor;
+                        colorKeys[0].time = 0.0f;
+                        colorKeys[1].color = lerpedColor;
+                        colorKeys[1].time = 1.0f;
+
+                        alphaKeys[0].alpha = lerpedColor.a;
+                        alphaKeys[0].time = 0.0f;
+                        alphaKeys[1].alpha = lerpedColor.a;
+                        alphaKeys[1].time = 1.0f;
+
+                        gradient.SetKeys(colorKeys, alphaKeys);
+                        colorOverLifetime.color = gradient;
+                    }
+
+                    // Update emission color if material exists
+                    if (renderer && originalMaterials[i] &&
+                        originalMaterials[i].HasProperty(EmissionColor))
+                    {
+                        Color targetEmissionColor = toNight ? nightParticleColor : originalEmissionColors[i];
+                        Color currentEmissionColor = toNight ? originalEmissionColors[i] : nightParticleColor;
+                        Color lerpedEmissionColor = Color.Lerp(currentEmissionColor, targetEmissionColor, t);
+
+                        particleMaterial.SetColor(EmissionColor, lerpedEmissionColor);
+                        renderer.material.SetColor(EmissionColor, lerpedEmissionColor);
+                        particleSystems[i].Clear();
+                        particleSystems[i].Play();
+                    }
+                }
+
+                yield return null;
+            }
         }
 
         public void Deinitialize()
@@ -203,7 +308,34 @@ namespace Spoonie_Tutorials.DayNight
                 }
             }
 
+            // Reset particle systems to original colors
+            if (particleSystems != null && originalParticleColors != null)
+            {
+                for (int i = 0; i < particleSystems.Length; i++)
+                {
+                    if (particleSystems[i] != null)
+                    {
+                        ParticleSystem.MainModule main = particleSystems[i].main;
+                        main.startColor = originalParticleColors[i];
+
+                        // Reset emission colors
+                        ParticleSystemRenderer renderer = particleSystems[i].GetComponent<ParticleSystemRenderer>();
+                        if (renderer && originalMaterials[i] && originalMaterials[i].HasProperty(EmissionColor))
+                        {
+                            renderer.material.SetColor(EmissionColor, originalEmissionColors[i]);
+                        }
+                    }
+                }
+            }
+
+            // Reset the shared particle material
+            if (particleMaterial && originalEmissionColors != null && originalEmissionColors.Length > 0)
+            {
+                particleMaterial.SetColor(EmissionColor, originalMatColor);
+            }
+
             animator.SetTrigger("Stop");
+            nightStarted = false;
         }
 
         private IEnumerator IncreaseLightIntensity(float a, float b)
@@ -284,6 +416,7 @@ namespace Spoonie_Tutorials.DayNight
             {
                 DestroyImmediate(dynamicSkyboxMaterial);
             }
+            particleMaterial.SetColor(EmissionColor, originalMatColor);
         }
     }
 }
