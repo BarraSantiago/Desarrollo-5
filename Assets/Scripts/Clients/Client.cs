@@ -22,6 +22,16 @@ namespace Clients
         public Transform WanderBoundsMax;
     }
 
+    [System.Serializable]
+    public class ClientPersonality
+    {
+        public float patience = 1f; // 0.5-2.0x multiplier
+        public float haggling = 1f; // 0.5-1.5x price tolerance
+        public float wanderTime = 1f; // 0.7-1.3x wander duration
+        public float tipGenerosity = 1f; // 0.5-2.0x tip chance
+        public string personalityType; // For debugging/display
+    }
+
     public class Client : MonoBehaviour
     {
         private enum State
@@ -45,6 +55,7 @@ namespace Clients
         [SerializeField] private Transform itemPosition;
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private GameObject reactionSprite;
+        [SerializeField] private ClientPersonality personality;
 
         #endregion
 
@@ -100,6 +111,14 @@ namespace Clients
         private float _wanderTimeMax = 15f;
         private float _reactionTime = 2f;
         private const string SoldSoundKey = "ItemSold";
+        private bool _isInQueue = false;
+        private float _queueWaitTime = 0f;
+        private float _maxQueueWaitTime = 60f;
+        private List<int> _preferredItemIds = new List<int>();
+        private List<int> _dislikedItemIds = new List<int>();
+        private Dictionary<int, float> _itemMemory = new Dictionary<int, float>(); // itemId -> last seen price
+        private bool _hasShoppedBefore;
+        
         private State _currentState;
 
         private State CurrentState
@@ -126,25 +145,84 @@ namespace Clients
             agent.updateUpAxis = false;
             animator = GetComponent<Animator>();
         }
-
-        private void Update()
-        {
-            if (CurrentState == State.None) return;
-            audioSource.enabled = agent.velocity.magnitude > 0.1f;
-            animator.SetFloat("Speed", agent.velocity.magnitude);
-            if (agent.velocity.magnitude < 0.1f) return;
-
-            Quaternion toRotation = Quaternion.LookRotation(agent.velocity, Vector3.up);
-            transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, Time.deltaTime * 10f);
-        }
-
+        
         public void Initialize(int id)
         {
             this.id = id;
-
+            _hasShoppedBefore = Random.Range(0, 100) < 40; // 40% are returning customers
+            GeneratePersonality();
+            GenerateItemPreferences();
+            LoadItemMemory();
             CurrentState = State.Idle;
         }
 
+        private void ReactToEnvironment()
+        {
+            // React to long queues
+            if (_isInQueue && _queueWaitTime > _maxQueueWaitTime * 0.5f)
+            {
+                if (Random.Range(0, 100) < 10) // 10% chance per frame
+                {
+                    animator.SetTrigger("LookAround");
+                    if (Random.Range(0, 100) < 20)
+                    {
+                        InstantiateTexture(10f); // Slight annoyance
+                    }
+                }
+            }
+            
+            // React to preferred items
+            if (CurrentState == State.ChoosingItem)
+            {
+                foreach (var displayItem in ItemDisplayer.DisplayItems)
+                {
+                    if (displayItem && _preferredItemIds.Contains(displayItem.Item.data.id))
+                    {
+                        float distance = Vector3.Distance(transform.position, displayItem.displayObject.transform.position);
+                        if (distance < 5f && Random.Range(0, 100) < 5)
+                        {
+                            // Look towards preferred item
+                            Vector3 directionToItem = (displayItem.displayObject.transform.position - transform.position).normalized;
+                            transform.rotation = Quaternion.LookRotation(directionToItem);
+                            InstantiateTexture(-20f); // Show interest
+                        }
+                    }
+                }
+            }
+        }
+        
+        private void Update()
+        {
+            if (CurrentState == State.None) return;
+            
+            audioSource.enabled = agent.velocity.magnitude > 0.1f;
+            animator.SetFloat("Speed", agent.velocity.magnitude);
+            
+            ReactToEnvironment(); // Add environmental reactions
+            
+            if (agent.velocity.magnitude < 0.1f) return;
+        
+            Quaternion toRotation = Quaternion.LookRotation(agent.velocity, Vector3.up);
+            transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, Time.deltaTime * 10f);
+        }
+        
+
+        
+        private void LoadItemMemory()
+        {
+            if (!_hasShoppedBefore) return;
+            
+            // Returning customers remember 1-3 item prices from "previous visits"
+            int memorizedItems = Random.Range(1, 4);
+            for (int i = 0; i < memorizedItems; i++)
+            {
+                int itemId = Random.Range(0, ItemDatabase.ItemObjects.Length);
+                float rememberedPrice = ItemDatabase.ItemObjects[itemId].data.listPrice.CurrentPrice * Random.Range(0.9f, 1.1f);
+                _itemMemory[itemId] = rememberedPrice;
+            }
+        }
+        
+        
         public void Deinitialize()
         {
             if (ItemDisplayer.DisplayItems[_desiredItemIndex])
@@ -206,6 +284,46 @@ namespace Clients
             }
         }
 
+        private void GeneratePersonality()
+        {
+            // Generate random personality traits
+            personality = new ClientPersonality();
+
+            int personalityRoll = Random.Range(0, 5);
+            switch (personalityRoll)
+            {
+                case 0: // Impatient
+                    personality.patience = Random.Range(0.5f, 0.8f);
+                    personality.wanderTime = Random.Range(0.7f, 0.9f);
+                    personality.personalityType = "Impatient";
+                    break;
+                case 1: // Patient
+                    personality.patience = Random.Range(1.5f, 2.0f);
+                    personality.wanderTime = Random.Range(1.1f, 1.3f);
+                    personality.personalityType = "Patient";
+                    break;
+                case 2: // Generous
+                    personality.tipGenerosity = Random.Range(1.5f, 2.0f);
+                    personality.haggling = Random.Range(1.2f, 1.5f);
+                    personality.personalityType = "Generous";
+                    break;
+                case 3: // Stingy
+                    personality.haggling = Random.Range(0.5f, 0.8f);
+                    personality.tipGenerosity = Random.Range(0.3f, 0.7f);
+                    personality.personalityType = "Stingy";
+                    break;
+                default: // Average
+                    personality.personalityType = "Average";
+                    break;
+            }
+
+            // Apply personality to existing values
+            _wanderTimemin *= personality.wanderTime;
+            _wanderTimeMax *= personality.wanderTime;
+            _maxQueueWaitTime *= personality.patience;
+            _willingnessToPay = (int)(_willingnessToPay * personality.haggling);
+            _tipChance *= personality.tipGenerosity;
+        }
 
         private IEnumerator EnterStoreAndWander()
         {
@@ -240,6 +358,27 @@ namespace Clients
             ChooseItem();
         }
 
+        private void GenerateItemPreferences()
+        {
+            // Generate 1-3 preferred items
+            int preferenceCount = Random.Range(1, 4);
+            for (int i = 0; i < preferenceCount; i++)
+            {
+                int randomItemId = Random.Range(0, ItemDatabase.ItemObjects.Length);
+                if (!_preferredItemIds.Contains(randomItemId))
+                    _preferredItemIds.Add(randomItemId);
+            }
+
+            // Generate 0-2 disliked items
+            int dislikeCount = Random.Range(0, 3);
+            for (int i = 0; i < dislikeCount; i++)
+            {
+                int randomItemId = Random.Range(0, ItemDatabase.ItemObjects.Length);
+                if (!_dislikedItemIds.Contains(randomItemId) && !_preferredItemIds.Contains(randomItemId))
+                    _dislikedItemIds.Add(randomItemId);
+            }
+        }
+
         private void ChooseItem()
         {
             List<DisplayItem> availableItems = ItemDisplayer.DisplayItems.Where(displayItem =>
@@ -248,26 +387,40 @@ namespace Clients
 
             if (availableItems.Count > 0)
             {
-                int randomItemIndex = Random.Range(0, availableItems.Count);
-                DisplayItem chosenItem = availableItems[randomItemIndex];
-                chosenItem.BeingViewed = true;
-                _desiredItemIndex = Array.IndexOf(ItemDisplayer.DisplayItems, chosenItem);
+                // Prioritize preferred items (70% chance)
+                List<DisplayItem> preferredItems = availableItems.Where(item =>
+                    _preferredItemIds.Contains(item.Item.data.id)).ToList();
 
-                CurrentState = State.GrabbingItem;
-            }
-            else
-            {
-                // Item not found
-                if (_timesCheckedItems >= _maxCheckItems)
+                if (preferredItems.Count > 0 && Random.Range(0, 100) < 70)
                 {
-                    CurrentState = State.Leaving;
+                    DisplayItem chosenItem = preferredItems[Random.Range(0, preferredItems.Count)];
+                    SelectItem(chosenItem);
+                    return;
                 }
-                else
+
+                // Avoid disliked items (80% chance)
+                List<DisplayItem> nonDislikedItems = availableItems.Where(item =>
+                    !_dislikedItemIds.Contains(item.Item.data.id)).ToList();
+
+                if (nonDislikedItems.Count > 0 && Random.Range(0, 100) < 80)
                 {
-                    _timesCheckedItems++;
-                    CurrentState = State.ChoosingItem;
+                    DisplayItem chosenItem = nonDislikedItems[Random.Range(0, nonDislikedItems.Count)];
+                    SelectItem(chosenItem);
+                    return;
                 }
+
+                // Fallback to any available item
+                DisplayItem fallbackItem = availableItems[Random.Range(0, availableItems.Count)];
+                SelectItem(fallbackItem);
             }
+            
+        }
+
+        private void SelectItem(DisplayItem item)
+        {
+            item.BeingViewed = true;
+            _desiredItemIndex = Array.IndexOf(ItemDisplayer.DisplayItems, item);
+            CurrentState = State.GrabbingItem;
         }
 
         /// <summary>
@@ -357,10 +510,11 @@ namespace Clients
             DisplayItem targetItem = ItemDisplayer.DisplayItems[_desiredItemIndex];
 
             if (!targetItem || !targetItem.displayObject) return;
-            
+
             targetItem.displayObject.transform.position = itemPosition.position;
             targetItem.displayObject.transform.SetParent(itemPosition);
         }
+
 
         private IEnumerator StartWaitingLine()
         {
@@ -370,36 +524,80 @@ namespace Clients
                 yield return null;
             }
 
+            _isInQueue = true;
+            _queueWaitTime = 0f;
             OnStartLine?.Invoke(this);
             CurrentState = State.Buying;
+
+            // Start queue patience countdown
+            StartCoroutine(QueuePatienceCountdown());
         }
 
+        private IEnumerator QueuePatienceCountdown()
+        {
+            while (_isInQueue && _queueWaitTime < _maxQueueWaitTime)
+            {
+                _queueWaitTime += Time.deltaTime;
+
+                // Show impatience at 75% wait time
+                if (_queueWaitTime > _maxQueueWaitTime * 0.75f && Random.Range(0, 100) < 5)
+                {
+                    InstantiateTexture(25f); // Show angry reaction
+                }
+
+                yield return null;
+            }
+
+            // If still waiting after max time, leave angry
+            if (_isInQueue)
+            {
+                _isInQueue = false;
+                CurrentState = State.Angry;
+            }
+        }
 
         private bool CheckBuyItem()
         {
             if (!ItemDisplayer.DisplayItems[_desiredItemIndex]) return false;
-
-
-            ListPrice itemList = ItemDatabase.ItemObjects[ItemDisplayer.DisplayItems[_desiredItemIndex].Item.data.id]
-                .data.listPrice;
-            float difference = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.Price - itemList.CurrentPrice;
-            float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
-
-            InstantiateTexture(percentageDifference);
-            if (ItemDisplayer.DisplayItems[_desiredItemIndex].Item.Price >= itemList.CurrentPrice)
+        
+            int itemId = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.data.id;
+            float currentPrice = ItemDisplayer.DisplayItems[_desiredItemIndex].Item.Price;
+            
+            // Check if returning customer remembers this item's price
+            if (_itemMemory.ContainsKey(itemId))
             {
-                // Reaction somewhat happy
+                float rememberedPrice = _itemMemory[itemId];
+                if (currentPrice > rememberedPrice * 1.2f) // 20% price increase tolerance
+                {
+                    InstantiateTexture(30f); // Show disappointment
+                    CurrentState = State.Angry;
+                    return false;
+                }
+                else if (currentPrice < rememberedPrice * 0.9f) // Price went down
+                {
+                    InstantiateTexture(-25f); // Show pleasant surprise
+                    _leaveTip = true;
+                }
+            }
+        
+            // Rest of existing price checking logic...
+            ListPrice itemList = ItemDatabase.ItemObjects[itemId].data.listPrice;
+            float difference = currentPrice - itemList.CurrentPrice;
+            float percentageDifference = (difference / itemList.CurrentPrice) * 100f;
+        
+            InstantiateTexture(percentageDifference);
+            
+            if (currentPrice >= itemList.CurrentPrice)
+            {
                 if (percentageDifference < _willingnessToPay) return true;
-
-                // Reaction angry
                 CurrentState = State.Angry;
                 return false;
             }
-
-            // Reaction very happy
+        
             _leaveTip = true;
             return true;
         }
+
 
         public void PayItem()
         {
@@ -443,7 +641,7 @@ namespace Clients
             }
         }
 
-       /// <summary>
+        /// <summary>
         /// Exits the store
         /// </summary>
         private void LeaveStore()
@@ -451,21 +649,21 @@ namespace Clients
             // Add randomization around the exit point to prevent clustering
             Vector3 exitPosition = ClientTransforms.Exit.transform.position;
             Vector3 randomOffset = new Vector3(
-                Random.Range(-2f, 2f), 
-                0, 
+                Random.Range(-2f, 2f),
+                0,
                 Random.Range(-2f, 2f)
             );
             Vector3 randomizedExit = exitPosition + randomOffset;
-            
+
             agent.SetDestination(randomizedExit);
             CurrentState = State.LeftStore;
         }
-        
+
         private IEnumerator CheckLeftStore()
         {
             float timeoutDuration = 10f; // Prevent infinite waiting
             float startTime = Time.time;
-            
+
             while (!NearExit() && Time.time - startTime < timeoutDuration)
             {
                 // Check if agent is stuck (not moving for too long)
@@ -474,30 +672,30 @@ namespace Clients
                     // Force move to a new randomized exit position
                     Vector3 exitPosition = ClientTransforms.Exit.transform.position;
                     Vector3 emergencyOffset = new Vector3(
-                        Random.Range(-3f, 3f), 
-                        0, 
+                        Random.Range(-3f, 3f),
+                        0,
                         Random.Range(-3f, 3f)
                     );
                     agent.SetDestination(exitPosition + emergencyOffset);
                 }
-                
+
                 yield return null;
             }
-        
+
             CurrentState = State.None;
             OnLeftStore?.Invoke();
             gameObject.SetActive(false);
         }
-        
+
         private bool NearExit()
         {
             // Use a more generous distance check for the exit
-            float exitDistance = _minimumDistance + 3f; 
-            
+            float exitDistance = _minimumDistance + 3f;
+
             // Also check if we're generally in the exit area, not just the exact point
             Vector3 exitArea = ClientTransforms.Exit.position;
             float distanceToExit = Vector3.Distance(transform.position, exitArea);
-            
+
             return distanceToExit < exitDistance;
         }
 
