@@ -18,6 +18,7 @@ namespace Store.Shops
         PriceLowToHigh,
         ItemType
     }
+
     public class Shop : MonoBehaviour, IInitializable
     {
         #region Serialized Fields
@@ -412,10 +413,12 @@ namespace Store.Shops
         {
             SortShopItems(SortType.PriceHighToLow);
         }
+
         public void SortByPriceLowToHigh()
         {
             SortShopItems(SortType.PriceLowToHigh);
         }
+
         public void SortByItemType()
         {
             SortShopItems(SortType.ItemType);
@@ -496,20 +499,29 @@ namespace Store.Shops
         {
             foreach (ShopItem shopItem in _shopItems)
             {
-                shopItem.OnSelectItem = null;
+                if (shopItem != null)
+                    shopItem.OnSelectItem = null;
             }
 
             Player.OnMoneyUpdate -= UpdateAvailability;
-            player.inventory.OnItemAdded -= CheckCraftingMaterials;
+            PopularityManager.OnLevelUp -= UpdateAvailability;
+
+            if (player?.inventory != null)
+            {
+                player.inventory.OnItemAdded -= CheckCraftingMaterials;
+            }
 
             upgradeButton?.onClick.RemoveListener(UpgradeShop);
-            buyButton.onClick.RemoveListener(BuyItem);
+            buyButton?.onClick.RemoveListener(BuyItem);
             increaseAmountButton?.onClick.RemoveListener(IncreaseAmount);
             decreaseAmountButton?.onClick.RemoveListener(DecreaseAmount);
 
             if (!isCraftingShop) return;
-            inputField.onEndEdit.RemoveListener(delegate { ChangeCraftChanceMod(); });
-            inputField.onDeselect.RemoveListener(delegate { ChangeCraftChanceMod(); });
+            if (inputField != null)
+            {
+                inputField.onEndEdit.RemoveListener(delegate { ChangeCraftChanceMod(); });
+                inputField.onDeselect.RemoveListener(delegate { ChangeCraftChanceMod(); });
+            }
         }
     }
 }

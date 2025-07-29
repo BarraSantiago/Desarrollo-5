@@ -166,13 +166,7 @@ namespace Spoonie_Tutorials.DayNight
 
             spotLight.intensity = 0;
 
-            foreach (GameObject fire in fires)
-            {
-                if (fire)
-                {
-                    fire.transform.localScale = Vector3.zero;
-                }
-            }
+            
 
             nightStarted = false;
         }
@@ -198,6 +192,14 @@ namespace Spoonie_Tutorials.DayNight
             foreach (GameObject fire in fires)
             {
                 if (fire != null)
+                {
+                    fire.transform.localScale = Vector3.zero;
+                }
+            }
+            
+            foreach (GameObject fire in fires)
+            {
+                if (fire)
                 {
                     fire.transform.localScale = Vector3.zero;
                 }

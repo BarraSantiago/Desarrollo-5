@@ -20,7 +20,7 @@ MonoBehaviour:
   description: Perfect for long range combats, this long, slender shaft of polished
     wood topped with a leaf-shaped steel head is used by hunters and scavengers.
   data:
-    name: "Ar\u0161ti Spear"
+    name: Arsti Spear
     id: 16
     listPrice:
       originalPrice: 75

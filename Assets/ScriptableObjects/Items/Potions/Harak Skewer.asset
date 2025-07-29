@@ -16,15 +16,14 @@ MonoBehaviour:
   characterDisplay: {fileID: 7256118649779197008, guid: 7b98c20676ac8fa47aede8576aeeea7b, type: 3}
   stackable: 1
   maxStack: 4
-  type: 3
+  type: 0
   description: Orange skewers made of Haraq leaves and orange qunbula. Its preparation
     takes several hours in the oven at low heat.
   data:
     name: Harak Skewer
-    id: -1
+    id: 23
     listPrice:
       originalPrice: 80
     craftable: 1
     recipe: {fileID: 11400000, guid: 97ed360a32d3e29478155586d0ad2704, type: 2}
   boneNames: []
-  price: 0

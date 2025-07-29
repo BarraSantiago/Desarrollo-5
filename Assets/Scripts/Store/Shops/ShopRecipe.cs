@@ -24,8 +24,11 @@ namespace Store.Shops
         
         public void UpdateAbailability(int requiredAmount, int ownedAmount)
         {
-            owned.text = ownedAmount.ToString();
-            stateImage.color = requiredAmount <= ownedAmount ? Color.green : Color.red;
+            if (owned && stateImage)
+            {
+                owned.text = ownedAmount.ToString();
+                stateImage.color = requiredAmount <= ownedAmount ? Color.green : Color.red;
+            }
         }
     }
 }

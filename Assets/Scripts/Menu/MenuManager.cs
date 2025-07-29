@@ -55,7 +55,7 @@ namespace Menu
                         inventory.RemoveAllItems();
                     }
                     SaveFileManager.ResetGame = true;
-
+                    ResetGame();
                     SceneManager.LoadScene(SceneName);
                 });
             }

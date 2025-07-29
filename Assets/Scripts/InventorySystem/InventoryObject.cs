@@ -210,20 +210,25 @@ namespace InventorySystem
 
         public void SwapItems(InventorySlot originalSlot, InventorySlot targetSlot)
         {
-            if (!targetSlot.CanPlaceInSlot(originalSlot.GetItemObject()) ||
-                !originalSlot.CanPlaceInSlot(targetSlot.GetItemObject())) return;
+            // Get item objects safely, handling empty slots
+            ItemObject originalItemObject = originalSlot.item.id >= 0 ? originalSlot.GetItemObject() : null;
+            ItemObject targetItemObject = targetSlot.item.id >= 0 ? targetSlot.GetItemObject() : null;
 
-            if (targetSlot.GetItemObject() == null ||
-                targetSlot.GetItemObject().data.id != originalSlot.GetItemObject().data.id)
+            if (!targetSlot.CanPlaceInSlot(originalItemObject) ||
+                !originalSlot.CanPlaceInSlot(targetItemObject)) return;
+
+            if (targetItemObject == null ||
+                targetItemObject.data.id != originalItemObject?.data.id)
             {
                 InventorySlot temp = new InventorySlot(targetSlot.item, targetSlot.amount);
                 targetSlot.UpdateSlot(originalSlot.item, originalSlot.amount);
                 originalSlot.UpdateSlot(temp.item, temp.amount);
             }
-            else if (originalSlot.GetItemObject().data.id == targetSlot.GetItemObject().data.id &&
-                     database.ItemObjects[originalSlot.GetItemObject().data.id].stackable)
+            else if (originalItemObject != null &&
+                     originalItemObject.data.id == targetItemObject.data.id &&
+                     database.ItemObjects[originalItemObject.data.id].stackable)
             {
-                int targetSlotRemainingSpace = targetSlot.GetItemObject().maxStack - targetSlot.amount;
+                int targetSlotRemainingSpace = targetItemObject.maxStack - targetSlot.amount;
                 if (originalSlot.amount <= targetSlotRemainingSpace)
                 {
                     targetSlot.AddAmount(originalSlot.amount);
@@ -351,28 +356,28 @@ namespace InventorySystem
         public bool IsFull(Item selectedItemData, int currentAmount)
         {
             ItemObject itemObject = database.ItemObjects[selectedItemData.id];
-    
+
             // If the item is stackable, check if it can fit in existing stacks
             if (itemObject.stackable)
             {
                 List<InventorySlot> existingSlots = FindAllItemsOnInventory(selectedItemData);
-        
+
                 // Calculate available space in existing stacks
                 int availableSpace = 0;
                 foreach (InventorySlot slot in existingSlots)
                 {
                     int remainingSpace = itemObject.maxStack - slot.amount;
                     availableSpace += remainingSpace;
-            
+
                     // If we found enough space, the inventory is not full
                     if (availableSpace >= currentAmount)
                         return false;
                 }
-        
+
                 // Check if we have enough empty slots for the remaining items
                 int remainingAmount = currentAmount - availableSpace;
                 int neededEmptySlots = Mathf.CeilToInt((float)remainingAmount / itemObject.maxStack);
-        
+
                 return EmptySlotCount < neededEmptySlots;
             }
             else
