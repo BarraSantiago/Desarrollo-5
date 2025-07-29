@@ -23,8 +23,7 @@ MonoBehaviour:
     name: Obsidian Block
     id: 24
     listPrice:
-      originalPrice: 180
+      originalPrice: 120
     craftable: 1
     recipe: {fileID: 11400000, guid: c58417437cf834948baede714bae863b, type: 2}
   boneNames: []
-  price: 0

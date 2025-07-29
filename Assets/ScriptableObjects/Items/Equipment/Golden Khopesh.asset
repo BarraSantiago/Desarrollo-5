@@ -21,9 +21,9 @@ MonoBehaviour:
     important, more lethal.
   data:
     name: Golden Khopesh
-    id: -1
+    id: 27
     listPrice:
-      originalPrice: 150
+      originalPrice: 130
     craftable: 1
     recipe: {fileID: 11400000, guid: 2890779ba5688f449b3002e8b5a3690b, type: 2}
   boneNames: []

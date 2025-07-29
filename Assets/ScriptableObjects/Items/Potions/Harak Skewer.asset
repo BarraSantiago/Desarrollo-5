@@ -23,7 +23,7 @@ MonoBehaviour:
     name: Harak Skewer
     id: 23
     listPrice:
-      originalPrice: 80
+      originalPrice: 46
     craftable: 1
     recipe: {fileID: 11400000, guid: 97ed360a32d3e29478155586d0ad2704, type: 2}
   boneNames: []

@@ -23,8 +23,7 @@ MonoBehaviour:
     name: Khud Helmet
     id: 15
     listPrice:
-      originalPrice: 65
+      originalPrice: 68
     craftable: 1
     recipe: {fileID: 11400000, guid: a8f1476b541ef774284bced1b20d5a17, type: 2}
   boneNames: []
-  price: 1

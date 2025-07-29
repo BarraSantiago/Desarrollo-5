@@ -21,10 +21,9 @@ MonoBehaviour:
     It's filled with honey and sprinkled with crushed pistachios.
   data:
     name: Pumpkin Cake
-    id: 23
+    id: 22
     listPrice:
-      originalPrice: 180
+      originalPrice: 105
     craftable: 1
     recipe: {fileID: 11400000, guid: 4d99d9ab86fd0e74390476d7e4440ba6, type: 2}
   boneNames: []
-  price: 0

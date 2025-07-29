@@ -21,9 +21,9 @@ MonoBehaviour:
     of overlapping golden steel scales.
   data:
     name: Golden Breastplate
-    id: -1
+    id: 26
     listPrice:
-      originalPrice: 90
+      originalPrice: 95
     craftable: 1
     recipe: {fileID: 11400000, guid: 4afc8e286ca55454896125fbc8d6c7ec, type: 2}
   boneNames: []

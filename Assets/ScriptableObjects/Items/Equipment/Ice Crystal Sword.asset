@@ -23,8 +23,7 @@ MonoBehaviour:
     name: Ice Crystal Sword
     id: 17
     listPrice:
-      originalPrice: 160
+      originalPrice: 150
     craftable: 1
     recipe: {fileID: 11400000, guid: 77b9f899d1947904e8d1ecdbc063ed75, type: 2}
   boneNames: []
-  price: 1

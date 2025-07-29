@@ -21,10 +21,9 @@ MonoBehaviour:
     and strenght.
   data:
     name: Strength Potion
-    id: -1
+    id: 20
     listPrice:
-      originalPrice: 80
+      originalPrice: 98
     craftable: 1
     recipe: {fileID: 11400000, guid: eb12210c603a40d4284d0cac53ecdeac, type: 2}
   boneNames: []
-  price: 0

@@ -21,10 +21,9 @@ MonoBehaviour:
     and greater focus for a limited time.
   data:
     name: Intelligence Potion
-    id: -1
+    id: 19
     listPrice:
-      originalPrice: 80
+      originalPrice: 135
     craftable: 1
     recipe: {fileID: 11400000, guid: f15f9a26dc8fa784fb96cfe31dc72f66, type: 2}
   boneNames: []
-  price: 0

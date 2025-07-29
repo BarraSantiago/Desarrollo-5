@@ -21,10 +21,9 @@ MonoBehaviour:
     drinks it.
   data:
     name: Speed Potion
-    id: -1
+    id: 18
     listPrice:
-      originalPrice: 80
+      originalPrice: 82
     craftable: 1
     recipe: {fileID: 11400000, guid: e1971ffef47eb2740a8f1d237ed1fc42, type: 2}
   boneNames: []
-  price: 0
