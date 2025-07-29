@@ -14340,7 +14340,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8d02474ac83aa5542ade7929132a06f4, type: 2}
+  - {fileID: 2100000, guid: 0227585ad08c3da4ab3286a2f78d42f5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14580,8 +14580,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 0.6603774, g: 0.2222269, b: 0.09033466, a: 0.63529414}
-      maxColor: {r: 0.4811321, g: 0.21508546, b: 0.102127105, a: 1}
+      minColor: {r: 1, g: 0.23272225, b: 0, a: 0.63529414}
+      maxColor: {r: 1, g: 0.29612762, b: 0, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -25551,14 +25551,6 @@ MonoBehaviour:
   lightIntensity: 25
   spotlightIncreaseDuration: 15
   spotlightIntensity: 1250
-  particleMaterial: {fileID: 2100000, guid: 0227585ad08c3da4ab3286a2f78d42f5, type: 2}
-  particleSystems:
-  - {fileID: 405548898}
-  - {fileID: 937030109}
-  - {fileID: 1051565465}
-  - {fileID: 1032256482}
-  nightParticleColor: {r: 0, g: 0, b: 0, a: 0.09411765}
-  particleColorTransitionDuration: 15
   CycleDuration: 210
 --- !u!1 &1005935803
 GameObject:
@@ -26030,11 +26022,6 @@ PrefabInstance:
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1798284706355412359, guid: 97fba3405f8c5054785854febc63558a, type: 3}
   m_PrefabInstance: {fileID: 1020135207}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &1032256482 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 808177192754162572, guid: eb10c6f1deca3f845a56949486cc5dd4, type: 3}
-  m_PrefabInstance: {fileID: 416674733}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1049771708
 GameObject:
