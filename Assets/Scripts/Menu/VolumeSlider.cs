@@ -14,20 +14,36 @@ namespace Menu
         [SerializeField] private Toggle volumeToggle;
 
         private const string MixerVolume = "Volume";
-        private float lastVolume;
+        private float _lastVolume;
+        private bool _isMuted;
+        
         private void Start()
         {
-            lastVolume = PlayerPrefs.GetFloat(MixerVolume, 0);
-            mainMixer.SetFloat(MixerVolume, lastVolume);
-            volumeSlider.value = Mathf.Pow(10, lastVolume / 20f); // Convert dB to linear value
+            _lastVolume = PlayerPrefs.GetFloat(MixerVolume, 0);
+            _isMuted = PlayerPrefs.GetInt("IsMuted", 0) == 1;
+            volumeToggle.isOn = _isMuted;
+            
+            if (_isMuted)
+            {
+                mainMixer.SetFloat(MixerVolume, -80);
+            }
+            else
+            {
+                mainMixer.SetFloat(MixerVolume, _lastVolume);
+            }
+            
+            volumeSlider.value = Mathf.Pow(10, _lastVolume / 20f);
             volumeSlider.onValueChanged.AddListener(SetVolume);
             volumeToggle.onValueChanged.AddListener(ToggleVolume);
-            lastVolume = volumeSlider.value;
+            _lastVolume = volumeSlider.value;
         }
 
         private void ToggleVolume(bool arg0)
         {
-            mainMixer.SetFloat(MixerVolume, !arg0 ? lastVolume : -80);
+            mainMixer.SetFloat(MixerVolume, !arg0 ? _lastVolume : -80);
+            _isMuted = arg0;
+            PlayerPrefs.SetInt("IsMuted", _isMuted ? 1 : 0);
+            PlayerPrefs.Save();
         }
 
         /// <summary>
@@ -37,10 +53,10 @@ namespace Menu
         public void SetVolume(float volume)
         {
             if(volume <= 0.0001f) volume = 0.0001f;
-            float dB = 20f * Mathf.Log10(volume); // Convert linear value to dB
+            float dB = 20f * Mathf.Log10(volume);
             mainMixer.SetFloat(MixerVolume, dB);
-            lastVolume = dB;
-            PlayerPrefs.SetFloat(MixerVolume, lastVolume);
+            _lastVolume = dB;
+            PlayerPrefs.SetFloat(MixerVolume, _lastVolume);
         }
     }
 }
