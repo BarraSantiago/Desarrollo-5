@@ -16,6 +16,7 @@ namespace Menu
         [SerializeField] private Button newGameButton;
         [SerializeField] private Button confirmationButton;
         [SerializeField] private GameObject confirmationWindow;
+        [SerializeField] private ItemDatabaseObject itemDatabase;
         private const string SceneName = "LoadingScene";
 
         public void Start()
@@ -73,14 +74,21 @@ namespace Menu
                 PlayerPrefs.SetInt("PlayerMoney", 250);
                 PlayerPrefs.SetInt("TutorialAccessed", 0);
                 PlayerPrefs.SetInt("TutorialAccessed", 0);
-                PlayerPrefs.Save();
                 SaveFileManager.ResetGame = true;
+
+                foreach (ItemObject item in itemDatabase.ItemObjects)
+                {
+                    if (!item || item.data == null) continue;
+                    item.Price = 1;
+                }
+                
                 InventoryObject[] allInventories = Resources.FindObjectsOfTypeAll<InventoryObject>();
                 
                 foreach (InventoryObject inventory in allInventories)
                 {
                     inventory.RemoveAllItems();
                 }
+                PlayerPrefs.Save();
 
                 SaveFileManager.DeleteAllSaves();
 

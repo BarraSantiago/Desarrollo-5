@@ -16,12 +16,13 @@ namespace Store.Shops
         public TMP_Text itemName;
         public Button buyButton;
 
-        public void SetItem(ItemObject itemData, float itemCostMultiplier)
+        public void SetItem(ItemObject itemData, float itemCostMultiplier, bool isCraftingShop)
         {
             itemID = itemData.data.id;
             itemImage.sprite = itemData.uiDisplay;
             itemName.text = itemData.data.name;
-            price.text = ((int)(itemData.data.listPrice.originalPrice * itemCostMultiplier)).ToString(CultureInfo.InvariantCulture);
+            price.text = isCraftingShop ? itemData.data.recipe.showPrice.ToString(CultureInfo.InvariantCulture) :
+                ((int)(itemData.data.listPrice.originalPrice * itemCostMultiplier)).ToString(CultureInfo.InvariantCulture);
             buyButton.onClick.AddListener(ShowItem);
             itemImage.preserveAspect = true;
         }

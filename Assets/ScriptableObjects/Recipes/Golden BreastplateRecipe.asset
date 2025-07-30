@@ -18,3 +18,4 @@ MonoBehaviour:
   - itemID: 13
     amount: 1
   craftChance: 55
+  showPrice: 95

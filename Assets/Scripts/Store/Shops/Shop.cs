@@ -388,7 +388,7 @@ namespace Store.Shops
             {
                 GameObject shopItem = Instantiate(shopItemPrefab, shopItemsParent);
                 ShopItem newItem = shopItem.GetComponent<ShopItem>();
-                newItem.SetItem(itemObject, itemCostMultiplier);
+                newItem.SetItem(itemObject, itemCostMultiplier, isCraftingShop);
                 newItem.OnSelectItem += SelectItem;
                 _shopItems.Add(newItem);
             }

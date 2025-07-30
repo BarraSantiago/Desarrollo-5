@@ -15,5 +15,6 @@ namespace InventorySystem
         }
         public ItemEntry[] items;
         public float craftChance;
+        public int showPrice = 1;
     }
 }

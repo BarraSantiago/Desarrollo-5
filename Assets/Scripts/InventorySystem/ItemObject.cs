@@ -17,7 +17,7 @@ namespace InventorySystem
         public Item data = new Item();
         public List<string> boneNames = new List<string>();
 
-        private int price;
+        public int price = 1;
         public int Price
         {
             get => price;
@@ -33,7 +33,7 @@ namespace InventorySystem
         {
             if(data != null)
             {
-                price = PlayerPrefs.GetInt(data.id.ToString(), 0);
+                price = PlayerPrefs.GetInt(data.id.ToString(), 1);
             }
         }
 
