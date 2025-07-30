@@ -223,12 +223,16 @@ namespace Store.Shops
             {
                 player.inventory.AddItem(_selectedItem.data, _currentAmount);
                 SuccessWindow.SetActive(true);
+                FailWindow.SetActive(false);
+
                 SuccessImage.sprite = _selectedItem.uiDisplay;
                 AudioManager.instance.Play("CraftSuccess");
             }
             else
             {
                 FailWindow.SetActive(true);
+                SuccessWindow.SetActive(false);
+
                 FailImage.sprite = _selectedItem.uiDisplay;
                 AudioManager.instance.Play("CraftFailure");
             }
