@@ -826,8 +826,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 430.09998, y: -127}
-  m_SizeDelta: {x: 583.53, y: 117.2539}
+  m_AnchoredPosition: {x: 430.09998, y: -174.48}
+  m_SizeDelta: {x: 583.53, y: 212.21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &110211768
 MonoBehaviour:
@@ -849,7 +849,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Ilias Mantikos - \nQanun and Sea Waves"
+  m_text: "Ilias Mantikos - \n\nQanun and Sea Waves"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 56a3a826538c12244b63f90545692b96, type: 2}
   m_sharedMaterial: {fileID: 7045605676037449407, guid: 56a3a826538c12244b63f90545692b96, type: 2}
@@ -2805,8 +2805,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: -172.4404}
-  m_SizeDelta: {x: 482.5497, y: 216.2908}
+  m_AnchoredPosition: {x: -400, y: -205}
+  m_SizeDelta: {x: 547.0461, y: 288.8493}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &800084034
 MonoBehaviour:
@@ -2828,10 +2828,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'De Bonis Lucas
+  m_text: 'Mejia Pablo
 
 
-    Mejia Pablo'
+    De Bonis Lucas
+
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 56a3a826538c12244b63f90545692b96, type: 2}
   m_sharedMaterial: {fileID: 7045605676037449407, guid: 56a3a826538c12244b63f90545692b96, type: 2}
@@ -3078,7 +3081,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: 147.93576}
+  m_AnchoredPosition: {x: -400, y: 146}
   m_SizeDelta: {x: 583.53, y: 69.0156}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &858989523
@@ -4433,7 +4436,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4654234943221838837, guid: 001da1759eb67ec4bb56de3c22f645e8, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4654234943221838837, guid: 001da1759eb67ec4bb56de3c22f645e8, type: 3}
       propertyPath: m_AnchorMax.x
