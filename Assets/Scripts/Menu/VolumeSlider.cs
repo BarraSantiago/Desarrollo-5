@@ -54,7 +54,7 @@ namespace Menu
         {
             if(volume <= 0.0001f) volume = 0.0001f;
             float dB = 20f * Mathf.Log10(volume);
-            mainMixer.SetFloat(MixerVolume, dB);
+            mainMixer.SetFloat(MixerVolume, _isMuted ? -80 : dB);
             _lastVolume = dB;
             PlayerPrefs.SetFloat(MixerVolume, _lastVolume);
         }
