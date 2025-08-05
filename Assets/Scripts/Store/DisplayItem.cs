@@ -40,11 +40,14 @@ namespace Store
                 }
             }
         }
+
         private const int MaxAmount = 99999;
         private const int MinAmount = 1;
 
         private void Start()
         {
+            inputField.characterLimit = 5;
+
             inputField.onEndEdit.AddListener(delegate { ChangeItemPrice(); });
             inputField.onDeselect.AddListener(delegate { ChangeItemPrice(); });
             inputField.onSelect.AddListener(delegate { OnSelectInput(); });
@@ -79,7 +82,7 @@ namespace Store
             }
 
             inventory.UpdateInventory();
-            
+
             if (inventory.GetSlots[0].GetItemObject())
             {
                 Initialize(inventory.GetSlots[0].GetItemObject());
@@ -88,6 +91,7 @@ namespace Store
             {
                 CleanDisplay();
             }
+
             inventoryParent.SetActive(false);
         }
 
@@ -142,23 +146,24 @@ namespace Store
 
         private void ChangeItemPrice()
         {
-            if (!int.TryParse(inputField.text, out int result))
+            string inputText = inputField.text.Replace("$", "");
+
+            if (!int.TryParse(inputText, out int result))
             {
-                OnSelectInput();
-                if (!int.TryParse(inputField.text, out result))
-                {
-                    return;
-                }
+                result = MinAmount;
             }
 
-            result = result switch
+            // Handle negative numbers and enforce maximum 5 digits (99999)
+            if (result <= 0)
             {
-                < MinAmount => MinAmount,
-                > MaxAmount => MaxAmount,
-                _ => result
-            };
-            inputField.text = result.ToString();
+                result = MinAmount;
+            }
+            else if (result > MaxAmount)
+            {
+                result = MaxAmount;
+            }
 
+            inputField.text = result.ToString();
             Item.Price = result;
             UpdatePrice();
         }
